@@ -43,7 +43,7 @@ const Dashboard = () => {
               <CardTitle className="font-serif text-[clamp(36px,6vw,48px)] tracking-tight leading-tight">
                 Create Report
               </CardTitle>
-              <CardDescription className="max-w-[680px] text-base leading-relaxed text-black/70">
+              <CardDescription className="max-w-[680px] text-base leading-relaxed ">
                 Enter a business, product, or website to generate a
                 comprehensive SEO analysis.
               </CardDescription>
@@ -111,12 +111,12 @@ const Dashboard = () => {
           <Card className="border border-black/10 shadow-sm rounded-none">
             <CardHeader className="space-y-2">
               <div className="flex items-center gap-2">
-                <BarChart3 className="w-5 h-5 text-black" />
+                <BarChart3 className="w-5 h-5" />
                 <CardTitle className="text-2xl font-serif">
                   Recent Reports
                 </CardTitle>
               </div>
-              <CardDescription className="text-black/60">
+              <CardDescription className="">
                 Track generated SEO analyses
               </CardDescription>
             </CardHeader>
@@ -128,7 +128,7 @@ const Dashboard = () => {
 
               <AuthLoading>
                 <div className="flex justify-center py-12">
-                  <Loader2 className="w-6 h-6 animate-spin text-black" />
+                  <Loader2 className="w-6 h-6 animate-spin " />
                 </div>
               </AuthLoading>
             </CardContent>

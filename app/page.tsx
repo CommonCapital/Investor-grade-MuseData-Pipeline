@@ -194,7 +194,7 @@ export default function SEOIntelligenceLanding() {
             </div>
             
             <div className="text-center p-8 bg-white border border-black/10">
-              <div className="text-4xl font-light mb-3">12+ Tools</div>
+              <div className="text-4xl font-light mb-3 text-black/60">12+ Tools</div>
               <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Fragmented Data</div>
               <p className="text-sm font-light text-black/70">
                 Multiple subscriptions for incomplete insights
@@ -202,7 +202,7 @@ export default function SEOIntelligenceLanding() {
             </div>
             
             <div className="text-center p-8 bg-white border border-black/10">
-              <div className="text-4xl font-light mb-3">$15K+</div>
+              <div className="text-4xl font-light mb-3 text-black/60">$15K+</div>
               <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Monthly Cost</div>
               <p className="text-sm font-light text-black/70">
                 Spent on SEO tools and analyst time

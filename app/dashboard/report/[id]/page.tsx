@@ -93,7 +93,7 @@ function ReportPage() {
         <div className='space-y-8'>
           {/* Header */}
           <div className='text-center'>
-            <h1 className='text-4xl font-light tracking-tight mb-3'>
+            <h1 className='text-4xl font-light tracking-tight mb-3 text-black/70'>
               Report Status
             </h1>
             <p className='text-base font-light text-black/70'>
@@ -110,7 +110,7 @@ function ReportPage() {
               <CardTitle className='text-2xl font-light tracking-tight'>
                 {getReportTitle(job.status)}
               </CardTitle>
-              <CardDescription className='text-base font-light text-black/70'>
+              <CardDescription className='text-base font-light '>
                 {getStatusMessage(job.status)}
               </CardDescription>
             </CardHeader>
@@ -119,7 +119,7 @@ function ReportPage() {
               {/* Progress Bar */}
               <div className='space-y-3'>
                 <div className='flex items-center justify-between text-sm font-light'>
-                  <span className='text-black/60 tracking-wide'>Progress</span>
+                  <span className=' tracking-wide'>Progress</span>
                   <span className='font-normal'>{getProgressPercentage(job.status)}</span>
                 </div>
                 <div className='w-full bg-black/5 h-1.5'>
@@ -131,20 +131,20 @@ function ReportPage() {
               <div className='space-y-4 pt-4 border-t border-black/5'>
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                   <div className='flex items-start gap-3'>
-                    <FileText className='w-4 h-4 text-black/40 mt-0.5' />
+                    <FileText className='w-4 h-4  mt-0.5' />
                     <div>
                       <p className='text-sm font-normal mb-1'>Original Query</p>
-                      <p className='text-sm text-black/60 font-light truncate'>
+                      <p className='text-sm  font-light truncate'>
                         {job.originalPrompt}
                       </p>
                     </div>
                   </div>
 
                   <div className='flex items-start gap-3'>
-                    <Calendar className='w-4 h-4 text-black/40 mt-0.5' />
+                    <Calendar className='w-4 h-4  mt-0.5' />
                     <div>
                       <p className='text-sm font-normal mb-1'>Created</p>
-                      <p className='text-sm text-black/60 font-light'>
+                      <p className='text-sm  font-light'>
                                          {format(new Date(job.createdAt), 'PPpp')}
                       </p>
                     </div>
@@ -153,10 +153,10 @@ function ReportPage() {
 
                 {job.completedAt && (
                   <div className='flex items-start gap-3'>
-                    <CheckCircle className='w-4 h-4 text-black/40 mt-0.5' />
+                    <CheckCircle className='w-4 h-4  mt-0.5' />
                     <div>
                       <p className='text-sm font-normal mb-1'>Completed</p>
-                      <p className='text-sm text-black/60 font-light'>
+                      <p className='text-sm  font-light'>
                     {format(new Date(job.completedAt), 'PPpp')}
                       </p>
                     </div>
@@ -165,10 +165,10 @@ function ReportPage() {
 
                 {job.snapshotId && (
                   <div className='flex items-start gap-3'>
-                    <BarChart3 className='w-4 h-4 text-black/40 mt-0.5' />
+                    <BarChart3 className='w-4 h-4  mt-0.5' />
                     <div>
                       <p className='text-sm font-normal mb-1'>Snapshot ID</p>
-                      <p className='text-sm text-black/60 font-light tracking-wide'>
+                      <p className='text-sm  font-light tracking-wide'>
                         {job.snapshotId}
                       </p>
                     </div>
@@ -178,10 +178,10 @@ function ReportPage() {
                 {job.error && (
                   <div className='p-4 bg-black/5 border border-black/10'>
                     <div className='flex items-start gap-2'>
-                      <XCircle className='w-4 h-4 text-black mt-0.5 flex-shrink-0' />
+                      <XCircle className='w-4 h-4  mt-0.5 flex-shrink-0' />
                       <div>
                         <p className='text-sm font-normal mb-2'>Error Details</p>
-                        <p className='text-sm text-black/70 font-light'>{job.error}</p>
+                        <p className='text-sm  font-light'>{job.error}</p>
                       </div>
                     </div>
                   </div>
@@ -192,11 +192,11 @@ function ReportPage() {
               {job.status === 'completed' && job.results && job.results.length > 0 && (
                 <div className='pt-4 border-t border-black/5'>
                   <div className='flex items-center gap-2 mb-3'>
-                    <BarChart3 className='w-4 h-4 text-black' />
+                    <BarChart3 className='w-4 h-4 ' />
                     <p className='text-sm font-normal'>Results Available</p>
                   </div>
                   <div className='p-4 bg-black/5 border border-black/10'>
-                    <p className='text-sm text-black/70 font-light'>
+                    <p className='text-sm  font-light'>
                       Your SEO report is ready for analysis
                     </p>
                   </div>
@@ -225,7 +225,7 @@ function ReportPage() {
                 >
                   {isPending ? (
                     <>
-                      <Loader2 className='w-4 h-4 animate-spin mr-2' />
+                      <Loader2 className='w-4 h-4 animate-spin mr-2 text-white' />
                       Retrying...
                     </>
                   ) : (
@@ -244,7 +244,7 @@ function ReportPage() {
               variant='outline'
               className='h-12 px-8 border-2 border-black/10 hover:border-black bg-white transition-all duration-300 text-xs tracking-widest uppercase'
             >
-              <ArrowLeft className='w-4 h-4 mr-2' />
+              <ArrowLeft className='w-4 h-4 mr-2 text-black' />
               Back to Dashboard
             </Button>
           </div>
