@@ -13,13 +13,13 @@ const Header = () => {
       <header className="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-black/10 z-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="text-xl font-light tracking-tight">MUSEDATA</div>
+            <div className="text-xl font-light tracking-tight text-black/60">MUSEDATA</div>
             
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-8">
-              <a href="#reports" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity">Reports</a>
-              <a href="#insights" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity">Insights</a>
-              <a href="#pricing" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity">Pricing</a>
+              <a href="#reports" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black/60">Reports</a>
+              <a href="#insights" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black/60">Insights</a>
+              <a href="#pricing" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black/60">Pricing</a>
               
               <Unauthenticated>
                 <SignInButton mode="modal" forceRedirectUrl="/dashboard">

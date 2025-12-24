@@ -38,8 +38,8 @@ export default function RootLayout({
           <ConvexClientProvider>
             <ThemeProvider
             attribute="class"
-            defaultTheme="light"
-            enableSystem={false}
+            defaultTheme="system"
+            enableSystem
             disableTransitionOnChange
             >
  <Header />

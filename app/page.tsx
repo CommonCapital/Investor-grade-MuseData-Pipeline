@@ -107,7 +107,7 @@ export default function SEOIntelligenceLanding() {
               </Badge>
             </div>
 
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light leading-[1.1] tracking-tight mb-8">
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light leading-[1.1] tracking-tight mb-8 text-black/70">
               Instant SEO Reports on Any Public Company
             </h1>
 
@@ -154,15 +154,15 @@ export default function SEOIntelligenceLanding() {
             <div className="mt-16 pt-8 border-t border-black/10">
               <div className="grid grid-cols-3 gap-8 max-w-2xl">
                 <div>
-                  <div className="text-3xl font-light mb-1">30 Sec</div>
+                  <div className="text-3xl font-light mb-1 text-black/70">30 Sec</div>
                   <div className="text-xs tracking-wider uppercase text-black/60">Report Generation</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-light mb-1">50K+</div>
+                  <div className="text-3xl font-light mb-1 text-black/70">50K+</div>
                   <div className="text-xs tracking-wider uppercase text-black/60">Companies Tracked</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-light mb-1">Real-Time</div>
+                  <div className="text-3xl font-light mb-1 text-black/70">Real-Time</div>
                   <div className="text-xs tracking-wider uppercase text-black/60">Data Updates</div>
                 </div>
               </div>
@@ -175,7 +175,7 @@ export default function SEOIntelligenceLanding() {
       <section id="reports" className="py-20 sm:py-32 bg-black/[0.02]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center mb-16">
-            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight">
+            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight text-black/70">
               Due Diligence Shouldn't Take Weeks
             </h2>
             <p className="text-lg font-light text-black/70 leading-relaxed">
@@ -186,7 +186,7 @@ export default function SEOIntelligenceLanding() {
           
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="text-center p-8 bg-white border border-black/10">
-              <div className="text-4xl font-light mb-3">5-7 Days</div>
+              <div className="text-4xl font-light mb-3 text-black/70">5-7 Days</div>
               <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Manual Research</div>
               <p className="text-sm font-light text-black/70">
                 Traditional competitive analysis timelines
@@ -216,7 +216,7 @@ export default function SEOIntelligenceLanding() {
       <section id="insights" className="py-20 sm:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto mb-20">
-            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight">
+            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight text-black/70">
               Comprehensive SEO Intelligence
             </h2>
             <p className="text-lg font-light text-black/70 leading-relaxed">
@@ -228,7 +228,7 @@ export default function SEOIntelligenceLanding() {
             {/* Search Visibility Analysis */}
             <div className="grid lg:grid-cols-2 gap-12 items-start">
               <div>
-                <h3 className="text-2xl font-light mb-6 tracking-tight">
+                <h3 className="text-2xl font-light mb-6 tracking-tight text-black/70">
                   Search Visibility Analysis
                 </h3>
                 <p className="text-base font-light text-black/70 leading-relaxed mb-6">
@@ -237,23 +237,23 @@ export default function SEOIntelligenceLanding() {
                 </p>
                 <div className="space-y-3 text-sm font-light">
                   <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                    <span>Keyword ranking positions and trends</span>
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                    <span className="text-black/70">Keyword ranking positions and trends</span>
                   </div>
                   <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                    <span>Organic traffic estimates and projections</span>
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                    <span className="text-black/70">Organic traffic estimates and projections</span>
                   </div>
                   <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                    <span>SERP feature analysis (featured snippets, knowledge panels)</span>
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                    <span className="text-black/70">SERP feature analysis (featured snippets, knowledge panels)</span>
                   </div>
                 </div>
               </div>
               
               <Card className="border-2 border-black/10 shadow-none">
                 <CardHeader>
-                  <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
+                  <CardTitle className="text-sm tracking-wider uppercase text-white/60 font-normal">
                     Sample Visibility Metrics
                   </CardTitle>
                 </CardHeader>
@@ -261,19 +261,19 @@ export default function SEOIntelligenceLanding() {
                   <div className="space-y-3 text-sm font-light">
                     <div className="flex justify-between items-center py-2 border-b border-black/5">
                       <span>Keyword Rankings</span>
-                      <span className="text-black/60">15,420 tracked</span>
+                      <span className="text-white/60 ">15,420 tracked</span>
                     </div>
                     <div className="flex justify-between items-center py-2 border-b border-black/5">
                       <span>Organic Traffic Est.</span>
-                      <span className="text-black/60">2.4M monthly</span>
+                      <span className="text-white/60 ">2.4M monthly</span>
                     </div>
                     <div className="flex justify-between items-center py-2 border-b border-black/5">
                       <span>Domain Authority</span>
-                      <span className="text-black/60">78/100</span>
+                      <span className="text-white/60 ">78/100</span>
                     </div>
                     <div className="flex justify-between items-center py-2">
                       <span>SERP Features</span>
-                      <span className="text-black/60">342 owned</span>
+                      <span className="text-white/60 ">342 owned</span>
                     </div>
                   </div>
                 </CardContent>
@@ -284,7 +284,7 @@ export default function SEOIntelligenceLanding() {
             <div className="grid lg:grid-cols-2 gap-12 items-start">
               <Card className="border-2 border-black/10 shadow-none lg:order-1">
                 <CardHeader>
-                  <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
+                  <CardTitle className="text-sm tracking-wider uppercase text-white/60  font-normal">
                     Competitive Insights
                   </CardTitle>
                 </CardHeader>
@@ -294,28 +294,28 @@ export default function SEOIntelligenceLanding() {
                       <Building2 className="w-5 h-5 mt-0.5 flex-shrink-0" />
                       <div>
                         <div className="font-normal mb-1">Direct Competitors</div>
-                        <div className="text-black/60 text-xs">Ranked by keyword overlap and traffic share</div>
+                        <div className="text-white/60  text-xs">Ranked by keyword overlap and traffic share</div>
                       </div>
                     </div>
                     <div className="flex items-start gap-3 py-2">
                       <TrendingUp className="w-5 h-5 mt-0.5 flex-shrink-0" />
                       <div>
                         <div className="font-normal mb-1">Market Share Analysis</div>
-                        <div className="text-black/60 text-xs">Search visibility vs. competitors over time</div>
+                        <div className="text-white/60  text-xs">Search visibility vs. competitors over time</div>
                       </div>
                     </div>
                     <div className="flex items-start gap-3 py-2">
                       <Eye className="w-5 h-5 mt-0.5 flex-shrink-0" />
                       <div>
                         <div className="font-normal mb-1">Content Gap Analysis</div>
-                        <div className="text-black/60 text-xs">Keywords competitors rank for but target doesn't</div>
+                        <div className="text-white/60  text-xs">Keywords competitors rank for but target doesn't</div>
                       </div>
                     </div>
                     <div className="flex items-start gap-3 py-2">
                       <BarChart3 className="w-5 h-5 mt-0.5 flex-shrink-0" />
                       <div>
                         <div className="font-normal mb-1">Growth Trajectories</div>
-                        <div className="text-black/60 text-xs">Historical trends and future projections</div>
+                        <div className="text-white/60  text-xs">Historical trends and future projections</div>
                       </div>
                     </div>
                   </div>
@@ -323,7 +323,7 @@ export default function SEOIntelligenceLanding() {
               </Card>
 
               <div className="lg:order-2">
-                <h3 className="text-2xl font-light mb-6 tracking-tight">
+                <h3 className="text-2xl font-light mb-6 tracking-tight text-black/70">
                   Competitive Positioning
                 </h3>
                 <p className="text-base font-light text-black/70 leading-relaxed mb-6">
@@ -332,16 +332,16 @@ export default function SEOIntelligenceLanding() {
                 </p>
                 <div className="space-y-3 text-sm font-light">
                   <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                    <span>Competitor ranking and traffic benchmarks</span>
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                    <span className="text-black/70">Competitor ranking and traffic benchmarks</span>
                   </div>
                   <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                    <span>Market share of voice analysis</span>
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                    <span className="text-black/70">Market share of voice analysis</span>
                   </div>
                   <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                    <span>Strategic content opportunities</span>
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                    <span className="text-black/70">Strategic content opportunities</span>
                   </div>
                 </div>
               </div>
@@ -350,7 +350,7 @@ export default function SEOIntelligenceLanding() {
             {/* Technical & Content Analysis */}
             <div className="grid lg:grid-cols-2 gap-12 items-start">
               <div>
-                <h3 className="text-2xl font-light mb-6 tracking-tight">
+                <h3 className="text-2xl font-light mb-6 tracking-tight text-black/70">
                   Technical & Content Analysis
                 </h3>
                 <p className="text-base font-light text-black/70 leading-relaxed mb-6">
@@ -359,23 +359,23 @@ export default function SEOIntelligenceLanding() {
                 </p>
                 <div className="space-y-3 text-sm font-light">
                   <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
                     <span>Backlink profile and authority distribution</span>
                   </div>
                   <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                    <span>Content strategy and topic coverage</span>
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                    <span className="text-black/70">Content strategy and topic coverage</span>
                   </div>
                   <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                    <span>Site speed and technical health metrics</span>
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                    <span className="text-black/70">Site speed and technical health metrics</span>
                   </div>
                 </div>
               </div>
               
               <Card className="border-2 border-black/10 shadow-none">
                 <CardHeader>
-                  <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
+                  <CardTitle className="text-sm tracking-wider uppercase text-white/60 font-normal">
                     Technical Metrics
                   </CardTitle>
                 </CardHeader>
@@ -383,19 +383,19 @@ export default function SEOIntelligenceLanding() {
                   <div className="space-y-3 text-sm font-light">
                     <div className="flex justify-between items-center py-2 border-b border-black/5">
                       <span>Total Backlinks</span>
-                      <span className="text-black/60">847K</span>
+                      <span className="text-white/60">847K</span>
                     </div>
                     <div className="flex justify-between items-center py-2 border-b border-black/5">
                       <span>Referring Domains</span>
-                      <span className="text-black/60">12.3K</span>
+                      <span className="text-white/60">12.3K</span>
                     </div>
                     <div className="flex justify-between items-center py-2 border-b border-black/5">
                       <span>Indexed Pages</span>
-                      <span className="text-black/60">45,280</span>
+                      <span className="text-white/60">45,280</span>
                     </div>
                     <div className="flex justify-between items-center py-2">
                       <span>Core Web Vitals</span>
-                      <span className="text-black/60">Good</span>
+                      <span className="text-white/60">Good</span>
                     </div>
                   </div>
                 </CardContent>
@@ -462,10 +462,10 @@ export default function SEOIntelligenceLanding() {
       <section className="py-20 sm:py-32 bg-black/[0.02]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center mb-16">
-            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight">
+            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight bg-black">
               Export-Ready Reports
             </h2>
-            <p className="text-lg font-light text-black/70 leading-relaxed">
+            <p className="text-lg font-light text-black/70 leading-relaxed bg-black">
               Professional reports formatted for investment committees and board presentations.
             </p>
           </div>
@@ -473,9 +473,9 @@ export default function SEOIntelligenceLanding() {
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="text-center p-8 bg-white border border-black/10">
               <div className="inline-flex p-4 mb-4">
-                <FileText className="w-8 h-8" />
+                <FileText className="w-8 h-8 text-black/60" />
               </div>
-              <h3 className="text-xl font-light mb-3">PDF Export</h3>
+              <h3 className="text-xl font-light mb-3 text-black/60">PDF Export</h3>
               <p className="text-sm font-light text-black/70">
                 Investor-grade reports with charts, tables, and executive summaries
               </p>
@@ -483,9 +483,9 @@ export default function SEOIntelligenceLanding() {
 
             <div className="text-center p-8 bg-white border border-black/10">
               <div className="inline-flex p-4 mb-4">
-                <BarChart3 className="w-8 h-8" />
+                <BarChart3 className="w-8 h-8 text-black/60" />
               </div>
-              <h3 className="text-xl font-light mb-3">Excel Data</h3>
+              <h3 className="text-xl font-light mb-3 text-black/60">Excel Data</h3>
               <p className="text-sm font-light text-black/70">
                 Raw data exports for custom analysis and modeling
               </p>
@@ -493,9 +493,9 @@ export default function SEOIntelligenceLanding() {
 
             <div className="text-center p-8 bg-white border border-black/10">
               <div className="inline-flex p-4 mb-4">
-                <Shield className="w-8 h-8" />
+                <Shield className="w-8 h-8 text-black/60" />
               </div>
-              <h3 className="text-xl font-light mb-3">API Access</h3>
+              <h3 className="text-xl font-light mb-3 text-black/60">API Access</h3>
               <p className="text-sm font-light text-black/70">
                 Integrate SEO data directly into your investment workflows
               </p>
@@ -508,7 +508,7 @@ export default function SEOIntelligenceLanding() {
       <section id="pricing" className="py-20 sm:py-32">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="border-2 border-black p-12 sm:p-16 text-center">
-            <h2 className="text-3xl sm:text-4xl font-light mb-6 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-light mb-6 tracking-tight text-black/60">
               Start Generating Reports Today
             </h2>
             <p className="text-lg font-light text-black/70 mb-2 max-w-2xl mx-auto">

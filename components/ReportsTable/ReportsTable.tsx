@@ -52,7 +52,7 @@ alert("Failed to delete report. Please try again.")
           <Loader2 className='w-6 h-6 animate-spin' />
         </div>
         <h3 className='text-lg font-light mb-2'>Loading Reports</h3>
-        <p className='text-sm text-black/60 font-light'>
+        <p className='text-sm  font-light'>
           Fetching your latest analysis reports...
         </p>
       </div>
@@ -64,14 +64,14 @@ alert("Failed to delete report. Please try again.")
     return (
       <div className='flex flex-col items-center justify-center p-12 text-center'>
         <div className='p-4 mb-6'>
-          <FileText className='w-8 h-8 text-black/40' />
+          <FileText className='w-8 h-8 ' />
         </div>
         <h3 className='text-xl font-light mb-2'>No Reports Yet</h3>
-        <p className='text-sm text-black/60 mb-6 max-w-md font-light'>
+        <p className='text-sm  mb-6 max-w-md font-light'>
           Get started by creating your first SEO analysis report. Enter a company name above to begin.
         </p>
         <div className='flex items-center gap-2 text-xs tracking-wider uppercase text-black/60'>
-          <div className='w-1.5 h-1.5 rounded-full bg-black/40' />
+          <div className='w-1.5 h-1.5 rounded-full ' />
           <span>Create your first report to see it here</span>
         </div>
       </div>
@@ -85,19 +85,19 @@ alert("Failed to delete report. Please try again.")
           <table className='w-full'>
             <thead>
               <tr className='border-b-2 border-black/10'>
-                <th className='text-left px-6 py-4 font-normal text-xs tracking-wider uppercase text-black/60'>
+                <th className='text-left px-6 py-4 font-normal text-xs tracking-wider uppercase '>
                   Report
                 </th>
-                <th className='text-left px-6 py-4 font-normal text-xs tracking-wider uppercase text-black/60'>
+                <th className='text-left px-6 py-4 font-normal text-xs tracking-wider uppercase '>
                   Status
                 </th>
-                <th className='text-left px-6 py-4 font-normal text-xs tracking-wider uppercase text-black/60'>
+                <th className='text-left px-6 py-4 font-normal text-xs tracking-wider uppercase '>
                   Created
                 </th>
-                <th className='text-left px-6 py-4 font-normal text-xs tracking-wider uppercase text-black/60'>
+                <th className='text-left px-6 py-4 font-normal text-xs tracking-wider uppercase '>
                   Completed
                 </th>
-                <th className='text-left px-6 py-4 font-normal text-xs tracking-wider uppercase text-black/60'>
+                <th className='text-left px-6 py-4 font-normal text-xs tracking-wider uppercase '>
                   Actions
                 </th>
               </tr>
@@ -124,7 +124,7 @@ alert("Failed to delete report. Please try again.")
                           </span>
                         </div>
                         {job.snapshotId && (
-                          <p className='text-xs text-black/60 mt-1 tracking-wide'>
+                          <p className='text-xs  mt-1 tracking-wide'>
                             ID: {job.snapshotId.slice(0, 12)}...
                           </p>
                         )}
@@ -134,10 +134,10 @@ alert("Failed to delete report. Please try again.")
                   <td className='px-6 py-4'>
                     <StatusBadge status={job.status} showIcon={true} />
                   </td>
-                  <td className='px-6 py-4 text-sm font-light text-black/60'>
+                  <td className='px-6 py-4 text-sm font-light '>
                     {format(new Date(job.createdAt), 'PPpp')}
                   </td>
-                  <td className='px-6 py-4 text-sm font-light text-black/60'>
+                  <td className='px-6 py-4 text-sm font-light '>
                     {job.completedAt ? format(new Date(job.completedAt), 'PPpp') : (
                       <span className='text-black/40'>—</span>
                     )}
@@ -165,7 +165,7 @@ alert("Failed to delete report. Please try again.")
       </div>
 
       {/* Summary Stats */}
-      <div className='mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-sm font-light text-black/60'>
+      <div className='mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-sm font-light '>
         <div className='flex items-center gap-6'>
           <div className='flex items-center gap-2'>
             <TrendingUp className='w-4 h-4' />
