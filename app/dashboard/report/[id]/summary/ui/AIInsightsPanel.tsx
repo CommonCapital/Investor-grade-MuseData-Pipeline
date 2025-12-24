@@ -7,7 +7,8 @@ import {
   Lightbulb, 
   BarChart3,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  LucideIcon
 } from "lucide-react";
 
 interface AIInsightsPanelProps {
@@ -16,21 +17,21 @@ interface AIInsightsPanelProps {
   isTransitioning?: boolean;
 }
 
-const INSIGHT_ICONS = {
+const INSIGHT_ICONS: Record<string, LucideIcon> = {
   hypothesis: TrendingUp,
   recommendation: Lightbulb,
   alert: AlertTriangle,
   analysis: BarChart3,
 };
 
-const INSIGHT_STYLES = {
+const INSIGHT_STYLES: Record<string, string> = {
   hypothesis: "border-l-foreground",
   recommendation: "border-l-foreground/60",
   alert: "border-l-foreground",
   analysis: "border-l-foreground/40",
 };
 
-const CONFIDENCE_BAND_STYLES = {
+const CONFIDENCE_BAND_STYLES: Record<string, { label: string; width: string; color: string }> = {
   high: { label: "High Confidence", width: "100%", color: "bg-foreground" },
   medium: { label: "Medium Confidence", width: "66%", color: "bg-foreground/70" },
   low: { label: "Low Confidence", width: "33%", color: "bg-foreground/40" },
@@ -55,13 +56,15 @@ function ConfidenceBand({ band }: { band: string | null | undefined }) {
 }
 
 function InsightCard({ insight }: { insight: AIInsight }) {
-  const Icon = INSIGHT_ICONS[insight.type];
+  const insightType = insight?.type || "analysis";
+  const Icon = INSIGHT_ICONS[insightType] || BarChart3;
+  const styleClass = INSIGHT_STYLES[insightType] || "border-l-foreground/40";
   
   return (
     <div 
       className={cn(
         "bg-card p-4 border-l-2 transition-all duration-300",
-        INSIGHT_STYLES[insight.type],
+        styleClass,
         "hover:bg-secondary/50"
       )}
     >
@@ -69,18 +72,18 @@ function InsightCard({ insight }: { insight: AIInsight }) {
         <div className="flex items-center gap-2">
           <Icon className="w-4 h-4 text-foreground" />
           <span className="text-micro uppercase tracking-ultra-wide text-muted-foreground">
-            {insight?.type}
+            {insightType}
           </span>
         </div>
         <ConfidenceBand band={insight?.confidence_band} />
       </div>
       
       <h4 className="font-medium text-foreground mb-1">
-        {insight?.title}
+        {insight?.title || "Untitled Insight"}
       </h4>
       
       <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-        {insight?.summary}
+        {insight?.summary || "No summary available"}
       </p>
       
       {insight?.details && (
@@ -92,7 +95,7 @@ function InsightCard({ insight }: { insight: AIInsight }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-micro text-muted-foreground font-mono">
-            {insight?.source}
+            {insight?.source || "AI Analysis"}
           </span>
         </div>
         
@@ -113,7 +116,7 @@ export function AIInsightsPanel({
   isTransitioning 
 }: AIInsightsPanelProps) {
   const filteredInsights = insights.filter(i => 
-    i.horizon_relevance.includes(horizon)
+    i?.horizon_relevance?.includes(horizon)
   );
   
   return (
@@ -151,8 +154,8 @@ export function AIInsightsPanel({
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredInsights.map((insight) => (
-              <InsightCard key={insight?.id} insight={insight} />
+            {filteredInsights.map((insight, index) => (
+              <InsightCard key={insight?.id || `insight-${index}`} insight={insight} />
             ))}
           </div>
         )}

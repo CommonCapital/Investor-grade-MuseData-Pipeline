@@ -61,12 +61,13 @@ export function PricePathProtection({ data }: PricePathProtectionProps) {
   ];
 
   // Protection triggers - derived from risks
-  const protectionTriggers: ProtectionTrigger[] = data.risks?.slice(0, 3).map(risk => ({
-    condition: risk?.trigger || risk?.title,
-    threshold: "N/A",
-    action: risk?.mitigation || "Review",
-    status: "active" as const
-  })) || [];
+ const protectionTriggers: ProtectionTrigger[] = data.risks?.slice(0, 3).map(risk => ({
+  condition: risk?.trigger ?? risk?.title ?? "Unknown condition",
+  threshold: "N/A",
+  action: risk?.mitigation ?? "Review",
+  status: "active" as const
+})) || [];
+
 
   // Position limits (would come from portfolio context in real implementation)
   const positionLimits = {

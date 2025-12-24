@@ -10,7 +10,7 @@ interface DefinitionPillProps {
   definition: MetricDefinition | null | undefined;
 }
 
-const PERIOD_LABELS = {
+const PERIOD_LABELS: Record<string, string> = {
   quarter: "Quarterly",
   TTM: "Trailing 12 Months",
   FY: "Fiscal Year",
@@ -18,7 +18,7 @@ const PERIOD_LABELS = {
   NTM: "Next Twelve Months",
 };
 
-const BASIS_LABELS = {
+const BASIS_LABELS: Record<string, string> = {
   GAAP: "GAAP",
   non_GAAP: "Non-GAAP",
   adjusted: "Adjusted",

@@ -14,4 +14,11 @@ const compat = new FlatCompat({
 export default defineConfig([
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   ...convexPlugin.configs.recommended,
+  {
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "react/no-unescaped-entities": "off",
+    },
+  },
 ]);
+

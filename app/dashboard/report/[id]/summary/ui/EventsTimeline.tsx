@@ -14,7 +14,10 @@ interface EventsTimelineProps {
   events: Event[];
 }
 
-const eventTypeConfig: Record<Event["type"], { icon: typeof FileText; label: string }> = {
+import { Event as SchemaEvent } from "@/lib/seo-schema";
+type Schema = NonNullable<SchemaEvent>;
+type Type = NonNullable<Schema["type"]>
+const eventTypeConfig: Record<Type, { icon: typeof FileText; label: string }> = {
   earnings: { icon: TrendingUp, label: "Earnings" },
   filing: { icon: FileText, label: "Filing" },
   guidance: { icon: BarChart3, label: "Guidance" },
@@ -23,16 +26,23 @@ const eventTypeConfig: Record<Event["type"], { icon: typeof FileText; label: str
   analyst_update: { icon: Users, label: "Analyst" },
 };
 
-const impactStyles: Record<Event["impact"], string> = {
+type EventShape = NonNullable<Event>;
+type Impact = NonNullable<EventShape["impact"]>;
+
+const impactStyles: Record<Impact, string> = {
   positive: "border-l-foreground",
   negative: "border-l-muted-foreground",
   neutral: "border-l-border",
 };
 
 export function EventsTimeline({ events }: EventsTimelineProps) {
-  const sortedEvents = [...events].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
+ const toTime = (d?: string | null) =>
+  d ? new Date(d).getTime() : 0;
+
+const sortedEvents = [...events].sort(
+  (a, b) => toTime(b?.date) - toTime(a?.date)
+);
+
 
   return (
     <section className="py-8 border-b border-border animate-fade-in">
@@ -52,27 +62,33 @@ export function EventsTimeline({ events }: EventsTimelineProps) {
         ) : (
           <div className="space-y-0">
             {sortedEvents.map((event, index) => {
-              const config = eventTypeConfig[event.type];
+            const config = eventTypeConfig[event?.type ?? "default"];
+
+
               const Icon = config?.icon || FileText;
 
               return (
-                <div
-                  key={event?.id}
-                  className={cn(
-                    "group relative pl-6 py-4 border-l-2 transition-all duration-150 hover:bg-secondary/30",
-                    impactStyles[event.impact],
-                    index !== sortedEvents.length - 1 && "border-b border-border"
-                  )}
-                  style={{ animationDelay: `${index * 50}ms` }}
-                >
+              <div
+  key={event?.id}
+  className={cn(
+    "group relative pl-6 py-4 border-l-2 transition-all duration-150 hover:bg-secondary/30",
+    event?.impact ? impactStyles[event.impact] : "", // fallback if undefined
+    index !== sortedEvents.length - 1 && "border-b border-border"
+  )}
+  style={{ animationDelay: `${index * 50}ms` }}
+>
+
                   {/* Date */}
                   <div className="absolute left-6 top-4 flex items-center gap-3">
                     <span className="text-micro font-mono text-muted-foreground">
-                      {new Date(event.date).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
+                    {event?.date ? (
+  new Date(event.date).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })
+) : "No date"}
+
                     </span>
                     <span className="px-2 py-0.5 text-[10px] uppercase tracking-ultra-wide font-sans border border-border">
                       {config?.label || event?.type}

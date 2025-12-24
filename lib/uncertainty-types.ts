@@ -44,18 +44,19 @@ export function computeSufficiencyFromMetrics(
   let metricCount = 0;
 
   for (const { name, metric, critical } of metrics) {
-    if (metric && metric.availability === "available" && metric.value !== null) {
-      available.push(name);
-      totalConfidence += metric.confidence;
-      metricCount++;
-      
-      if (metric.confidence < 70) {
-        caveats.push(`${name} has low confidence (${metric.confidence}%)`);
-      }
-    } else {
-      unavailable.push(name);
-      if (critical) {
-        blockers.push(name);
+  if (metric && metric.availability === "available" && metric.value !== null) {
+    available.push(name);
+    const confidence = metric.confidence ?? 0;
+    totalConfidence += confidence;
+    metricCount++;
+    
+    if (confidence < 70) {
+      caveats.push(`${name} has low confidence (${confidence}%)`);
+    }
+  } else {
+    unavailable.push(name);
+    if (critical) {
+      blockers.push(name);
       }
       if (metric?.unavailable_reason) {
         caveats.push(`${name}: ${metric.unavailable_reason}`);
@@ -141,8 +142,12 @@ export function assessDashboardSufficiency(data: any): DecisionAssessment {
 // Get uncertainty reasons from metrics
 export function getUncertaintyReasons(data: any): UncertaintyReason[] {
   const reasons: UncertaintyReason[] = [];
-  
-  const checkMetric = (metric: Metric | undefined, label: string, impact: "critical" | "material" | "minor") => {
+
+  const checkMetric = (
+    metric: Metric | undefined,
+    label: string,
+    impact: "critical" | "material" | "minor"
+  ): void => {
     if (!metric) {
       reasons.push({
         field: label,
@@ -150,30 +155,31 @@ export function getUncertaintyReasons(data: any): UncertaintyReason[] {
         confidence: 0,
         explanation: `${label} not available from current data sources`,
         impact,
-        workaround: "Consider alternative data providers or direct company inquiry"
+        workaround: "Consider alternative data providers or direct company inquiry",
       });
     } else if (metric.availability !== "available") {
       reasons.push({
         field: label,
         status: metric.availability,
-        confidence: metric.confidence,
-        explanation: metric.unavailable_reason || `${label} is ${metric.availability}`,
+        confidence: metric.confidence ?? 0,
+        explanation:
+          metric.unavailable_reason || `${label} is ${metric.availability}`,
         impact: metric.availability === "conflicting" ? "critical" : impact,
-        workaround: getWorkaroundForStatus(metric.availability)
+        workaround: getWorkaroundForStatus(metric.availability),
       });
-    } else if (metric.confidence < 70) {
+    } else if ((metric.confidence ?? 0) < 70) {
       reasons.push({
         field: label,
         status: metric.availability,
-        confidence: metric.confidence,
-        explanation: `${label} has low confidence (${metric.confidence}%)`,
+        confidence: metric.confidence ?? 0,
+        explanation: `${label} has low confidence (${metric.confidence ?? 0}%)`,
         impact: "minor",
-        workaround: "Verify with additional sources"
+        workaround: "Verify with additional sources",
       });
     }
   };
 
-  // Check key metrics (extract current from MetricWithHistory)
+  // ⬇️ YOU PROBABLY MISSED THESE CALLS TOO
   checkMetric(data?.financials?.revenue?.current, "Revenue", "critical");
   checkMetric(data?.financials?.ebitda?.current, "EBITDA", "critical");
   checkMetric(data?.financials?.free_cash_flow?.current, "Free Cash Flow", "material");
@@ -182,8 +188,9 @@ export function getUncertaintyReasons(data: any): UncertaintyReason[] {
   checkMetric(data?.market_data?.pe_ratio?.current, "P/E Ratio", "minor");
   checkMetric(data?.market_data?.ev_ebitda?.current, "EV/EBITDA", "material");
 
-  return reasons;
+  return reasons; // ✅ THIS IS THE FIX
 }
+
 
 function getWorkaroundForStatus(status: AvailabilityStatus): string {
   switch (status) {

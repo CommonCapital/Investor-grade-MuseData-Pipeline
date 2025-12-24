@@ -20,6 +20,7 @@ import { DriverScenariosPanel } from "./DriverScenarioPanel";
 import { RisksPanel } from "./RisksPanel";
 import { DataLineage } from "./DataLineage";
 import { DecisionSufficiency } from "./DecisionSufficiency";
+
 interface InvestorDashboardProps {
   data: InvestorDashboardType;
   id: string;
@@ -36,7 +37,7 @@ export function InvestorDashboard({ data, id, user }: InvestorDashboardProps) {
   } = useTimeHorizon();
 
   return (
-   <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background">
       <RunHeader
         metadata={data.run_metadata}
         mode={mode}
@@ -93,18 +94,19 @@ export function InvestorDashboard({ data, id, user }: InvestorDashboardProps) {
         {/* Valuation Engine */}
         <ValuationSection valuation={data.valuation} />
         
-        <EventsTimeline events={data.events} />
+        {/* Events Timeline */}
+        {data.events && <EventsTimeline events={data.events} />}
         
         {/* Driver-Based Scenarios - replaces thin scenario panel */}
-        <DriverScenariosPanel scenarios={data.scenarios} />
+        {data.scenarios && <DriverScenariosPanel scenarios={data.scenarios} />}
         
         {/* Enhanced Risks as Tradable Objects */}
-        <RisksPanel risks={data.risks} />
+        {data.risks && <RisksPanel risks={data.risks} />}
         
-        <DataLineage sources={data.sources} />
+        {data.sources && <DataLineage sources={data.sources} />}
       </main>
 
-       {/* Chat Toggle Button */}
+      {/* Chat Toggle Button */}
       <Button
         onClick={() => setIsChatOpen(!isChatOpen)}
         className={cn(
@@ -135,7 +137,7 @@ export function InvestorDashboard({ data, id, user }: InvestorDashboardProps) {
       <AIChat seoReportId={id} isExpanded={isChatOpen} user={user} onClose={() => setIsChatOpen(false)} />
 
       {/* Footer */}
-  <footer className="border-t border-border py-6 px-6">
+      <footer className="border-t border-border py-6 px-6">
         <div className="flex items-center justify-between text-micro text-muted-foreground">
           <span>
             Decision-Grade Dashboard • {data.run_metadata?.entity || "Unknown"} •{" "}

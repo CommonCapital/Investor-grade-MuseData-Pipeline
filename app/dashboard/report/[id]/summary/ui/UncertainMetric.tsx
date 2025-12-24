@@ -14,7 +14,8 @@ import {
   Lock, 
   AlertTriangle,
   Ban,
-  CheckCircle2
+  CheckCircle2,
+  LucideIcon
 } from "lucide-react";
 
 interface UncertainMetricProps {
@@ -24,8 +25,8 @@ interface UncertainMetricProps {
   className?: string;
 }
 
-const AVAILABILITY_CONFIG: Record<AvailabilityStatus, {
-  icon: typeof HelpCircle;
+const AVAILABILITY_CONFIG: Record<string, {
+  icon: LucideIcon;
   label: string;
   color: string;
   bgColor: string;
@@ -67,13 +68,6 @@ const AVAILABILITY_CONFIG: Record<AvailabilityStatus, {
     bgColor: "bg-red-50 dark:bg-red-950/30",
   },
 };
-
-function getQualityLabel(coverage: number | null, auditability: number | null, freshness: number | null): string {
-  const avgScore = [coverage, auditability].filter(Boolean).reduce((a, b) => a + (b || 0), 0) / 2;
-  if (avgScore >= 85) return "High";
-  if (avgScore >= 60) return "Medium";
-  return "Low";
-}
 
 // Helper to extract the current metric from MetricWithHistory or plain Metric
 function extractCurrentMetric(metric: MetricWithHistory | Metric | null | undefined): Metric | null {
@@ -125,13 +119,12 @@ export function UncertainMetric({
     );
   }
 
-  const availability = currentMetric.availability;
-  const confidence = currentMetric.confidence;
-  const config = AVAILABILITY_CONFIG[availability];
+  const availability = currentMetric?.availability || "unavailable";
+  const config = AVAILABILITY_CONFIG[availability] || AVAILABILITY_CONFIG.unavailable;
   const Icon = config.icon;
 
   // If metric has a value and is available, render with full context
-  if (currentMetric.value !== null && currentMetric.value !== undefined && availability === "available") {
+  if (currentMetric?.value != null && availability === "available") {
     return (
       <div
         className={cn(
@@ -145,11 +138,11 @@ export function UncertainMetric({
               {label}
             </span>
             {/* Definition Pill */}
-            <DefinitionPill definition={currentMetric.definition} />
+            <DefinitionPill definition={currentMetric?.definition} />
           </div>
           <div className="flex items-center gap-2">
             {/* Data Quality: Coverage, Auditability, Freshness */}
-            {currentMetric.data_quality ? (
+            {currentMetric?.data_quality && (
               <div className="flex items-center gap-1.5">
                 <span className="text-micro uppercase tracking-wide">
                   {currentMetric.data_quality.coverage || 0}%
@@ -160,7 +153,7 @@ export function UncertainMetric({
                   {currentMetric.data_quality.auditability || 0}%
                 </span>
                 <span className="text-[9px] text-muted-foreground/50">aud</span>
-                {currentMetric.data_quality.freshness_days !== null && (
+                {currentMetric.data_quality.freshness_days != null && (
                   <>
                     <span className="text-muted-foreground/30">•</span>
                     <span className="text-micro text-muted-foreground">
@@ -169,8 +162,8 @@ export function UncertainMetric({
                   </>
                 )}
               </div>
-            ) : null}
-            <TieOutBadge status={currentMetric.tie_out_status} />
+            )}
+            <TieOutBadge status={currentMetric?.tie_out_status} />
           </div>
         </div>
 
@@ -183,7 +176,7 @@ export function UncertainMetric({
               )}
               data-metric
             >
-              {currentMetric.formatted}
+              {currentMetric?.formatted || "—"}
             </div>
           </TooltipTrigger>
           <TooltipContent
@@ -193,7 +186,7 @@ export function UncertainMetric({
           >
             <div className="space-y-2 text-xs">
               {/* Data Quality Breakdown */}
-              {currentMetric.data_quality && (
+              {currentMetric?.data_quality && (
                 <div className="space-y-1 pb-2 border-b border-background/20">
                   <span className="text-background/60 uppercase tracking-wide text-[10px] block">
                     Data Quality
@@ -214,7 +207,7 @@ export function UncertainMetric({
                   </div>
                 </div>
               )}
-              {!currentMetric.data_quality && (
+              {!currentMetric?.data_quality && (
                 <div className="text-background/50 text-[10px] italic">
                   No quality metrics available
                 </div>
@@ -223,9 +216,9 @@ export function UncertainMetric({
                 <span className="text-background/60 uppercase tracking-wide text-[10px]">
                   Source
                 </span>
-                <p className="font-medium">{currentMetric.source}</p>
+                <p className="font-medium">{currentMetric?.source || "Unknown"}</p>
               </div>
-              {currentMetric.last_updated && (
+              {currentMetric?.last_updated && (
                 <div>
                   <span className="text-background/60 uppercase tracking-wide text-[10px]">
                     Updated
@@ -236,18 +229,18 @@ export function UncertainMetric({
                 </div>
               )}
               {/* Decision Context */}
-              {currentMetric.decision_context && (
+              {currentMetric?.decision_context && (
                 <div className="pt-2 border-t border-background/20">
                   <span className="text-background/60 uppercase tracking-wide text-[10px]">
                     Decision Context
                   </span>
                   <div className="mt-1 space-y-1">
-                    {currentMetric.decision_context.knowns.length > 0 && (
+                    {currentMetric?.decision_context?.knowns && currentMetric.decision_context.knowns.length > 0 && (
                       <p className="text-[10px]">
                         <span className="text-emerald-400">Known:</span> {currentMetric.decision_context.knowns.join(", ")}
                       </p>
                     )}
-                    {currentMetric.decision_context.unknowns.length > 0 && (
+                    {currentMetric?.decision_context?.unknowns && currentMetric.decision_context.unknowns.length > 0 && (
                       <p className="text-[10px]">
                         <span className="text-amber-400">Unknown:</span> {currentMetric.decision_context.unknowns.join(", ")}
                       </p>
@@ -257,7 +250,7 @@ export function UncertainMetric({
               )}
 
               {/* Tie-Out View Button */}
-              {currentMetric.source_reference?.excerpt && (
+              {currentMetric?.source_reference?.excerpt && (
                 <div className="pt-2 border-t border-background/20">
                   <TieOutView metric={currentMetric} label={label} />
                 </div>
@@ -272,7 +265,7 @@ export function UncertainMetric({
   }
 
   // Render uncertainty state for non-available metrics
-  const reason = currentMetric.unavailable_reason || getDefaultReason(availability, label);
+  const reason = currentMetric?.unavailable_reason || getDefaultReason(availability, label);
 
   return (
     <div
@@ -304,7 +297,7 @@ export function UncertainMetric({
               "text-muted-foreground/50"
             )}
           >
-            <span>{currentMetric.formatted || "—"}</span>
+            <span>{currentMetric?.formatted || "—"}</span>
             <Icon className={cn("w-5 h-5", config.color)} />
           </div>
         </TooltipTrigger>
@@ -343,7 +336,7 @@ export function UncertainMetric({
               </p>
             </div>
             {/* Decision Context */}
-            {currentMetric.decision_context && (
+            {currentMetric?.decision_context?.what_changes_conclusion && currentMetric.decision_context.what_changes_conclusion.length > 0 && (
               <div className="pt-2 border-t border-background/20">
                 <span className="text-background/60 uppercase tracking-wide text-[10px]">
                   What Changes Conclusion
@@ -370,7 +363,7 @@ export function UncertainMetric({
   );
 }
 
-function getDefaultReason(availability: AvailabilityStatus, label: string): string {
+function getDefaultReason(availability: string, label: string): string {
   switch (availability) {
     case "pending":
       return `${label} data is being processed or awaiting source confirmation`;
@@ -387,7 +380,7 @@ function getDefaultReason(availability: AvailabilityStatus, label: string): stri
   }
 }
 
-function getDecisionImpact(availability: AvailabilityStatus, label: string): string {
+function getDecisionImpact(availability: string, label: string): string {
   switch (availability) {
     case "pending":
       return "May proceed with caution; verify when available";
