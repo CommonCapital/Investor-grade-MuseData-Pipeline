@@ -26,6 +26,9 @@ interface DecisionSufficiencyProps {
   className?: string;
 }
 
+type ImpactLevel = "critical" | "material" | "minor";
+type StatusType = "available" | "pending" | "unavailable" | "restricted" | "stale" | "conflicting";
+
 const SUFFICIENCY_CONFIG: Record<SufficiencyLevel, {
   icon: typeof CheckCircle;
   label: string;
@@ -63,35 +66,35 @@ const SUFFICIENCY_CONFIG: Record<SufficiencyLevel, {
   },
 };
 
-function ConfidenceMeter({ confidence }: { confidence: number }) {
+function DataQualityMeter({ score }: { score: number }) {
   return (
     <div className="flex items-center gap-3">
       <div className="flex-1 h-2 bg-border rounded-full overflow-hidden">
         <div 
           className={cn(
             "h-full transition-all duration-500 rounded-full",
-            confidence >= 80 ? "bg-emerald-500" :
-            confidence >= 60 ? "bg-amber-500" :
-            confidence >= 40 ? "bg-orange-500" : "bg-red-500"
+            score >= 80 ? "bg-emerald-500" :
+            score >= 60 ? "bg-amber-500" :
+            score >= 40 ? "bg-orange-500" : "bg-red-500"
           )}
-          style={{ width: `${confidence}%` }}
+          style={{ width: `${score}%` }}
         />
       </div>
       <span className="font-mono text-sm font-medium w-12 text-right">
-        {confidence}%
+        {score}%
       </span>
     </div>
   );
 }
 
 function UncertaintyItem({ reason }: { reason: UncertaintyReason }) {
-  const impactColors = {
+  const impactColors: Record<ImpactLevel, string> = {
     critical: "border-l-red-500 bg-red-50/50 dark:bg-red-950/20",
     material: "border-l-amber-500 bg-amber-50/50 dark:bg-amber-950/20",
     minor: "border-l-muted-foreground/30 bg-muted/30",
   };
   
-  const statusLabels = {
+  const statusLabels: Record<StatusType, string> = {
     available: "Available",
     pending: "Pending",
     unavailable: "Not Available",
@@ -103,7 +106,7 @@ function UncertaintyItem({ reason }: { reason: UncertaintyReason }) {
   return (
     <div className={cn(
       "border-l-2 pl-3 py-2",
-      impactColors[reason.impact]
+      impactColors[reason.impact as ImpactLevel] || impactColors.minor
     )}>
       <div className="flex items-start justify-between gap-2">
         <span className="font-medium text-sm">{reason.field}</span>
@@ -113,7 +116,7 @@ function UncertaintyItem({ reason }: { reason: UncertaintyReason }) {
           reason.impact === "material" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300" :
           "bg-muted text-muted-foreground"
         )}>
-          {statusLabels[reason.status]}
+          {statusLabels[reason.status as StatusType] || reason.status}
         </span>
       </div>
       <p className="text-xs text-muted-foreground mt-1">{reason.explanation}</p>
@@ -166,7 +169,7 @@ export function DecisionSufficiency({ data, className }: DecisionSufficiencyProp
         <div className="flex items-center gap-4">
           <div className="text-right hidden sm:block">
             <div className="text-micro uppercase tracking-wide text-muted-foreground">
-              Confidence
+              Data Quality
             </div>
             <div className="font-mono font-bold text-lg">
               {assessment.confidence}%
@@ -183,12 +186,12 @@ export function DecisionSufficiency({ data, className }: DecisionSufficiencyProp
       {/* Expanded Details */}
       {expanded && (
         <div className="border-t border-border/50 p-4 space-y-4 bg-background/50">
-          {/* Confidence Meter */}
+          {/* Data Quality Meter */}
           <div>
             <div className="text-micro uppercase tracking-ultra-wide text-muted-foreground mb-2">
-              Confidence Level
+              Data Quality Score
             </div>
-            <ConfidenceMeter confidence={assessment.confidence} />
+            <DataQualityMeter score={assessment.confidence} />
           </div>
 
           {/* Known / Unknown Grid */}

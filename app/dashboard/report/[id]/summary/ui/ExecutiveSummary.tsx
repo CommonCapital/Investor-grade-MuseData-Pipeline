@@ -1,12 +1,16 @@
 import { InvestorDashboard } from "@/lib/seo-schema";
 import { cn } from "@/lib/utils";
-import { CheckCircle, AlertTriangle, XCircle } from "lucide-react";
+import { CheckCircle, AlertTriangle, XCircle, LucideIcon } from "lucide-react";
 
 interface ExecutiveSummaryProps {
   summary: InvestorDashboard["executive_summary"];
 }
 
-const thesisStatusConfig = {
+const thesisStatusConfig: Record<string, {
+  icon: LucideIcon;
+  label: string;
+  className: string;
+}> = {
   intact: {
     icon: CheckCircle,
     label: "THESIS INTACT",
@@ -25,7 +29,7 @@ const thesisStatusConfig = {
 };
 
 export function ExecutiveSummary({ summary }: ExecutiveSummaryProps) {
-  const statusConfig = thesisStatusConfig[summary.thesis_status];
+  const statusConfig = thesisStatusConfig[summary?.thesis_status || "intact"];
   const StatusIcon = statusConfig.icon;
 
   return (
@@ -49,7 +53,7 @@ export function ExecutiveSummary({ summary }: ExecutiveSummaryProps) {
 
         {/* Headline */}
         <p className="text-xl md:text-2xl font-serif font-normal leading-relaxed mb-8 max-w-4xl">
-          {summary.headline}
+          {summary?.headline || "No headline available"}
         </p>
 
         {/* Grid of facts/implications/risks */}
@@ -60,11 +64,13 @@ export function ExecutiveSummary({ summary }: ExecutiveSummaryProps) {
               Key Facts
             </h3>
             <ul className="space-y-2">
-              {summary.key_facts.map((fact, i) => (
-                <li key={i} className="text-sm font-light leading-relaxed">
+              {summary?.key_facts?.map((fact, i) => (
+                <li key={`fact-${i}`} className="text-sm font-light leading-relaxed">
                   {fact}
                 </li>
-              ))}
+              )) || (
+                <li className="text-sm text-muted-foreground italic">No key facts available</li>
+              )}
             </ul>
           </div>
 
@@ -74,11 +80,13 @@ export function ExecutiveSummary({ summary }: ExecutiveSummaryProps) {
               Implications
             </h3>
             <ul className="space-y-2">
-              {summary.implications.map((impl, i) => (
-                <li key={i} className="text-sm font-light leading-relaxed">
+              {summary?.implications?.map((impl, i) => (
+                <li key={`impl-${i}`} className="text-sm font-light leading-relaxed">
                   {impl}
                 </li>
-              ))}
+              )) || (
+                <li className="text-sm text-muted-foreground italic">No implications available</li>
+              )}
             </ul>
           </div>
 
@@ -88,11 +96,13 @@ export function ExecutiveSummary({ summary }: ExecutiveSummaryProps) {
               Key Risks
             </h3>
             <ul className="space-y-2">
-              {summary.key_risks.map((risk, i) => (
-                <li key={i} className="text-sm font-light leading-relaxed">
+              {summary?.key_risks?.map((risk, i) => (
+                <li key={`risk-${i}`} className="text-sm font-light leading-relaxed">
                   {risk}
                 </li>
-              ))}
+              )) || (
+                <li className="text-sm text-muted-foreground italic">No key risks available</li>
+              )}
             </ul>
           </div>
         </div>

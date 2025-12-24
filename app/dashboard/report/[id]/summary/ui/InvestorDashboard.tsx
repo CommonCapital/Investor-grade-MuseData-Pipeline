@@ -1,21 +1,25 @@
 import { useState } from "react";
 import { InvestorDashboard as InvestorDashboardType } from "@/lib/seo-schema";
 import { useTimeHorizon } from "@/hooks/use-time-horizon";
-import { RunHeader } from "./RunHeader";
-import { ExecutiveSummary } from "./ExecutiveSummary";
-import { TimeSeriesSection } from "./TimeSeriesSection";
-import { AIInsightsPanel } from "./AIInsightsPanel";
-import { FinancialsGrid } from "./FinancialsGrid";
-import { EventsTimeline } from "./EventsTimeline";
-import { ScenariosPanel } from "./ScenariosPanel";
-import { RisksPanel } from "./RisksPanel";
-import { DataLineage } from "./DataLineage";
-import { DecisionSufficiency } from "./DecisionSufficiency";
+
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { MessageCircle, X } from "lucide-react";
 import AIChat from "./AIChat";
-
+import { RunHeader } from "./RunHeader";
+import { ChangesSection } from "./ChangesSection";
+import { ExecutiveSummary } from "./ExecutiveSummary";
+import { TimeSeriesSection } from "./TimeSeriesSection";
+import { AIInsightsPanel } from "./AIInsightsPanel";
+import { FinancialsGrid } from "./FinancialsGrid";
+import { PricePathProtection } from "./PricePathProtection";
+import { PublicMarketMetrics } from "./PublicMarketMetrics";
+import { ValuationSection } from "./ValuationSection";
+import { EventsTimeline } from "./EventsTimeline";
+import { DriverScenariosPanel } from "./DriverScenarioPanel";
+import { RisksPanel } from "./RisksPanel";
+import { DataLineage } from "./DataLineage";
+import { DecisionSufficiency } from "./DecisionSufficiency";
 interface InvestorDashboardProps {
   data: InvestorDashboardType;
   id: string;
@@ -23,8 +27,7 @@ interface InvestorDashboardProps {
 }
 
 export function InvestorDashboard({ data, id, user }: InvestorDashboardProps) {
-  const [mode, setMode] = useState<"public" | "private">(data.run_metadata.mode);
-  
+  const [mode, setMode] = useState<"public" | "private">((data.run_metadata?.mode as "public" | "private") || "public");
   const [isChatOpen, setIsChatOpen] = useState(false);
   const { 
     horizon, 
@@ -33,7 +36,7 @@ export function InvestorDashboard({ data, id, user }: InvestorDashboardProps) {
   } = useTimeHorizon();
 
   return (
-    <div className="min-h-screen bg-background">
+   <div className="min-h-screen bg-background">
       <RunHeader
         metadata={data.run_metadata}
         mode={mode}
@@ -41,12 +44,20 @@ export function InvestorDashboard({ data, id, user }: InvestorDashboardProps) {
       />
 
       <main>
-        {/* Decision Sufficiency Assessment - Always visible */}
+        {/* What Changed Since Last Run - TOP OF DASHBOARD */}
+        <ChangesSection changes={data.changes_since_last_run} />
+        
+        {/* Decision Sufficiency Assessment */}
         <section className="py-6 px-6 border-b border-border">
           <DecisionSufficiency data={data} />
         </section>
         
         <ExecutiveSummary summary={data.executive_summary} />
+        
+        {/* Price → Path → Protection Framework */}
+        {mode === "public" && (
+          <PricePathProtection data={data} />
+        )}
         
         {/* Time-Series Section with functional horizon controls */}
         {mode === "public" && data.market_data && (
@@ -58,22 +69,41 @@ export function InvestorDashboard({ data, id, user }: InvestorDashboardProps) {
           />
         )}
         
-        {/* AI Insights Panel */}
-        {data.ai_insights && data.ai_insights.length > 0 && (
+        {/* AI Insights / Hypotheses Panel */}
+        {((data.ai_insights && data.ai_insights.length > 0) || (data.hypotheses && data.hypotheses.length > 0)) && (
           <AIInsightsPanel
-            insights={data.ai_insights}
+            insights={data.ai_insights || data.hypotheses || []}
             horizon={horizon}
             isTransitioning={isTransitioning}
           />
         )}
         
         <FinancialsGrid data={data} mode={mode} />
-        <EventsTimeline events={data.events} />
-        <ScenariosPanel scenarios={data.scenarios} />
-        <RisksPanel risks={data.risks} />
-        <DataLineage sources={data.sources} />
         
+        {/* Public Market Metrics - replaces private noise */}
+        {mode === "public" && (
+          <PublicMarketMetrics 
+            data={null} 
+            segments={null}
+            guidance_bridge={null}
+            revisions_momentum={null}
+          />
+        )}
+        
+        {/* Valuation Engine */}
+        <ValuationSection valuation={data.valuation} />
+        
+        <EventsTimeline events={data.events} />
+        
+        {/* Driver-Based Scenarios - replaces thin scenario panel */}
+        <DriverScenariosPanel scenarios={data.scenarios} />
+        
+        {/* Enhanced Risks as Tradable Objects */}
+        <RisksPanel risks={data.risks} />
+        
+        <DataLineage sources={data.sources} />
       </main>
+
        {/* Chat Toggle Button */}
       <Button
         onClick={() => setIsChatOpen(!isChatOpen)}
@@ -105,14 +135,14 @@ export function InvestorDashboard({ data, id, user }: InvestorDashboardProps) {
       <AIChat seoReportId={id} isExpanded={isChatOpen} user={user} onClose={() => setIsChatOpen(false)} />
 
       {/* Footer */}
-      <footer className="border-t border-border py-6 px-6">
+  <footer className="border-t border-border py-6 px-6">
         <div className="flex items-center justify-between text-micro text-muted-foreground">
           <span>
-            Decision-Grade Dashboard • {data.run_metadata.entity} •{" "}
-            {data.run_metadata.run_id}
+            Decision-Grade Dashboard • {data.run_metadata?.entity || "Unknown"} •{" "}
+            {data.run_metadata?.run_id || "N/A"}
           </span>
           <span className="font-mono">
-            {new Date(data.run_metadata.timestamp).toLocaleString()}
+            {data.run_metadata?.timestamp ? new Date(data.run_metadata.timestamp).toLocaleString() : "N/A"}
           </span>
         </div>
       </footer>

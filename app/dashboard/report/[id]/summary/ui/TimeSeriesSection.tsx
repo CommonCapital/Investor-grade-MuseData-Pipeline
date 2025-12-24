@@ -17,13 +17,15 @@ function getHorizonStats(metric: MetricWithHistory | undefined, horizon: TimeHor
   if (!metric?.history) return null;
   if (metric.history.availability !== "available") return null;
   
-  const stats = metric.history.horizons[horizon];
+  const stats = metric.history.horizons?.[horizon];
   if (!stats) return null;
   
   // Check if any quarterly data exists
   const quarters = stats.quarters;
-  if (quarters.Q1 === null && quarters.Q2 === null && 
-      quarters.Q3 === null && quarters.Q4 === null) {
+  if (!quarters) return null;
+  
+  if (quarters.Q1 == null && quarters.Q2 == null && 
+      quarters.Q3 == null && quarters.Q4 == null) {
     return null;
   }
   
@@ -39,10 +41,10 @@ export function TimeSeriesSection({
   // Get horizon stats for each metric with history
   const stockPriceStats = getHorizonStats(data.market_data?.stock_price, horizon);
   const volumeStats = getHorizonStats(data.market_data?.volume, horizon);
-  const revenueStats = getHorizonStats(data.financials.revenue, horizon);
-  const ebitdaStats = getHorizonStats(data.financials.ebitda, horizon);
+  const revenueStats = getHorizonStats(data.financials?.revenue, horizon);
+  const ebitdaStats = getHorizonStats(data.financials?.ebitda, horizon);
 
-  const hasAnyCharts = stockPriceStats || volumeStats || revenueStats || ebitdaStats;
+  const hasAnyCharts = !!(stockPriceStats || volumeStats || revenueStats || ebitdaStats);
 
   // Get change percent for header display
   const priceChange = stockPriceStats?.change_percent;
@@ -90,7 +92,7 @@ export function TimeSeriesSection({
           </div>
 
           {/* Quick Stats - price change if available */}
-          {priceChange !== null && priceChange !== undefined && (
+          {priceChange != null && (
             <div className="flex items-center gap-4">
               <span
                 className={cn(
@@ -115,8 +117,8 @@ export function TimeSeriesSection({
                 horizonStats={stockPriceStats}
                 horizon={horizon}
                 label="Stock Price"
-                currentValue={data.market_data?.stock_price.current.value ?? null}
-                currentFormatted={data.market_data?.stock_price.current.formatted ?? null}
+                currentValue={data.market_data?.stock_price?.current?.value ?? null}
+                currentFormatted={data.market_data?.stock_price?.current?.formatted ?? null}
                 isTransitioning={isTransitioning}
               />
             )}
@@ -125,8 +127,8 @@ export function TimeSeriesSection({
                 horizonStats={volumeStats}
                 horizon={horizon}
                 label="Volume"
-                currentValue={data.market_data?.volume.current.value ?? null}
-                currentFormatted={data.market_data?.volume.current.formatted ?? null}
+                currentValue={data.market_data?.volume?.current?.value ?? null}
+                currentFormatted={data.market_data?.volume?.current?.formatted ?? null}
                 isTransitioning={isTransitioning}
               />
             )}
@@ -135,8 +137,8 @@ export function TimeSeriesSection({
                 horizonStats={revenueStats}
                 horizon={horizon}
                 label="Revenue"
-                currentValue={data.financials.revenue.current.value}
-                currentFormatted={data.financials.revenue.current.formatted}
+                currentValue={data.financials?.revenue?.current?.value ?? null}
+                currentFormatted={data.financials?.revenue?.current?.formatted ?? null}
                 isTransitioning={isTransitioning}
               />
             )}
@@ -145,8 +147,8 @@ export function TimeSeriesSection({
                 horizonStats={ebitdaStats}
                 horizon={horizon}
                 label="EBITDA"
-                currentValue={data.financials.ebitda.current.value}
-                currentFormatted={data.financials.ebitda.current.formatted}
+                currentValue={data.financials?.ebitda?.current?.value ?? null}
+                currentFormatted={data.financials?.ebitda?.current?.formatted ?? null}
                 isTransitioning={isTransitioning}
               />
             )}

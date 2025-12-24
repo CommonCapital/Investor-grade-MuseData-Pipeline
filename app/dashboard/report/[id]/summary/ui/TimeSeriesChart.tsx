@@ -23,6 +23,14 @@ interface QuarterlyChartProps {
   className?: string;
 }
 
+function formatNumber(value: number): string {
+  if (Math.abs(value) >= 1000000000) return `$${(value / 1000000000).toFixed(1)}B`;
+  if (Math.abs(value) >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
+  if (Math.abs(value) >= 1000) return `$${(value / 1000).toFixed(1)}K`;
+  if (Math.abs(value) >= 1) return `$${value.toFixed(2)}`;
+  return `${value.toFixed(2)}`;
+}
+
 export function QuarterlyChart({
   horizonStats,
   horizon,
@@ -34,26 +42,26 @@ export function QuarterlyChart({
 }: QuarterlyChartProps) {
   // Build chart data from Q1-Q4 quarters
   const chartData = useMemo(() => {
-    const quarters = horizonStats.quarters;
+    const quarters = horizonStats?.quarters;
     const data: { quarter: string; value: number | null; formatted: string }[] = [];
     
-    if (quarters.Q1 !== null) {
+    if (quarters?.Q1 != null) {
       data.push({ quarter: "Q1", value: quarters.Q1, formatted: formatNumber(quarters.Q1) });
     }
-    if (quarters.Q2 !== null) {
+    if (quarters?.Q2 != null) {
       data.push({ quarter: "Q2", value: quarters.Q2, formatted: formatNumber(quarters.Q2) });
     }
-    if (quarters.Q3 !== null) {
+    if (quarters?.Q3 != null) {
       data.push({ quarter: "Q3", value: quarters.Q3, formatted: formatNumber(quarters.Q3) });
     }
-    if (quarters.Q4 !== null) {
+    if (quarters?.Q4 != null) {
       data.push({ quarter: "Q4", value: quarters.Q4, formatted: formatNumber(quarters.Q4) });
     }
     
     return data;
-  }, [horizonStats.quarters]);
+  }, [horizonStats?.quarters]);
 
-  const isPositive = (horizonStats.change_percent ?? 0) >= 0;
+  const isPositive = (horizonStats?.change_percent ?? 0) >= 0;
 
   if (chartData.length === 0) {
     return (
@@ -93,7 +101,7 @@ export function QuarterlyChart({
               isPositive ? "text-foreground" : "text-muted-foreground"
             )}
           >
-            {horizonStats.change_percent !== null 
+            {horizonStats?.change_percent != null
               ? `${isPositive ? "+" : ""}${horizonStats.change_percent.toFixed(1)}%`
               : "—"
             }
@@ -129,7 +137,7 @@ export function QuarterlyChart({
                 );
               }}
             />
-            {horizonStats.average !== null && (
+            {horizonStats?.average != null && (
               <ReferenceLine
                 y={horizonStats.average}
                 stroke="hsl(0, 0%, 70%)"
@@ -157,25 +165,25 @@ export function QuarterlyChart({
         <div>
           <span className="text-micro text-muted-foreground block">High</span>
           <span className="text-sm font-mono">
-            {horizonStats.high !== null ? formatNumber(horizonStats.high) : "—"}
+            {horizonStats?.high != null ? formatNumber(horizonStats.high) : "—"}
           </span>
         </div>
         <div>
           <span className="text-micro text-muted-foreground block">Low</span>
           <span className="text-sm font-mono">
-            {horizonStats.low !== null ? formatNumber(horizonStats.low) : "—"}
+            {horizonStats?.low != null ? formatNumber(horizonStats.low) : "—"}
           </span>
         </div>
         <div>
           <span className="text-micro text-muted-foreground block">Avg</span>
           <span className="text-sm font-mono">
-            {horizonStats.average !== null ? formatNumber(horizonStats.average) : "—"}
+            {horizonStats?.average != null ? formatNumber(horizonStats.average) : "—"}
           </span>
         </div>
         <div>
           <span className="text-micro text-muted-foreground block">Vol</span>
           <span className="text-sm font-mono">
-            {horizonStats.volatility !== null ? `${horizonStats.volatility.toFixed(1)}%` : "—"}
+            {horizonStats?.volatility != null ? `${horizonStats.volatility.toFixed(1)}%` : "—"}
           </span>
         </div>
         <div>
@@ -184,7 +192,7 @@ export function QuarterlyChart({
             "text-sm font-mono",
             isPositive ? "text-foreground" : "text-muted-foreground"
           )}>
-            {horizonStats.change_percent !== null 
+            {horizonStats?.change_percent != null
               ? `${isPositive ? "+" : ""}${horizonStats.change_percent.toFixed(1)}%`
               : "—"
             }
@@ -193,12 +201,4 @@ export function QuarterlyChart({
       </div>
     </div>
   );
-}
-
-function formatNumber(value: number): string {
-  if (Math.abs(value) >= 1000000000) return `$${(value / 1000000000).toFixed(1)}B`;
-  if (Math.abs(value) >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
-  if (Math.abs(value) >= 1000) return `$${(value / 1000).toFixed(1)}K`;
-  if (Math.abs(value) >= 1) return `$${value.toFixed(2)}`;
-  return `${value.toFixed(2)}`;
 }

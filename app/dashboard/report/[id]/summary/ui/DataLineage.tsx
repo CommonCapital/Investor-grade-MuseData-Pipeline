@@ -3,10 +3,16 @@ import { Database, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface DataLineageProps {
-  sources: InvestorDashboard["sources"];
+  sources?: InvestorDashboard["sources"] | null;
 }
 
 export function DataLineage({ sources }: DataLineageProps) {
+  const sourcesList = sources || [];
+  
+  if (sourcesList.length === 0) {
+    return null;
+  }
+  
   return (
     <section className="py-8 animate-fade-in">
       <div className="px-6">
@@ -18,7 +24,7 @@ export function DataLineage({ sources }: DataLineageProps) {
         </div>
 
         <div className="space-y-2">
-          {sources.map((source, i) => (
+          {sourcesList.map((source, i) => (
             <div
               key={i}
               className="flex items-center justify-between py-3 border-b border-border/50"

@@ -45,49 +45,13 @@ export function FinancialsGrid({ data, mode }: FinancialsGridProps) {
           />
         </div>
 
-        {/* Mode-specific metrics */}
-        {mode === "public" && (
+        {/* Mode-specific metrics - Only show if in proprietary mode */}
+        {mode === "private" && data.private_data && (
           <>
             <h3 className="text-micro uppercase tracking-ultra-wide text-muted-foreground font-sans mb-4 mt-8">
-              Market Data
+              Proprietary Metrics
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-px bg-border">
-              <UncertainMetric
-                label="Stock Price"
-                metric={data.market_data?.stock_price}
-                size="lg"
-                className="bg-card"
-              />
-              <UncertainMetric
-                label="Market Cap"
-                metric={data.market_data?.market_cap}
-                className="bg-card"
-              />
-              <UncertainMetric
-                label="P/E Ratio"
-                metric={data.market_data?.pe_ratio}
-                className="bg-card"
-              />
-              <UncertainMetric
-                label="EV/EBITDA"
-                metric={data.market_data?.ev_ebitda}
-                className="bg-card"
-              />
-              <UncertainMetric
-                label="Target Price"
-                metric={data.market_data?.target_price}
-                className="bg-card"
-              />
-            </div>
-          </>
-        )}
-
-        {mode === "private" && (
-          <>
-            <h3 className="text-micro uppercase tracking-ultra-wide text-muted-foreground font-sans mb-4 mt-8">
-              Private Metrics
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-border">
+            <div className="grid grid-cols-2 gap-px bg-border">
               <UncertainMetric
                 label="Valuation Mark"
                 metric={data.private_data?.valuation_mark}
@@ -97,16 +61,6 @@ export function FinancialsGrid({ data, mode }: FinancialsGridProps) {
               <UncertainMetric
                 label="Net Leverage"
                 metric={data.private_data?.net_leverage}
-                className="bg-card"
-              />
-              <UncertainMetric
-                label="Liquidity Runway"
-                metric={data.private_data?.liquidity_runway}
-                className="bg-card"
-              />
-              <UncertainMetric
-                label="Covenant Headroom"
-                metric={data.private_data?.covenant_headroom}
                 className="bg-card"
               />
             </div>

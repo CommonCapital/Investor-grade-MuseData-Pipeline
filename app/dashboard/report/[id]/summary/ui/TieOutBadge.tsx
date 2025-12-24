@@ -6,7 +6,7 @@ interface TieOutBadgeProps {
   className?: string;
 }
 
-const statusConfig: Record<TieOutStatus, { label: string; className: string }> = {
+const statusConfig: Record<string, { label: string; className: string }> = {
   final: {
     label: "FINAL",
     className: "status-final",
@@ -22,7 +22,11 @@ const statusConfig: Record<TieOutStatus, { label: string; className: string }> =
 };
 
 export function TieOutBadge({ status, className }: TieOutBadgeProps) {
-  const config = statusConfig[status];
+ const config =
+  status 
+    ? statusConfig[status] ?? statusConfig.provisional
+    : statusConfig.provisional;
+
 
   return (
     <span

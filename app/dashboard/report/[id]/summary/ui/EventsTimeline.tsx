@@ -57,7 +57,7 @@ export function EventsTimeline({ events }: EventsTimelineProps) {
 
               return (
                 <div
-                  key={event.id}
+                  key={event?.id}
                   className={cn(
                     "group relative pl-6 py-4 border-l-2 transition-all duration-150 hover:bg-secondary/30",
                     impactStyles[event.impact],
@@ -75,7 +75,7 @@ export function EventsTimeline({ events }: EventsTimelineProps) {
                       })}
                     </span>
                     <span className="px-2 py-0.5 text-[10px] uppercase tracking-ultra-wide font-sans border border-border">
-                      {config?.label || event.type}
+                      {config?.label || event?.type}
                     </span>
                   </div>
 
@@ -84,15 +84,15 @@ export function EventsTimeline({ events }: EventsTimelineProps) {
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
                         <h4 className="font-serif text-lg font-medium mb-1">
-                          {event.title}
+                          {event?.title}
                         </h4>
                         <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                          {event.description}
+                          {event?.description}
                         </p>
                       </div>
-                      {event.source_url && (
+                      {event?.source_url && (
                         <a
-                          href={event.source_url}
+                          href={event?.source_url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 px-2 py-1 text-micro uppercase tracking-wide text-muted-foreground hover:text-foreground hover:bg-secondary transition-all"

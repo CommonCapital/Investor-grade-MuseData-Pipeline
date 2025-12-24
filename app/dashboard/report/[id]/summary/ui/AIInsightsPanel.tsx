@@ -17,30 +17,38 @@ interface AIInsightsPanelProps {
 }
 
 const INSIGHT_ICONS = {
-  prediction: TrendingUp,
+  hypothesis: TrendingUp,
   recommendation: Lightbulb,
   alert: AlertTriangle,
   analysis: BarChart3,
 };
 
 const INSIGHT_STYLES = {
-  prediction: "border-l-foreground",
+  hypothesis: "border-l-foreground",
   recommendation: "border-l-foreground/60",
   alert: "border-l-foreground",
   analysis: "border-l-foreground/40",
 };
 
-function ConfidenceBar({ value }: { value: number }) {
+const CONFIDENCE_BAND_STYLES = {
+  high: { label: "High Confidence", width: "100%", color: "bg-foreground" },
+  medium: { label: "Medium Confidence", width: "66%", color: "bg-foreground/70" },
+  low: { label: "Low Confidence", width: "33%", color: "bg-foreground/40" },
+};
+
+function ConfidenceBand({ band }: { band: string | null | undefined }) {
+  const normalizedBand = (band === "high" || band === "medium" || band === "low") ? band : "low";
+  const style = CONFIDENCE_BAND_STYLES[normalizedBand];
   return (
     <div className="flex items-center gap-2">
       <div className="w-16 h-1 bg-border">
         <div 
-          className="h-full bg-foreground transition-all duration-300"
-          style={{ width: `${value * 100}%` }}
+          className={cn("h-full transition-all duration-300", style.color)}
+          style={{ width: style.width }}
         />
       </div>
       <span className="text-micro font-mono text-muted-foreground">
-        {Math.round(value * 100)}%
+        {style.label}
       </span>
     </div>
   );
@@ -61,21 +69,21 @@ function InsightCard({ insight }: { insight: AIInsight }) {
         <div className="flex items-center gap-2">
           <Icon className="w-4 h-4 text-foreground" />
           <span className="text-micro uppercase tracking-ultra-wide text-muted-foreground">
-            {insight.type}
+            {insight?.type}
           </span>
         </div>
-        <ConfidenceBar value={insight.confidence} />
+        <ConfidenceBand band={insight?.confidence_band} />
       </div>
       
       <h4 className="font-medium text-foreground mb-1">
-        {insight.title}
+        {insight?.title}
       </h4>
       
       <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-        {insight.summary}
+        {insight?.summary}
       </p>
       
-      {insight.details && (
+      {insight?.details && (
         <p className="text-micro text-muted-foreground border-t border-border pt-2 mb-3">
           {insight.details}
         </p>
@@ -83,17 +91,12 @@ function InsightCard({ insight }: { insight: AIInsight }) {
       
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          {insight.supporting_metrics?.map((metric) => (
-            <span 
-              key={metric}
-              className="px-2 py-0.5 bg-secondary text-micro font-mono text-muted-foreground"
-            >
-              {metric}
-            </span>
-          ))}
+          <span className="text-micro text-muted-foreground font-mono">
+            {insight?.source}
+          </span>
         </div>
         
-        {insight.action_required && (
+        {insight?.action_required && (
           <span className="flex items-center gap-1 text-micro uppercase tracking-wide text-foreground">
             Action Required
             <ArrowRight className="w-3 h-3" />
@@ -149,7 +152,7 @@ export function AIInsightsPanel({
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredInsights.map((insight) => (
-              <InsightCard key={insight.id} insight={insight} />
+              <InsightCard key={insight?.id} insight={insight} />
             ))}
           </div>
         )}

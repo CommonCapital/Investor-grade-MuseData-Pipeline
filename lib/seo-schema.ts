@@ -1,221 +1,279 @@
 import { z } from "zod";
 
-// === EVIDENCE SCHEMA ===
-export const evidenceSchema = z.object({
-  url: z.string(),
-  quote: z.string().nullable(),
-  relevance_score: z.number().min(0).max(1),
-}).partial();
+// === CORE ENUMS (flexible with fallback to string) ===
 
-// === CORE TYPES ===
+const tieOutStatusSchema = z.string().nullable().optional();
 
-// Tie-out status for reconciliation
-const tieOutStatusSchema = z.enum(["final", "provisional", "flagged"]);
+const availabilityStatusSchema = z.string().nullable().optional();
 
-// Data availability status
-const availabilityStatusSchema = z.enum([
-  "available",      // Data present and validated
-  "pending",        // Expected but not yet received  
-  "unavailable",    // Source doesn't provide this
-  "restricted",     // Behind paywall or access limited
-  "stale",          // Data exists but outdated
-  "conflicting",    // Multiple sources disagree
-]);
-
-// Time horizons (removed 1H as it's not illustrated)
 export const timeHorizonSchema = z.enum(["1D", "1W", "1M", "1Y", "5Y", "10Y"]);
 
-// Decision context per metric
+// === DATA QUALITY ===
+
+const dataQualitySchema = z.object({
+  coverage: z.number().nullable().optional(),
+  auditability: z.number().nullable().optional(),
+  freshness_days: z.number().nullable().optional(),
+}).nullable().optional();
+
+// === METRIC DEFINITION ===
+
+const metricDefinitionSchema = z.object({
+  metric_name: z.string().nullable().optional(),
+  period: z.string().nullable().optional(),
+  basis: z.string().nullable().optional(),
+  currency: z.string().nullable().optional(),
+  unit: z.string().nullable().optional(),
+}).nullable().optional();
+
+// === DECISION CONTEXT ===
+
 const decisionContextSchema = z.object({
-  confidence_level: z.enum(["high", "medium", "low"]),
-  sufficiency_status: z.enum(["sufficient", "insufficient"]),
-  knowns: z.array(z.string()),
-  unknowns: z.array(z.string()),
-  what_changes_conclusion: z.array(z.string()),
-});
+  confidence_level: z.string().nullable().optional(),
+  sufficiency_status: z.string().nullable().optional(),
+  knowns: z.array(z.string()).nullable().optional(),
+  unknowns: z.array(z.string()).nullable().optional(),
+  what_changes_conclusion: z.array(z.string()).nullable().optional(),
+}).nullable().optional();
 
-// Metric with uncertainty awareness
+// === SOURCE REFERENCE ===
+
+const sourceReferenceSchema = z.object({
+  url: z.string().nullable().optional(),
+  document_type: z.string().nullable().optional(),
+  excerpt: z.string().nullable().optional(),
+  accessed_at: z.string().nullable().optional(),
+}).nullable().optional();
+
+// === CORE METRIC ===
+
 const metricSchema = z.object({
-  value: z.union([z.number(), z.string()]).nullable(),
-  formatted: z.string().nullable(),
-  unit: z.string().optional().nullable(),
-  source: z.string().nullable(),
+  value: z.union([z.number(), z.string()]).nullable().optional(),
+  formatted: z.string().nullable().optional(),
+  unit: z.string().nullable().optional(),
+  source: z.string().nullable().optional(),
+  source_reference: sourceReferenceSchema,
   tie_out_status: tieOutStatusSchema,
-  last_updated: z.string().nullable(),
-  // Uncertainty fields - required for decision-readiness
-  confidence: z.number().min(0).max(100),           // 0-100 reliability score
-  availability: availabilityStatusSchema,           // Current data status
-  unavailable_reason: z.string().optional().nullable(),        // Why missing, if applicable
-  decision_context: decisionContextSchema.optional().nullable(),
-});
+  last_updated: z.string().nullable().optional(),
+  availability: availabilityStatusSchema,
+  unavailable_reason: z.string().nullable().optional(),
+  confidence: z.number().nullable().optional(),
+  data_quality: dataQualitySchema,
+  decision_context: decisionContextSchema,
+  definition: metricDefinitionSchema,
+}).nullable().optional();
 
-// === TIME-SERIES SCHEMA ===
+// === TIME-SERIES ===
 
-// Quarterly data slices - Q1-Q4 values for graph visualization
 const quarterlySeriesSchema = z.object({
-  Q1: z.number().nullable(),
-  Q2: z.number().nullable(),
-  Q3: z.number().nullable(),
-  Q4: z.number().nullable(),
-});
+  Q1: z.number().nullable().optional(),
+  Q2: z.number().nullable().optional(),
+  Q3: z.number().nullable().optional(),
+  Q4: z.number().nullable().optional(),
+}).nullable().optional();
 
-// Horizon statistics with quarterly breakdown
 const horizonStatsSchema = z.object({
   quarters: quarterlySeriesSchema,
-  high: z.number().nullable(),
-  low: z.number().nullable(),
-  average: z.number().nullable(),
-  volatility: z.number().nullable(),        // Percentage volatility
-  change_percent: z.number().nullable(),    // Period change percentage
-});
+  high: z.number().nullable().optional(),
+  low: z.number().nullable().optional(),
+  average: z.number().nullable().optional(),
+  volatility: z.number().nullable().optional(),
+  change_percent: z.number().nullable().optional(),
+}).nullable().optional();
 
-// Time-series metric with horizon data (for Stock Price, EBITDA, Revenue, Volume only)
 const timeSeriesMetricSchema = z.object({
   horizons: z.object({
-    "1D": horizonStatsSchema.nullable(),
-    "1W": horizonStatsSchema.nullable(),
-    "1M": horizonStatsSchema.nullable(),
-    "1Y": horizonStatsSchema.nullable(),
-    "5Y": horizonStatsSchema.nullable(),
-    "10Y": horizonStatsSchema.nullable(),
-  }),
+    "1D": horizonStatsSchema,
+    "1W": horizonStatsSchema,
+    "1M": horizonStatsSchema,
+    "1Y": horizonStatsSchema,
+    "5Y": horizonStatsSchema,
+    "10Y": horizonStatsSchema,
+  }).nullable().optional(),
   availability: availabilityStatusSchema,
-  confidence: z.number().min(0).max(100),
-  unavailable_reason: z.string().optional().nullable(),
-  source: z.string().nullable(),
-  decision_context: decisionContextSchema.optional().nullable(),
-});
+  unavailable_reason: z.string().nullable().optional(),
+  confidence: z.number().nullable().optional(),
+  data_quality: dataQualitySchema,
+  source: z.string().nullable().optional(),
+  decision_context: decisionContextSchema,
+}).nullable().optional();
 
-// Metric with current value and optional history (only for key metrics)
 const metricWithHistorySchema = z.object({
   current: metricSchema,
-  history: timeSeriesMetricSchema.nullable(),
-});
+  history: timeSeriesMetricSchema.optional().nullable(),
+}).nullable().optional();
 
-// === AI INSIGHTS SCHEMA ===
+// === HYPOTHESIS ===
 
-const aiInsightSchema = z.object({
-  id: z.string(),
-  type: z.enum(["prediction", "recommendation", "alert", "analysis"]),
-  confidence: z.number().min(0).max(1),
-  title: z.string(),
-  summary: z.string(),
-  details: z.string().optional().nullable(),
-  source: z.string(),
-  generated_at: z.string(),
-  horizon_relevance: z.array(timeHorizonSchema),
-  impact_score: z.number().min(-1).max(1),  // -1 to 1
-  action_required: z.boolean(),
-  supporting_metrics: z.array(z.string()).optional().nullable(),
-});
+const hypothesisSchema = z.object({
+  id: z.string().nullable().optional(),
+  type: z.string().nullable().optional(),
+  title: z.string().nullable().optional(),
+  summary: z.string().nullable().optional(),
+  details: z.string().nullable().optional(),
+  assumptions: z.array(z.string()).nullable().optional(),
+  falsification_criteria: z.array(z.string()).nullable().optional(),
+  confidence_band: z.string().nullable().optional(),
+  source: z.string().nullable().optional(),
+  generated_at: z.string().nullable().optional(),
+  horizon_relevance: z.array(z.string()).nullable().optional(),
+  impact_score: z.number().nullable().optional(),
+  action_required: z.boolean().nullable().optional(),
+}).nullable().optional();
 
-// Event in timeline
+// === EVENT ===
+
 const eventSchema = z.object({
-  id: z.string(),
-  date: z.string(),
-  type: z.enum(["earnings", "filing", "guidance", "corporate_action", "news", "analyst_update"]),
-  title: z.string(),
-  description: z.string(),
-  impact: z.enum(["positive", "negative", "neutral"]),
-  source_url: z.string().optional().nullable(),
-});
+  id: z.string().nullable().optional(),
+  date: z.string().nullable().optional(),
+  type: z.string().nullable().optional(),
+  title: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
+  impact: z.string().nullable().optional(),
+  source_url: z.string().nullable().optional(),
+}).nullable().optional();
 
-// Scenario definition
-const scenarioSchema = z.object({
-  name: z.enum(["base", "downside", "upside"]),
-  probability: z.number().min(0).max(1),
+// === SCENARIO ===
+
+const scenarioOutputsSchema = z.object({
+  revenue: metricSchema,
+  ebitda: metricSchema,
+  valuation: metricSchema,
+}).nullable().optional();
+
+const singleScenarioSchema = z.object({
+  probability: z.number().nullable().optional(),
   assumptions: z.array(z.object({
-    key: z.string().nullable(),
-    value: z.string().nullable(),
-  })),
-  outputs: z.object({
-    revenue: metricSchema,
-    ebitda: metricSchema,
-    valuation: metricSchema,
-  }),
-});
+    key: z.string().nullable().optional(),
+    value: z.string().nullable().optional(),
+  })).nullable().optional(),
+  outputs: scenarioOutputsSchema,
+}).nullable().optional();
 
-// Risk definition
+const scenariosSchema = z.object({
+  base: singleScenarioSchema.optional().nullable(),
+  downside: singleScenarioSchema.optional().nullable(),
+  upside: singleScenarioSchema.optional().nullable(),
+}).optional().nullable();
+
+// === RISK ===
+
 const riskSchema = z.object({
-  id: z.string(),
-  category: z.enum(["market", "operational", "financial", "liquidity", "governance"]),
-  title: z.string(),
-  description: z.string(),
-  severity: z.enum(["critical", "high", "medium", "low"]),
-  trigger: z.string().nullable(),
-  mitigation: z.string().optional().nullable(),
-});
+  id: z.string().nullable().optional(),
+  category: z.string().nullable().optional(),
+  title: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
+  severity: z.string().nullable().optional(),
+  trigger: z.string().nullable().optional(),
+  mitigation: z.string().nullable().optional(),
+}).nullable().optional();
+
+// === CHANGE ===
+
+const changeSchema = z.object({
+  id: z.string().nullable().optional(),
+  timestamp: z.string().nullable().optional(),
+  category: z.string().nullable().optional(),
+  title: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
+  source_url: z.string().nullable().optional(),
+  thesis_pillar: z.string().nullable().optional(),
+  so_what: z.string().nullable().optional(),
+  action: z.string().nullable().optional(),
+}).nullable().optional();
+
+// === VALUATION ===
+
+const valuationSchema = z.object({
+  valuation_range_low: z.number().nullable().optional(),
+  valuation_range_high: z.number().nullable().optional(),
+  valuation_range_midpoint: z.number().nullable().optional(),
+  why_range_exists: z.string().nullable().optional(),
+  
+  dcf: z.object({
+    terminal_growth_rate: z.number().nullable().optional(),
+    wacc: z.number().nullable().optional(),
+    implied_value: z.number().nullable().optional(),
+    implied_value_per_share: z.number().nullable().optional(),
+  }).nullable().optional(),
+  
+  trading_comps: z.object({
+    implied_value_range_low: z.number().nullable().optional(),
+    implied_value_range_high: z.number().nullable().optional(),
+    confidence: dataQualitySchema,
+  }).nullable().optional(),
+  
+  precedent_transactions: z.object({
+    implied_value_range_low: z.number().nullable().optional(),
+    implied_value_range_high: z.number().nullable().optional(),
+    confidence: dataQualitySchema,
+  }).nullable().optional(),
+}).nullable().optional();
 
 // === MAIN SCHEMA ===
 
 export const investorDashboardSchema = z.object({
-  // Run metadata
   run_metadata: z.object({
-    run_id: z.string(),
-    entity: z.string(),
-    ticker: z.string().optional(),
-    mode: z.enum(["public", "private"]),
-    timestamp: z.string(),
-    owner: z.string(),
-  }),
+    run_id: z.string().nullable().optional(),
+    entity: z.string().nullable().optional(),
+    ticker: z.string().nullable().optional(),
+    mode: z.string().nullable().optional(),
+    timestamp: z.string().nullable().optional(),
+    owner: z.string().nullable().optional(),
+  }).nullable().optional(),
 
-  // Executive summary
+  changes_since_last_run: z.array(changeSchema).nullable().optional(),
+
   executive_summary: z.object({
-    headline: z.string(),
-    key_facts: z.array(z.string()),
-    implications: z.array(z.string()),
-    key_risks: z.array(z.string()),
-    thesis_status: z.enum(["intact", "challenged", "broken"]),
-  }),
+    headline: z.string().nullable().optional(),
+    key_facts: z.array(z.string()).nullable().optional(),
+    implications: z.array(z.string()).nullable().optional(),
+    key_risks: z.array(z.string()).nullable().optional(),
+    thesis_status: z.string().nullable().optional(),
+  }).nullable().optional(),
 
-  // Core financials - only revenue and ebitda have history
   financials: z.object({
     revenue: metricWithHistorySchema,
-    revenue_growth: z.object({ current: metricSchema }),  // No history needed
+    revenue_growth: z.object({ current: metricSchema }).nullable().optional(),
     ebitda: metricWithHistorySchema,
-    ebitda_margin: z.object({ current: metricSchema }),   // No history needed
-    free_cash_flow: z.object({ current: metricSchema }),  // No history needed
-  }),
+    ebitda_margin: z.object({ current: metricSchema }).nullable().optional(),
+    free_cash_flow: z.object({ current: metricSchema }).nullable().optional(),
+  }).nullable().optional(),
 
-  // Market data (public mode) - stock_price and volume have history
   market_data: z.object({
     stock_price: metricWithHistorySchema,
-    volume: metricWithHistorySchema,  // Added volume with history
-    market_cap: z.object({ current: metricSchema }),      // No history needed
-    pe_ratio: z.object({ current: metricSchema }).optional(),
-    ev_ebitda: z.object({ current: metricSchema }).optional(),
-    target_price: z.object({ current: metricSchema }).optional(),
-  }).optional(),
+    volume: metricWithHistorySchema,
+    market_cap: z.object({ current: metricSchema }).nullable().optional(),
+    pe_ratio: z.object({ current: metricSchema }).nullable().optional(),
+    ev_ebitda: z.object({ current: metricSchema }).nullable().optional(),
+    target_price: z.object({ current: metricSchema }).nullable().optional(),
+  }).nullable().optional(),
 
-  // Private data (private mode) - no history needed for private metrics
   private_data: z.object({
-    valuation_mark: z.object({ current: metricSchema }),
-    net_leverage: z.object({ current: metricSchema }),
-    liquidity_runway: z.object({ current: metricSchema }),
-    covenant_headroom: z.object({ current: metricSchema }).optional(),
-  }).optional(),
+    valuation_mark: z.object({ current: metricSchema }).nullable().optional(),
+    net_leverage: z.object({ current: metricSchema }).nullable().optional(),
+  }).nullable().optional(),
 
-  // AI Insights - with horizon relevance
-  ai_insights: z.array(aiInsightSchema),
+  valuation: valuationSchema,
 
-  // Events timeline
-  events: z.array(eventSchema),
+  hypotheses: z.array(hypothesisSchema).nullable().optional(),
+  ai_insights: z.array(hypothesisSchema).nullable().optional(),
 
-  // Scenarios
-  scenarios: z.array(scenarioSchema),
+  events: z.array(eventSchema).nullable().optional(),
+  scenarios: scenariosSchema.optional().nullable(),
+  risks: z.array(riskSchema).optional().nullable(),
 
-  // Risks
-  risks: z.array(riskSchema),
-
-  // Data sources
   sources: z.array(z.object({
     name: z.string(),
     type: z.enum(["primary", "secondary"]),
     last_refresh: z.string(),
-  })),
-});
+  })).optional().nullable(),
 
-// Type exports
+  run_data_quality: dataQualitySchema,
+}).passthrough();
+
+// === TYPE EXPORTS ===
+
 export type InvestorDashboard = z.infer<typeof investorDashboardSchema>;
 export type Metric = z.infer<typeof metricSchema>;
 export type MetricWithHistory = z.infer<typeof metricWithHistorySchema>;
@@ -226,7 +284,14 @@ export type DecisionContext = z.infer<typeof decisionContextSchema>;
 export type TieOutStatus = z.infer<typeof tieOutStatusSchema>;
 export type AvailabilityStatus = z.infer<typeof availabilityStatusSchema>;
 export type TimeHorizon = z.infer<typeof timeHorizonSchema>;
-export type AIInsight = z.infer<typeof aiInsightSchema>;
+export type Hypothesis = z.infer<typeof hypothesisSchema>;
+export type AIInsight = z.infer<typeof hypothesisSchema>;
 export type Event = z.infer<typeof eventSchema>;
-export type Scenario = z.infer<typeof scenarioSchema>;
+export type Scenarios = z.infer<typeof scenariosSchema>;
+export type SingleScenario = z.infer<typeof singleScenarioSchema>;
 export type Risk = z.infer<typeof riskSchema>;
+export type DataQuality = z.infer<typeof dataQualitySchema>;
+export type MetricDefinition = z.infer<typeof metricDefinitionSchema>;
+export type SourceReference = z.infer<typeof sourceReferenceSchema>;
+export type Change = z.infer<typeof changeSchema>;
+export type Valuation = z.infer<typeof valuationSchema>;

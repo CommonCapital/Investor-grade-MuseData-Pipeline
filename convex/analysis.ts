@@ -53,7 +53,7 @@ import { investorDashboardSchema } from '@/lib/seo-schema';
             const {object: seoReport} = await generateObject({
                 model: openai("gpt-5"),
                 system: systemPrompt(),
-                prompt: analysisPrompt,
+                prompt: analysisPrompt + "\n\nIMPORTANT: Respond ONLY with valid JSON matching the schema. No explanations, no markdown, just pure JSON.",
                 schema: investorDashboardSchema,
                
             });
@@ -167,7 +167,7 @@ return null;
             const {object: seoReport} = await generateObject({
                 model: openai("gpt-5"),
                 system: systemPrompt(),
-                prompt: analysisPrompt,
+                prompt: analysisPrompt + "\n\nIMPORTANT: Respond ONLY with valid JSON matching the schema. No explanations, no markdown, just pure JSON.",
                 schema: investorDashboardSchema,
             });
 

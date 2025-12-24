@@ -40,7 +40,7 @@ export function MetricCard({
         <span className="text-micro uppercase tracking-ultra-wide text-muted-foreground font-sans">
           {label}
         </span>
-        <TieOutBadge status={metric.tie_out_status} />
+        <TieOutBadge status={metric?.tie_out_status} />
       </div>
 
       {/* Value */}
@@ -53,7 +53,7 @@ export function MetricCard({
             )}
             data-metric
           >
-            {metric.formatted}
+            {metric?.formatted}
           </div>
         </TooltipTrigger>
         <TooltipContent
@@ -66,9 +66,9 @@ export function MetricCard({
               <span className="text-background/60 uppercase tracking-wide text-[10px]">
                 Source
               </span>
-              <p className="font-medium">{metric.source}</p>
+              <p className="font-medium">{metric?.source}</p>
             </div>
-            {metric.last_updated && (
+            {metric?.last_updated && (
               <div>
                 <span className="text-background/60 uppercase tracking-wide text-[10px]">
                   Updated
