@@ -38,7 +38,7 @@ const sendMessageMutation = useMutation(api.scrapingJobs.sendMessage);
 
 // ✅ Load messages on mount
 useEffect(() => {
-  scrollToBottom()
+ 
   if (job?.messages && messages.length === 0) {
     setMessages(job.messages);
   }
@@ -46,26 +46,26 @@ useEffect(() => {
 
 // ✅ Save messages when they change
 useEffect(() => {
-  const saveMessages = async () => {
-    if (job?._id && messages.length > 0) {
-      await sendMessageMutation({ jobId: job._id as Id<"scrapingJobs">, messages: messages });
-    }
-  };
-  saveMessages();
-}, [messages, job?._id]);
+  if (!job?._id) return;
+ 
+  if (status !== "ready") return; // streaming still happening
+  if (messages.length === 0) return;
+
+  sendMessageMutation({
+    jobId: job._id as Id<"scrapingJobs">,
+    messages
+  });
+}, [status]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+   
     if (input.trim()) {
       sendMessage({text: input, metadata: {seoReportId}});
- 
-if (job?._id) {
-      await sendMessageMutation({ 
-        jobId: job._id as Id<"scrapingJobs">, 
-        messages: [...messages, { role: 'user', content: input }] 
-      });
-    }
+      
+
       setInput("");
+      
     }
   }
   
@@ -303,7 +303,7 @@ if (job?._id) {
                 }
               }}
               placeholder="Type your question..."
-              className='flex-1 h-12 bg-white border border-black/30 focus:border-black focus:ring-2 focus:ring-black/10 transition-all duration-300'
+              className='flex-1 h-12 bg-white text-black border border-black/30 focus:border-black focus:ring-2 focus:ring-black/10 transition-all duration-300'
               style={{ 
                 fontFamily: 'Helvetica Neue, sans-serif',
                 fontWeight: 300,

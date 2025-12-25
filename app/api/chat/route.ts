@@ -18,12 +18,13 @@ export async function POST(req: Request) {
   if (!userId) {
     throw new Error("User ID is not set");
   }
+  console.log('User is authenticated')
   
   const {messages, id}: {
     messages: UIMessage[];
     id: string;
   } = await req.json();
-  
+  console.log("Message is recevied:", messages)
   let seoReportData = null;
   let systemPrompt = `You are an AI assistant that assists users on comprehending their SEO report.
 Provide helpful insights and answer queries based on the SEO report data.`
@@ -60,16 +61,23 @@ Provide helpful insights and answer queries based on the SEO report data.`
     }
   }
   
-  const result = await streamText({
-    model: openai("gpt-5"),
-    messages: convertToModelMessages(messages),
-    system: systemPrompt,
-    tools: {
-      web_search: openai.tools.webSearch({
-        searchContextSize: 'high',
-      }) as any,
-    },
-  });
-  
+ const safeMessages = messages.map(m => ({
+  role: m.role,
+  content: m.parts
+    ?.filter(p => p.type === 'text')
+    .map(p => p.text)
+    .join('') ?? ''
+}))
+
+const result = await streamText({
+  model: openai("gpt-5"),
+  messages: safeMessages,
+  system: systemPrompt,
+  tools: {
+    web_search: openai.tools.webSearch({ searchContextSize: 'high' }) as any,
+  },
+})
+
+  console.log('result:', result)
   return result.toUIMessageStreamResponse();
 }
