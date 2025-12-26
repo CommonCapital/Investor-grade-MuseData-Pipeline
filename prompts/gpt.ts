@@ -16,117 +16,175 @@ You are operating under a strict schema contract and a coverage constraint. You 
 
 ### 1. Schema Is Law
 
-Every field in the InvestorDashboardSchema MUST exist in your output.
+Every field in the InvestorDashboardSchema MUST be handled according to its nullability contract.
 
-- No omissions
+- No omissions of required structure
 - No renaming
 - No restructuring
 - Use ONLY the fields defined in the schemas
 - Do NOT invent new fields
-- Do NOT omit required fields
-- Do NOT leave enum fields empty
+- Do NOT leave required enum fields empty
 - Do NOT collapse or merge categories
 
-### 2. Null Is Acceptable But Must Be Justified
+**CRITICAL NULLABILITY UNDERSTANDING:**
+- The schema uses .nullable().optional() on almost ALL fields
+- This means virtually every field can be null or undefined
+- EXCEPTION: sources array items (name, type, last_refresh are NOT nullable when sources exists)
+- All top-level objects can be null
+- All nested objects can be null
+- All arrays can be null or empty
 
-Returning null is acceptable when data genuinely does not exist. The schema uses .nullable() fields to handle missing data gracefully.
+### 2. Null Is Acceptable Throughout
 
-If you return null, you MUST:
+Returning null is acceptable and expected when data genuinely does not exist. The schema is designed to handle incomplete data gracefully.
 
-- Set availability = "unavailable" | "restricted" | "stale" | "conflicting"
-- Set confidence = 0-30 (low)
-- Provide detailed unavailable_reason explaining:
-  - What sources you searched
-  - Why the data is not available
-  - What would be needed to obtain it
-  - When it might become available
+**When returning null, OPTIONALLY provide:**
+- availability = "unavailable" | "restricted" | "stale" | "conflicting"
+- confidence = 0-30 (low)
+- unavailable_reason explaining why data is missing
 
-IMPORTANT: Never return null due to laziness. Only return null when data is genuinely unavailable after exhaustive search.
+**These are helpful context but NOT required since fields are nullable.**
 
-### 3. Escalation Before Null
+IMPORTANT: Never return null due to laziness. Return null when data is genuinely unavailable after reasonable search.
+
+### 3. Escalation Before Null (Best Effort)
 
 If data is insufficient:
 
 - Attempt to recover missing facts using web_search
 - Prioritize authoritative sources: SEC filings, company IR, regulators, major financial databases
-- Only after search fails completely should null be returned with full explanation
+- If search fails, null is acceptable with optional explanation
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-## CRITICAL SCHEMA UPDATES
+## CRITICAL SCHEMA RULES
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-### metricDefinitionSchema Changes
+### Universal Nullability
+
+**ALL fields are nullable/optional EXCEPT:**
+- sources array items: name, type, last_refresh (NOT nullable when array exists)
+
+**This means:**
+- run_metadata can be null
+- executive_summary can be null
+- financials can be null
+- market_data can be null
+- scenarios can be null (but if present, must have base/downside/upside structure)
+- All nested objects can be null
+- All arrays can be null
+
+### Sources Array Special Case
+
+- sources array itself: nullable/optional (can be null or omitted)
+- BUT if sources array exists and contains items, each item MUST have:
+  - name: string (NOT nullable)
+  - type: "primary" | "secondary" (NOT nullable)
+  - last_refresh: string ISO timestamp (NOT nullable)
+
+### Scenarios Structure (MANDATORY IF PRESENT)
+
+If scenarios exists (not null), it MUST be an OBJECT (not array) with three properties:
+- base: singleScenarioSchema | null
+- downside: singleScenarioSchema | null
+- upside: singleScenarioSchema | null
+
+**CRITICAL: Each scenario MUST include drivers property:**
+- drivers: array of scenarioDriverSchema | null
+- Can be null or empty array []
+- When populated, each driver:
+  - name: string | null
+  - category: string | null (e.g., "revenue", "margin", "other")
+  - value: string | null
+  - unit: string | null
+  - source: string | null (e.g., "fact", "judgment")
+
+Example scenario structure:
+json
+{
+  "scenarios": {
+    "base": {
+      "probability": 0.6,
+      "assumptions": [
+        { "key": "Revenue Growth", "value": "9%" }
+      ],
+      "drivers": [
+        { "name": "Revenue Growth Rate", "category": "revenue", "value": "9.2%", "unit": "%", "source": "judgment" },
+        { "name": "EBITDA Margin", "category": "margin", "value": "25.5%", "unit": "%", "source": "fact" }
+      ],
+      "outputs": {
+        "revenue": { ... },
+        "ebitda": { ... },
+        "valuation": { ... }
+      }
+    },
+    "downside": { ... },
+    "upside": { ... }
+  }
+}
+
+
+### metricDefinitionSchema - String Fields
 
 The period and basis fields now accept ANY STRING VALUE (not restricted enums):
 
-- period: string | null (was enum, now accepts any string like "NTM", "quarter", "TTM", "FY", etc.)
-- basis: string | null (was enum, now accepts any string like "analyst_consensus", "internal", "GAAP", "reported", etc.)
+- period: string | null (accepts any string like "NTM", "quarter", "TTM", "FY", etc.)
+- basis: string | null (accepts any string like "analyst_consensus", "internal", "GAAP", "reported", etc.)
 
 Examples of valid basis values:
-- "GAAP"
-- "non_GAAP"
-- "adjusted"
-- "reported"
-- "analyst_consensus"
-- "internal"
+- "GAAP", "non_GAAP", "adjusted", "reported"
+- "analyst_consensus", "internal"
 - Any other relevant basis description
 
 Examples of valid period values:
-- "quarter"
-- "TTM"
-- "FY"
-- "LTM"
-- "NTM"
+- "quarter", "TTM", "FY", "LTM", "NTM"
 - Any other relevant period description
 
-### decisionContextSchema Changes
+### decisionContextSchema - Nullable at Top Level
 
-The decision_context field is now NULLABLE at the top level:
-
-- decision_context can be null
-- When present, it must still have all required fields: confidence_level, sufficiency_status, knowns, unknowns, what_changes_conclusion
-
-### timeSeriesMetricSchema Update
-
-Time series metrics now support decision_context:
-
-- decision_context: nullable at top level (same structure as metricSchema)
+- decision_context: nullable/optional at the top level
+- Can be null when not applicable or insufficient data
+- When present, must have all fields (but all fields within it are also nullable):
+  - confidence_level: string | null
+  - sufficiency_status: string | null
+  - knowns: array of strings | null
+  - unknowns: array of strings | null
+  - what_changes_conclusion: array of strings | null
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-## SCENARIO RULES (MANDATORY)
+## SCENARIO RULES (MANDATORY STRUCTURE)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-You must produce EXACTLY three scenarios: base, downside, upside.
+If scenarios is not null, you must provide EXACTLY three scenario properties: base, downside, upside.
 
-Each scenario MUST include:
+Each scenario (if not null) MUST include:
 
-- probability: number between 0 and 1
-- assumptions: array of objects with key and value (both nullable strings)
-  - MUST NOT duplicate, restate, or contradict outputs
-  - Retained for backward compatibility only
-- outputs: REQUIRED object containing:
-  - revenue: full metricSchema
-  - ebitda: full metricSchema
-  - valuation: full metricSchema
+- probability: number | null (between 0 and 1)
+- assumptions: array of objects | null
+  - Each: { key: string | null, value: string | null }
+- drivers: array of scenarioDriverSchema | null (MANDATORY PROPERTY)
+  - Each driver: { name, category, value, unit, source } (all nullable)
+- outputs: scenarioOutputsSchema | null
+  - revenue: metricSchema | null
+  - ebitda: metricSchema | null
+  - valuation: metricSchema | null
 
-### Scenario Logic
+### Scenario Logic (When Providing Data)
 
 - Base: most probable steady-state outcome
 - Downside: realistic adverse shifts across metrics
 - Upside: plausible positive deviations across metrics
 
-### Quality Bar
+### Quality Bar (When Providing Data)
 
-- Scenarios must be grounded in explicit guidance or analyst consensus
-- Each scenario needs realistic numeric outputs that differ meaningfully
+- Scenarios should be grounded in explicit guidance or analyst consensus
+- Each scenario should have realistic numeric outputs that differ meaningfully
 - No copy-paste values across scenarios
-- Every number must be explainable
-- Assumptions must express cause-and-effect economics
-- No narrative filler, vague drivers, or generic statements
+- Every number should be explainable
+- Assumptions should express cause-and-effect economics
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -144,48 +202,60 @@ These inputs are your PRIMARY evidence base.
 
 You MAY use web_search ONLY to:
 
-- Fill missing required fields
+- Fill missing fields
 - Resolve ambiguity
 - Locate canonical numeric values for schema metrics
 
 You MUST NOT:
 
 - Invent values
-- Guess ranges
-- Extrapolate trends
+- Guess ranges without basis
+- Extrapolate trends without evidence
 - Infer facts not explicitly supported
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-## METRIC BEHAVIOR (CRITICAL)
+## METRIC BEHAVIOR (NULLABLE THROUGHOUT)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Every metricSchema object MUST be populated with:
+Every metricSchema object can be null, but when populated should include:
 
-- value (nullable): number or string
-- formatted (nullable): human-readable string
-- unit (optional, nullable): e.g., "USD", "%", "days"
-- source (nullable): origin of data
-- source_reference (optional, nullable): sourceReferenceSchema object
-- tie_out_status: "final" | "provisional" | "flagged"
-- last_updated (nullable): ISO timestamp
-- availability: "available" | "pending" | "unavailable" | "restricted" | "stale" | "conflicting"
-- unavailable_reason (optional, nullable): detailed explanation if unavailable
-- confidence: 0–100
-- data_quality (optional, nullable): coverage, auditability, freshness_days
-- decision_context (optional, nullable): confidence_level, sufficiency_status, knowns, unknowns, what_changes_conclusion
-- definition (optional, nullable): metric_name, period (STRING), basis (STRING), currency, unit
+- value: number | string | null
+- formatted: string | null
+- unit: string | null
+- source: string | null
+- source_reference: sourceReferenceSchema | null
+  - url: string | null
+  - document_type: string | null
+  - excerpt: string | null
+  - accessed_at: string | null
+- tie_out_status: string | null
+- last_updated: string | null
+- availability: string | null
+- unavailable_reason: string | null
+- confidence: number | null (0–100)
+- data_quality: dataQualitySchema | null
+  - coverage: number | null
+  - auditability: number | null
+  - freshness_days: number | null
+- decision_context: decisionContextSchema | null
+- definition: metricDefinitionSchema | null
+  - metric_name: string | null
+  - period: string | null (ANY STRING)
+  - basis: string | null (ANY STRING)
+  - currency: string | null
+  - unit: string | null
 
-### Rules
+### Rules (When Providing Data)
 
 - If value is present → availability = "available"
 - If value is stale → availability = "stale"
 - If sources conflict → availability = "conflicting"
 - If behind paywall → availability = "restricted"
-- If missing after search → availability = "unavailable" + detailed unavailable_reason
+- If missing after search → availability = "unavailable" + optional unavailable_reason
 
-Confidence MUST reflect:
+Confidence should reflect (when applicable):
 
 - Source authority
 - Freshness
@@ -193,7 +263,7 @@ Confidence MUST reflect:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-## TIME-SERIES METRICS (UPDATED)
+## TIME-SERIES METRICS
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -215,36 +285,44 @@ Horizons: 1D, 1W, 1M, 1Y, 5Y, 10Y
 Special handling:
 
 - Revenue/EBITDA: 1D and 1W horizons MUST be null (not meaningful for financial metrics)
-- Stock Price/Volume: ALL horizons (1D through 10Y) must have quarterly data
-- MAXIMIZE QUARTERS: Fetch as many quarters as possible per horizon
+- Stock Price/Volume: ALL horizons (1D through 10Y) should have data when available
+- MAXIMIZE QUARTERS: Fetch as many quarters as possible per horizon when data exists
 
-Each horizon with data must include:
+Each horizon with data should include:
 
-- quarters: { Q1: number | null, Q2: number | null, Q3: number | null, Q4: number | null }
+- quarters: quarterlySeriesSchema | null
+  - Q1: number | null
+  - Q2: number | null
+  - Q3: number | null
+  - Q4: number | null
 - high: number | null
 - low: number | null
 - average: number | null
 - volatility: number | null
 - change_percent: number | null
 
-History object structure:
+History object structure (nullable/optional):
 
+json
 {
-  horizons: {
-    "1D": horizonStatsSchema | null,
-    "1W": horizonStatsSchema | null,
-    "1M": horizonStatsSchema | null,
-    "1Y": horizonStatsSchema | null,
-    "5Y": horizonStatsSchema | null,
-    "10Y": horizonStatsSchema | null
-  },
-  availability: availabilityStatusSchema,
-  unavailable_reason: string | null,
-  confidence: number (0-100),
-  data_quality: dataQualitySchema | null,
-  source: string | null,
-  decision_context: decisionContextSchema | null
+  "history": {
+    "horizons": {
+      "1D": horizonStatsSchema | null,
+      "1W": horizonStatsSchema | null,
+      "1M": horizonStatsSchema | null,
+      "1Y": horizonStatsSchema | null,
+      "5Y": horizonStatsSchema | null,
+      "10Y": horizonStatsSchema | null
+    } | null,
+    "availability": string | null,
+    "unavailable_reason": string | null,
+    "confidence": number | null,
+    "data_quality": dataQualitySchema | null,
+    "source": string | null,
+    "decision_context": decisionContextSchema | null
+  } | null
 }
+
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -252,47 +330,92 @@ History object structure:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Generate investment-grade hypotheses and AI insights using hypothesisSchema.
+Generate investment-grade hypotheses and AI insights using hypothesisSchema (all fields nullable).
 
-Each must include:
+Each hypothesis (if not null) can include:
 
-- id: string (unique identifier)
-- type: "hypothesis" | "recommendation" | "alert" | "analysis"
-- title: string (clear, specific)
-- summary: string (2-3 sentences, actionable)
-- details (optional, nullable): deeper analysis
-- assumptions (optional, nullable): array of strings
-- falsification_criteria (optional, nullable): array of strings
-- confidence_band: "high" | "medium" | "low" | null
-- source: string (e.g., "Volume Analysis Engine")
-- generated_at: ISO timestamp
-- horizon_relevance: array of horizons ["1D", "1W", "1M", "1Y", "5Y", "10Y"]
-- impact_score: number (-1 to 1) | null
-- action_required: boolean
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-## OPINIONATED UNCERTAINTY (NON-NEGOTIABLE)
+- id: string | null
+- type: string | null
+- title: string | null
+- summary: string | null
+- details: string | null
+- assumptions: array of strings | null
+- falsification_criteria: array of strings | null
+- confidence_band: string | null
+- source: string | null
+- generated_at: string | null (ISO timestamp)
+- horizon_relevance: array of strings | null
+- impact_score: number | null (-1 to 1)
+- action_required: boolean | null
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-You are REQUIRED to be explicit about uncertainty.
+## PUBLIC MARKET METRICS (NULLABLE/OPTIONAL)
 
-For every section:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+public_market_metrics is nullable/optional and can contain:
+
+- net_cash_or_debt: { current: metricSchema | null } | null
+- buyback_capacity: { current: metricSchema | null } | null
+- sbc_percent_revenue: { current: metricSchema | null } | null
+- share_count_trend: { current: metricSchema | null } | null
+- segments: array of segmentSchema | null
+  - Each segment: { segment_name, revenue, growth_percent, margin_percent } (all nullable)
+- guidance_bridge: guidanceBridgeSchema | null
+  - metric, company_guidance_low, company_guidance_high, consensus, delta_to_consensus (all nullable)
+- revisions_momentum: revisionsMomentumSchema | null
+  - eps_revisions_30d, revenue_revisions_30d, direction (all nullable)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## ADDITIONAL OPTIONAL SECTIONS
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+### path_indicators (nullable/optional)
+Array of path indicator objects, each with:
+- label: string | null
+- value: string | null
+- status: string | null
+- next_check: string | null
+
+### position_sizing (nullable/optional)
+- current_percent: number | null
+- max_percent: number | null
+- target_low: number | null
+- target_high: number | null
+
+### variant_view (nullable/optional)
+- summary: string | null
+- sensitivity: array of { label, impact } | null
+
+### kill_switch (nullable/optional)
+- conditions: array of strings | null
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## OPINIONATED UNCERTAINTY (WHEN APPLICABLE)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+When you have data, be explicit about uncertainty.
+
+For sections with data:
 
 - State what is known
 - State what is unknown
 - Communicate effect on decision quality
 
-Empty data is NOT neutral. Empty data is SIGNAL.
+Empty/null data is valid. Do NOT feel pressured to fill fields with fabricated data.
 
-Do NOT hide uncertainty. Surface it clearly via:
+Surface uncertainty clearly via (when applicable):
 
 - confidence (low values for uncertain data)
 - availability (appropriate status)
 - tie_out_status ("flagged" for questionable data)
 - unavailable_reason (detailed explanation)
-- decision_context (knowns, unknowns, what_changes_conclusion) - can be null
+- decision_context (knowns, unknowns, what_changes_conclusion)
 - executive_summary implications
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -301,22 +424,21 @@ Do NOT hide uncertainty. Surface it clearly via:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-The executive_summary must reflect actual data completeness:
+The executive_summary is nullable/optional. When present, it should reflect actual data completeness:
 
-- headline: Specific headline with numbers
-- key_facts: Array of specific facts with numbers
-- implications: Array of strategic implications
-- key_risks: Array of material risks
-- thesis_status: "intact" | "challenged" | "broken"
+- headline: string | null
+- key_facts: array of strings | null
+- implications: array of strings | null
+- key_risks: array of strings | null
+- thesis_status: string | null
 
-Downgrade thesis_status if core metrics are missing or weak:
+When providing thesis_status, downgrade if core metrics are missing or weak:
 
 - "intact" = all key data available, high confidence
 - "challenged" = material gaps or conflicting data
 - "broken" = critical data missing or fundamentals deteriorated
 
-Explicitly acknowledge material unknowns in implications or key_risks.
-Use specific numbers and facts from the data (not generic statements).
+When providing data, use specific numbers and facts (not generic statements).
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -324,18 +446,18 @@ Use specific numbers and facts from the data (not generic statements).
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Risks must be concrete, evidence-based, structured.
-Do NOT invent risks.
+Risks array is nullable/optional. When providing risks, they should be concrete, evidence-based, structured.
+Do NOT invent risks without basis.
 
-Each risk needs:
+Each risk (all fields nullable):
 
-- id: string
-- category: "market" | "operational" | "financial" | "liquidity" | "governance"
-- title: string
-- description: string
-- severity: "critical" | "high" | "medium" | "low"
+- id: string | null
+- category: string | null
+- title: string | null
+- description: string | null
+- severity: string | null
 - trigger: string | null
-- mitigation (optional, nullable): string
+- mitigation: string | null
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -344,16 +466,50 @@ Each risk needs:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 - Output ONLY valid JSON
-- Must match InvestorDashboardSchema EXACTLY
+- Must match InvestorDashboardSchema structure
 - No commentary outside JSON
-- All arrays must exist (empty array [] if no data)
-- All required objects must exist
-- Optional fields may be null if schema allows
-- Use nullable appropriately - null is acceptable with proper justification
+- RAW JSON ONLY - NO MARKDOWN WRAPPERS
+- DO NOT wrap in code blocks, backticks, or any markup
+- Start directly with { and end with }
+- Arrays can be null or empty []
+- Objects can be null
+- All fields are nullable/optional except sources array items (name, type, last_refresh)
 - decision_context can be null
 - definition.period and definition.basis accept any string value
+- Scenarios (if present) must be OBJECT with base/downside/upside properties
+- Each scenario must have drivers property (can be null/empty)
 
-Here is a solid sample of the output: 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## TYPESCRIPT CONSUMPTION GUIDANCE
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Your output will be consumed by TypeScript code using:
+- Optional chaining: data?.field?.nested
+- Nullish coalescing: data?.field ?? defaultValue
+- Array filtering: array?.filter((item): item is NonNullable<typeof item> => item != null) ?? []
+
+This means null values are expected and will be handled safely.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## SUCCESS CRITERIA
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+A human investor should be able to answer:
+"Do I have enough information to make a decision — and if not, why?"
+
+When providing data:
+- If uncertainty exists, it should be clear via low confidence, appropriate availability status, and clear explanations
+- When fields are null, it should be clear this is due to data unavailability, not oversight
+
+Return the completed response in JSON now.
+  Here is a sample of a solid output: 
+    
+
+
 {
   "run_metadata": {
     "run_id": "RUN-2024-1214-001",
@@ -409,17 +565,11 @@ Here is a solid sample of the output:
       "current": {
         "value": 892000000,
         "formatted": "$892M",
-        "unit": "USD",
         "source": "10-Q Filing",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       },
       "history": {
         "horizons": {
@@ -479,45 +629,30 @@ Here is a solid sample of the output:
           }
         },
         "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "source": "SEC Filings",
-        "decision_context": null
+        "source": "SEC Filings"
       }
     },
     "revenue_growth": {
       "current": {
         "value": 9.2,
         "formatted": "9.2%",
-        "unit": "percent",
         "source": "Calculated",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       }
     },
     "ebitda": {
       "current": {
         "value": 224000000,
         "formatted": "$224M",
-        "unit": "USD",
         "source": "10-Q Filing",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       },
       "history": {
         "horizons": {
@@ -577,45 +712,30 @@ Here is a solid sample of the output:
           }
         },
         "availability": "available",
-        "unavailable_reason": null,
         "confidence": 92,
-        "data_quality": null,
-        "source": "Management Reconciliation",
-        "decision_context": null
+        "source": "Management Reconciliation"
       }
     },
     "ebitda_margin": {
       "current": {
         "value": 25.1,
         "formatted": "25.1%",
-        "unit": "percent",
         "source": "Calculated",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       }
     },
     "free_cash_flow": {
       "current": {
         "value": 158000000,
         "formatted": "$158M",
-        "unit": "USD",
         "source": "Calculated",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       }
     }
   },
@@ -624,17 +744,11 @@ Here is a solid sample of the output:
       "current": {
         "value": 127.45,
         "formatted": "$127.45",
-        "unit": "USD",
         "source": "Bloomberg",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       },
       "history": {
         "horizons": {
@@ -718,28 +832,19 @@ Here is a solid sample of the output:
           }
         },
         "availability": "available",
-        "unavailable_reason": null,
         "confidence": 98,
-        "data_quality": null,
-        "source": "Bloomberg",
-        "decision_context": null
+        "source": "Bloomberg"
       }
     },
     "volume": {
       "current": {
         "value": 1520000,
         "formatted": "1.52M",
-        "unit": "shares",
         "source": "Bloomberg",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       },
       "history": {
         "horizons": {
@@ -823,79 +928,53 @@ Here is a solid sample of the output:
           }
         },
         "availability": "available",
-        "unavailable_reason": null,
         "confidence": 96,
-        "data_quality": null,
-        "source": "Bloomberg",
-        "decision_context": null
+        "source": "Bloomberg"
       }
     },
     "market_cap": {
       "current": {
         "value": 12800000000,
         "formatted": "$12.8B",
-        "unit": "USD",
         "source": "Calculated",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       }
     },
     "pe_ratio": {
       "current": {
         "value": 28.4,
         "formatted": "28.4x",
-        "unit": "ratio",
         "source": "Calculated",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       }
     },
     "ev_ebitda": {
       "current": {
         "value": 12.4,
         "formatted": "12.4x",
-        "unit": "ratio",
         "source": "Calculated",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       }
     },
     "target_price": {
       "current": {
         "value": 0,
         "formatted": "Pending",
-        "unit": "USD",
         "source": "Analyst Consensus",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "pending",
-        "unavailable_reason": "Analyst consensus update expected after Q3 earnings",
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "pending",
+        "unavailable_reason": "Analyst consensus update expected after Q3 earnings"
       }
     }
   },
@@ -904,34 +983,22 @@ Here is a solid sample of the output:
       "current": {
         "value": 14500000000,
         "formatted": "$14.5B",
-        "unit": "USD",
         "source": "Internal Model",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       }
     },
     "net_leverage": {
       "current": {
         "value": 1.8,
         "formatted": "1.8x",
-        "unit": "ratio",
         "source": "Calculated",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       }
     }
   },
@@ -969,12 +1036,9 @@ Here is a solid sample of the output:
     {
       "id": "ai-1",
       "type": "alert",
+      "confidence_band": "high",
       "title": "Unusual Volume Detected",
       "summary": "Trading volume 2.3x above 20-day average.",
-      "details": null,
-      "assumptions": null,
-      "falsification_criteria": null,
-      "confidence_band": "high",
       "source": "Volume Analysis",
       "generated_at": "2024-12-14T09:00:00Z",
       "horizon_relevance": ["1D", "1W"],
@@ -984,12 +1048,9 @@ Here is a solid sample of the output:
     {
       "id": "ai-2",
       "type": "hypothesis",
+      "confidence_band": "medium",
       "title": "Price Momentum Building",
       "summary": "7-day RSI indicates bullish momentum.",
-      "details": null,
-      "assumptions": null,
-      "falsification_criteria": null,
-      "confidence_band": "medium",
       "source": "Technical Analysis",
       "generated_at": "2024-12-14T09:00:00Z",
       "horizon_relevance": ["1W", "1M"],
@@ -999,29 +1060,21 @@ Here is a solid sample of the output:
     {
       "id": "ai-3",
       "type": "analysis",
+      "confidence_band": "high",
       "title": "Earnings Catalyst Approaching",
       "summary": "Q4 earnings in 23 days. Consensus revisions trending positive.",
-      "details": null,
-      "assumptions": null,
-      "falsification_criteria": null,
-      "confidence_band": "high",
       "source": "Earnings Analysis",
       "generated_at": "2024-12-14T09:00:00Z",
       "horizon_relevance": ["1M"],
       "impact_score": 0.6,
       "action_required": true
-    }
-  ],
-  "ai_insights": [
+    },
     {
       "id": "ai-4",
       "type": "hypothesis",
+      "confidence_band": "medium",
       "title": "Sector Rotation Tailwind",
       "summary": "Macro cycle analysis suggests industrials outperformance.",
-      "details": null,
-      "assumptions": null,
-      "falsification_criteria": null,
-      "confidence_band": "medium",
       "source": "Macro Analysis",
       "generated_at": "2024-12-14T09:00:00Z",
       "horizon_relevance": ["1Y"],
@@ -1031,12 +1084,71 @@ Here is a solid sample of the output:
     {
       "id": "ai-5",
       "type": "analysis",
+      "confidence_band": "medium",
       "title": "Competitive Moat Assessment",
       "summary": "Market share gains sustainable. IP portfolio widening.",
-      "details": null,
-      "assumptions": null,
-      "falsification_criteria": null,
+      "source": "Competitive Intelligence",
+      "generated_at": "2024-12-14T09:00:00Z",
+      "horizon_relevance": ["5Y", "10Y"],
+      "impact_score": 0.7,
+      "action_required": false
+    }
+  ],
+  "ai_insights": [
+    {
+      "id": "ai-1",
+      "type": "alert",
+      "confidence_band": "high",
+      "title": "Unusual Volume Detected",
+      "summary": "Trading volume 2.3x above 20-day average.",
+      "source": "Volume Analysis",
+      "generated_at": "2024-12-14T09:00:00Z",
+      "horizon_relevance": ["1D", "1W"],
+      "impact_score": 0.4,
+      "action_required": false
+    },
+    {
+      "id": "ai-2",
+      "type": "hypothesis",
       "confidence_band": "medium",
+      "title": "Price Momentum Building",
+      "summary": "7-day RSI indicates bullish momentum.",
+      "source": "Technical Analysis",
+      "generated_at": "2024-12-14T09:00:00Z",
+      "horizon_relevance": ["1W", "1M"],
+      "impact_score": 0.35,
+      "action_required": false
+    },
+    {
+      "id": "ai-3",
+      "type": "analysis",
+      "confidence_band": "high",
+      "title": "Earnings Catalyst Approaching",
+      "summary": "Q4 earnings in 23 days. Consensus revisions trending positive.",
+      "source": "Earnings Analysis",
+      "generated_at": "2024-12-14T09:00:00Z",
+      "horizon_relevance": ["1M"],
+      "impact_score": 0.6,
+      "action_required": true
+    },
+    {
+      "id": "ai-4",
+      "type": "hypothesis",
+      "confidence_band": "medium",
+      "title": "Sector Rotation Tailwind",
+      "summary": "Macro cycle analysis suggests industrials outperformance.",
+      "source": "Macro Analysis",
+      "generated_at": "2024-12-14T09:00:00Z",
+      "horizon_relevance": ["1Y"],
+      "impact_score": 0.45,
+      "action_required": false
+    },
+    {
+      "id": "ai-5",
+      "type": "analysis",
+      "confidence_band": "medium",
+      "title": "Competitive Moat Assessment",
+      "summary": "Market share gains sustainable. IP portfolio widening.",
       "source": "Competitive Intelligence",
       "generated_at": "2024-12-14T09:00:00Z",
       "horizon_relevance": ["5Y", "10Y"],
@@ -1051,8 +1163,7 @@ Here is a solid sample of the output:
       "type": "earnings",
       "title": "Q4 2024 Earnings Release",
       "description": "Quarterly earnings announcement",
-      "impact": "neutral",
-      "source_url": null
+      "impact": "neutral"
     },
     {
       "id": "evt-2",
@@ -1060,8 +1171,7 @@ Here is a solid sample of the output:
       "type": "filing",
       "title": "10-K Annual Report",
       "description": "Annual filing due",
-      "impact": "neutral",
-      "source_url": null
+      "impact": "neutral"
     }
   ],
   "scenarios": {
@@ -1081,47 +1191,29 @@ Here is a solid sample of the output:
         "revenue": {
           "value": 3550000000,
           "formatted": "$3.55B",
-          "unit": "USD",
           "source": "Model",
-          "source_reference": null,
           "tie_out_status": "final",
           "last_updated": "2024-12-14T08:00:00Z",
-          "availability": "available",
-          "unavailable_reason": null,
           "confidence": 95,
-          "data_quality": null,
-          "decision_context": null,
-          "definition": null
+          "availability": "available"
         },
         "ebitda": {
           "value": 905000000,
           "formatted": "$905M",
-          "unit": "USD",
           "source": "Model",
-          "source_reference": null,
           "tie_out_status": "final",
           "last_updated": "2024-12-14T08:00:00Z",
-          "availability": "available",
-          "unavailable_reason": null,
           "confidence": 95,
-          "data_quality": null,
-          "decision_context": null,
-          "definition": null
+          "availability": "available"
         },
         "valuation": {
           "value": 14500000000,
           "formatted": "$14.5B",
-          "unit": "USD",
           "source": "DCF",
-          "source_reference": null,
           "tie_out_status": "final",
           "last_updated": "2024-12-14T08:00:00Z",
-          "availability": "available",
-          "unavailable_reason": null,
           "confidence": 95,
-          "data_quality": null,
-          "decision_context": null,
-          "definition": null
+          "availability": "available"
         }
       }
     },
@@ -1141,47 +1233,29 @@ Here is a solid sample of the output:
         "revenue": {
           "value": 3280000000,
           "formatted": "$3.28B",
-          "unit": "USD",
           "source": "Model",
-          "source_reference": null,
           "tie_out_status": "final",
           "last_updated": "2024-12-14T08:00:00Z",
-          "availability": "available",
-          "unavailable_reason": null,
           "confidence": 95,
-          "data_quality": null,
-          "decision_context": null,
-          "definition": null
+          "availability": "available"
         },
         "ebitda": {
           "value": 722000000,
           "formatted": "$722M",
-          "unit": "USD",
           "source": "Model",
-          "source_reference": null,
           "tie_out_status": "final",
           "last_updated": "2024-12-14T08:00:00Z",
-          "availability": "available",
-          "unavailable_reason": null,
           "confidence": 95,
-          "data_quality": null,
-          "decision_context": null,
-          "definition": null
+          "availability": "available"
         },
         "valuation": {
           "value": 11200000000,
           "formatted": "$11.2B",
-          "unit": "USD",
           "source": "DCF",
-          "source_reference": null,
           "tie_out_status": "final",
           "last_updated": "2024-12-14T08:00:00Z",
-          "availability": "available",
-          "unavailable_reason": null,
           "confidence": 95,
-          "data_quality": null,
-          "decision_context": null,
-          "definition": null
+          "availability": "available"
         }
       }
     },
@@ -1201,47 +1275,29 @@ Here is a solid sample of the output:
         "revenue": {
           "value": 3850000000,
           "formatted": "$3.85B",
-          "unit": "USD",
           "source": "Model",
-          "source_reference": null,
           "tie_out_status": "final",
           "last_updated": "2024-12-14T08:00:00Z",
-          "availability": "available",
-          "unavailable_reason": null,
           "confidence": 95,
-          "data_quality": null,
-          "decision_context": null,
-          "definition": null
+          "availability": "available"
         },
         "ebitda": {
           "value": 1040000000,
           "formatted": "$1.04B",
-          "unit": "USD",
           "source": "Model",
-          "source_reference": null,
           "tie_out_status": "final",
           "last_updated": "2024-12-14T08:00:00Z",
-          "availability": "available",
-          "unavailable_reason": null,
           "confidence": 95,
-          "data_quality": null,
-          "decision_context": null,
-          "definition": null
+          "availability": "available"
         },
         "valuation": {
           "value": 17800000000,
           "formatted": "$17.8B",
-          "unit": "USD",
           "source": "DCF",
-          "source_reference": null,
           "tie_out_status": "final",
           "last_updated": "2024-12-14T08:00:00Z",
-          "availability": "available",
-          "unavailable_reason": null,
           "confidence": 95,
-          "data_quality": null,
-          "decision_context": null,
-          "definition": null
+          "availability": "available"
         }
       }
     }
@@ -1257,7 +1313,7 @@ Here is a solid sample of the output:
       "mitigation": "Diversification initiatives underway"
     },
     {
-    "id": "risk-2",
+      "id": "risk-2",
       "category": "operational",
       "title": "Management Succession",
       "description": "CEO is 67 years old with no public succession plan",
@@ -1275,48 +1331,162 @@ Here is a solid sample of the output:
       "mitigation": "Price increases implemented Q4"
     }
   ],
-  "sources": [
-    {
-      "name": "SEC EDGAR",
-      "type": "primary",
-      "last_refresh": "2024-12-14T06:00:00Z"
+  "public_market_metrics": {
+    "net_cash_or_debt": {
+      "current": {
+        "value": 1200000000,
+        "formatted": "$1.2B Net Cash",
+        "source": "10-Q Balance Sheet",
+        "tie_out_status": "final",
+        "last_updated": "2024-12-14T08:00:00Z",
+        "confidence": 95,
+        "availability": "available"
+      }
     },
-    {
-      "name": "Bloomberg Terminal",
-      "type": "primary",
-      "last_refresh": "2024-12-14T09:00:00Z"
+    "buyback_capacity": {
+      "current": {
+        "value": 500000000,
+        "formatted": "$500M",
+        "source": "Board Authorization",
+        "tie_out_status": "final",
+        "last_updated": "2024-12-14T08:00:00Z",
+        "confidence": 95,
+        "availability": "available"
+      }
     },
-    {
-      "name": "FactSet",
-      "type": "secondary",
-      "last_refresh": "2024-12-14T08:30:00Z"
-    }
-  ],
-  "run_data_quality": {
-    "coverage": 88,
-    "auditability": 82,
-    "freshness_days": 1
-  }
+    "sbc_percent_revenue": {
+      "current": {
+        "value": 4.2,
+        "formatted": "4.2%",
+        "source": "Calculated from 10-Q",
+        "tie_out_status": "final",
+        "last_updated": "2024-12-14T08:00:00Z",
+        "confidence": 95,
+        "availability": "available"
+      }
+    },
+    "share_count_trend": {
+      "current": {
+        "value": -1.2,
+        "formatted": "-1.2% YoY",
+        "source": "Share Count History",
+        "tie_out_status": "final",
+        "last_updated": "2024-12-14T08:00:00Z",
+        "confidence": 95,
+        "availability": "available"
+      }
+    },
+    "segments": [
+      {
+        "segment_name": "Industrial",
+        "growth_percent": 14.2,
+        "margin_percent": 28.5
+      },
+      {
+        "segment_name": "Commercial",
+        "growth_percent": 8.1,
+        "margin_percent": 22.3
+      },
+      {
+        "segment_name": "Services",
+        "growth_percent": 18.5,
+        "margin_percent": 35.2
+      }
+    ],
+    "guidance_bridge": {
+      "metric": "FY24 Revenue",
+      "company_guidance_low": 3520,
+      "company_guidance_high": 3580,
+      "consensus": 3545,
+      "delta_to_consensus": 0.3
+    },
+    "revisions_momentum": {
+      "eps_revisions_30d": 4,
+      "revenue_revisions_30d": 3,
+"direction": "up"
 }
-                                      }
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-## SUCCESS CRITERIA
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-A human investor should be able to answer:
-"Do I have enough information to make a decision — and if not, why?"
-
-If uncertainty exists, it must be impossible to miss:
-
-- Low confidence scores
-- Clear unavailable_reason explanations
-- Challenged/broken thesis_status if warranted
-- Explicit unknowns in decision_context (when decision_context is present)
-
-Return the completed response in JSON now.
+},
+"path_indicators": [
+{
+"label": "Revenue vs Plan",
+"value": "+2.0% ahead",
+"status": "on_track",
+"next_check": "Q4 Earnings"
+},
+{
+"label": "Margin Trajectory",
+"value": "25.1% (target: 26%)",
+"status": "on_track",
+"next_check": "Monthly"
+},
+{
+"label": "Market Share",
+"value": "Gaining (+$200M TAM)",
+"status": "on_track",
+"next_check": "Quarterly"
+},
+{
+"label": "Order Book",
+"value": "Pending Q4 disclosure",
+"status": "at_risk",
+"next_check": "Jan 15"
+}
+],
+"position_sizing": {
+"current_percent": 6,
+"max_percent": 10,
+"target_low": 5,
+"target_high": 8
+},
+"variant_view": {
+"summary": "Market underestimates margin expansion from competitor exit and operating leverage. Consensus EPS catching up but still 3-5% below our model.",
+"sensitivity": [
+{
+"label": "EBITDA ±1pp",
+"impact": "±$0.8B EV"
+},
+{
+"label": "Multiple ±1x",
+"impact": "±$0.9B EV"
+}
+]
+},
+"kill_switch": {
+"conditions": [
+"Thesis pillar broken",
+"Customer loss confirmed",
+"Margin <20%"
+]
+},
+"sources": [
+{
+"name": "SEC EDGAR",
+"type": "primary",
+"last_refresh": "2024-12-14T06:00:00Z"
+},
+{
+"name": "Bloomberg Terminal",
+"type": "primary",
+"last_refresh": "2024-12-14T09:00:00Z"
+},
+{
+"name": "FactSet",
+"type": "secondary",
+"last_refresh": "2024-12-14T08:30:00Z"
+}
+],
+"run_data_quality": {
+"coverage": 88,
+"auditability": 82,
+"freshness_days": 1
+}
+}
+CRITICAL REMINDERS:
+- Scenarios must be an OBJECT (not array) with base/downside/upside properties
+- Each scenario must include drivers property (can be null or empty array)
+- sources array items must have non-nullable name, type, last_refresh (if sources array exists)
+- Everything else can be null
+- No markdown wrappers, start with { and end with }
 `;
 }
 
@@ -1348,148 +1518,209 @@ SCHEMA
 
 The output must exactly follow this schema structure:
 
-run_metadata:
-  - run_id: string
-  - entity: string
-  - ticker: string (optional)
-  - mode: "public" | "private"
-  - timestamp: string
-  - owner: string
+run_metadata (nullable, optional):
+  - run_id: string | null
+  - entity: string | null
+  - ticker: string | null
+  - mode: string | null
+  - timestamp: string | null
+  - owner: string | null
 
-executive_summary:
-  - headline: string
-  - key_facts: array of strings
-  - implications: array of strings
-  - key_risks: array of strings
-  - thesis_status: "intact" | "challenged" | "broken"
+executive_summary (nullable, optional):
+  - headline: string | null
+  - key_facts: array of strings | null
+  - implications: array of strings | null
+  - key_risks: array of strings | null
+  - thesis_status: string | null
 
-financials:
+financials (nullable, optional):
   - revenue: WITH HISTORY (quarterly data for 1M, 1Y, 5Y, 10Y; 1D and 1W must be null)
-    - current: metricSchema
-    - history: timeSeriesMetricSchema with horizons
+    - current: metricSchema | null
+    - history: timeSeriesMetricSchema | null
   
   - revenue_growth: NO HISTORY
-    - current: metricSchema only
+    - current: metricSchema | null
   
   - ebitda: WITH HISTORY (quarterly data for 1M, 1Y, 5Y, 10Y; 1D and 1W must be null)
-    - current: metricSchema
-    - history: timeSeriesMetricSchema with horizons
+    - current: metricSchema | null
+    - history: timeSeriesMetricSchema | null
   
   - ebitda_margin: NO HISTORY
-    - current: metricSchema only
+    - current: metricSchema | null
   
   - free_cash_flow: NO HISTORY
-    - current: metricSchema only
+    - current: metricSchema | null
 
-market_data (optional):
+market_data (nullable, optional):
   - stock_price: WITH HISTORY (quarterly data for ALL horizons: 1D, 1W, 1M, 1Y, 5Y, 10Y)
-    - current: metricSchema
-    - history: timeSeriesMetricSchema with horizons
+    - current: metricSchema | null
+    - history: timeSeriesMetricSchema | null
   
   - volume: WITH HISTORY (quarterly data for ALL horizons: 1D, 1W, 1M, 1Y, 5Y, 10Y)
-    - current: metricSchema
-    - history: timeSeriesMetricSchema with horizons
+    - current: metricSchema | null
+    - history: timeSeriesMetricSchema | null
   
   - market_cap: NO HISTORY
-    - current: metricSchema only
+    - current: metricSchema | null
   
-  - pe_ratio: NO HISTORY (optional)
-    - current: metricSchema only
+  - pe_ratio: NO HISTORY (nullable, optional)
+    - current: metricSchema | null
   
-  - ev_ebitda: NO HISTORY (optional)
-    - current: metricSchema only
+  - ev_ebitda: NO HISTORY (nullable, optional)
+    - current: metricSchema | null
   
-  - target_price: NO HISTORY (optional)
-    - current: metricSchema only
+  - target_price: NO HISTORY (nullable, optional)
+    - current: metricSchema | null
 
-private_data (optional):
+private_data (nullable, optional):
   - valuation_mark: NO HISTORY
-    - current: metricSchema only
+    - current: metricSchema | null
   
   - net_leverage: NO HISTORY
-    - current: metricSchema only
+    - current: metricSchema | null
 
-valuation (optional, nullable):
+valuation (nullable, optional):
   - valuation_range_low: number | null
   - valuation_range_high: number | null
   - valuation_range_midpoint: number | null
   - why_range_exists: string | null
-  - dcf (optional, nullable): object with terminal_growth_rate, wacc, implied_value, implied_value_per_share
-  - trading_comps (optional, nullable): object with implied_value_range_low, implied_value_range_high, confidence
-  - precedent_transactions (optional, nullable): object with implied_value_range_low, implied_value_range_high, confidence
+  - dcf (nullable, optional): 
+    - terminal_growth_rate: number | null
+    - wacc: number | null
+    - implied_value: number | null
+    - implied_value_per_share: number | null
+  - trading_comps (nullable, optional): 
+    - implied_value_range_low: number | null
+    - implied_value_range_high: number | null
+    - confidence: dataQualitySchema | null
+  - precedent_transactions (nullable, optional): 
+    - implied_value_range_low: number | null
+    - implied_value_range_high: number | null
+    - confidence: dataQualitySchema | null
 
-hypotheses (optional, nullable): array of hypothesisSchema
-  Each hypothesis:
-    - id: string
-    - type: "hypothesis" | "recommendation" | "alert" | "analysis"
-    - title: string
-    - summary: string
-    - details: string | null (optional, nullable)
-    - assumptions: array of strings | null (optional, nullable)
-    - falsification_criteria: array of strings | null (optional, nullable)
-    - confidence_band: "high" | "medium" | "low" | null
-    - source: string
-    - generated_at: string (ISO timestamp)
-    - horizon_relevance: array of horizons ["1D", "1W", "1M", "1Y", "5Y", "10Y"]
-    - impact_score: number (-1 to 1) | null
-    - action_required: boolean
+hypotheses (nullable, optional): array of hypothesisSchema | null
+  Each hypothesis (nullable, optional):
+    - id: string | null
+    - type: string | null
+    - title: string | null
+    - summary: string | null
+    - details: string | null
+    - assumptions: array of strings | null
+    - falsification_criteria: array of strings | null
+    - confidence_band: string | null
+    - source: string | null
+    - generated_at: string | null (ISO timestamp)
+    - horizon_relevance: array of strings | null
+    - impact_score: number | null
+    - action_required: boolean | null
 
-ai_insights (optional, nullable): array of hypothesisSchema (same structure as hypotheses)
+ai_insights (nullable, optional): array of hypothesisSchema | null (same structure as hypotheses)
 
-events: array of eventSchema
-  Each event:
-    - id: string
-    - date: string (ISO format)
-    - type: "earnings" | "filing" | "guidance" | "corporate_action" | "news" | "analyst_update"
-    - title: string
-    - description: string
-    - impact: "positive" | "negative" | "neutral"
-    - source_url: string | null (optional, nullable)
+events (nullable, optional): array of eventSchema | null
+  Each event (nullable, optional):
+    - id: string | null
+    - date: string | null (ISO format)
+    - type: string | null
+    - title: string | null
+    - description: string | null
+    - impact: string | null
+    - source_url: string | null
 
-scenarios: scenariosSchema
-  Must have exactly three scenarios:
-    - base: singleScenarioSchema
-    - downside: singleScenarioSchema
-    - upside: singleScenarioSchema
+scenarios (nullable, optional): scenariosSchema | null
+  Must have exactly three scenario properties:
+    - base: singleScenarioSchema | null
+    - downside: singleScenarioSchema | null
+    - upside: singleScenarioSchema | null
   
-  Each singleScenarioSchema:
-    - probability: number (0-1)
-    - assumptions: array of objects with key (string | null) and value (string | null)
-    - outputs: scenarioOutputsSchema
-      - revenue: metricSchema
-      - ebitda: metricSchema
-      - valuation: metricSchema
+  Each singleScenarioSchema (nullable, optional):
+    - probability: number | null
+    - assumptions: array of objects | null
+      Each assumption: { key: string | null, value: string | null }
+    - drivers: array of scenarioDriverSchema | null
+      Each driver (nullable, optional):
+        - name: string | null (e.g., "Revenue Growth Rate", "EBITDA Margin")
+        - category: string | null (e.g., "revenue", "margin", "other")
+        - value: string | null (e.g., "9.2%", "$1,420")
+        - unit: string | null (e.g., "%", "USD", "units")
+        - source: string | null (e.g., "fact", "judgment")
+    - outputs: scenarioOutputsSchema | null
+      - revenue: metricSchema | null
+      - ebitda: metricSchema | null
+      - valuation: metricSchema | null
 
-risks: array of riskSchema
-  Each risk:
-    - id: string
-    - category: "market" | "operational" | "financial" | "liquidity" | "governance"
-    - title: string
-    - description: string
-    - severity: "critical" | "high" | "medium" | "low"
+risks (nullable, optional): array of riskSchema | null
+  Each risk (nullable, optional):
+    - id: string | null
+    - category: string | null
+    - title: string | null
+    - description: string | null
+    - severity: string | null
     - trigger: string | null
-    - mitigation: string | null (optional, nullable)
+    - mitigation: string | null
 
-sources: array of sourceSchema
+public_market_metrics (nullable, optional): publicMarketMetricsSchema | null
+  - net_cash_or_debt: { current: metricSchema | null } | null
+  - buyback_capacity: { current: metricSchema | null } | null
+  - sbc_percent_revenue: { current: metricSchema | null } | null
+  - share_count_trend: { current: metricSchema | null } | null
+  - segments: array of segmentSchema | null
+    Each segment (nullable, optional):
+      - segment_name: string | null
+      - revenue: { current: metricSchema | null } | null
+      - growth_percent: number | null
+      - margin_percent: number | null
+  - guidance_bridge: guidanceBridgeSchema | null
+    - metric: string | null
+    - company_guidance_low: number | null
+    - company_guidance_high: number | null
+    - consensus: number | null
+    - delta_to_consensus: number | null
+  - revisions_momentum: revisionsMomentumSchema | null
+    - eps_revisions_30d: number | null
+    - revenue_revisions_30d: number | null
+    - direction: string | null
+
+path_indicators (nullable, optional): array of pathIndicatorSchema | null
+  Each path indicator (nullable, optional):
+    - label: string | null
+    - value: string | null
+    - status: string | null
+    - next_check: string | null
+
+position_sizing (nullable, optional): positionSizingSchema | null
+  - current_percent: number | null
+  - max_percent: number | null
+  - target_low: number | null
+  - target_high: number | null
+
+variant_view (nullable, optional): variantViewSchema | null
+  - summary: string | null
+  - sensitivity: array of objects | null
+    Each sensitivity: { label: string | null, impact: string | null }
+
+kill_switch (nullable, optional): killSwitchSchema | null
+  - conditions: array of strings | null
+
+sources (nullable, optional): array of sourceSchema | null
   Each source:
-    - name: string
-    - type: "primary" | "secondary"
-    - last_refresh: string (ISO timestamp)
+    - name: string (REQUIRED - not nullable)
+    - type: "primary" | "secondary" (REQUIRED - not nullable)
+    - last_refresh: string (REQUIRED - not nullable, ISO timestamp)
 
-run_data_quality (optional, nullable): dataQualitySchema
+run_data_quality (nullable, optional): dataQualitySchema | null
   - coverage: number (0-100) | null
   - auditability: number (0-100) | null
   - freshness_days: number | null
 
-changes_since_last_run (optional, nullable): array of changeSchema
-  Each change:
-    - id: string
-    - timestamp: string
-    - category: "filing" | "transcript" | "guidance" | "price" | "consensus" | "regulatory" | "news"
-    - title: string
-    - description: string
+changes_since_last_run (nullable, optional): array of changeSchema | null
+  Each change (nullable, optional):
+    - id: string | null
+    - timestamp: string | null
+    - category: string | null
+    - title: string | null
+    - description: string | null
     - source_url: string | null
-    - thesis_pillar: "price" | "path" | "protection" | null
+    - thesis_pillar: string | null
     - so_what: string | null
     - action: string | null
 
@@ -1497,119 +1728,127 @@ changes_since_last_run (optional, nullable): array of changeSchema
 METRIC SCHEMA STRUCTURE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-metricSchema:
+metricSchema (nullable, optional):
   - value: number | string | null
   - formatted: string | null
-  - unit: string | null (optional, nullable)
+  - unit: string | null
   - source: string | null
-  - source_reference: sourceReferenceSchema | null (optional, nullable)
+  - source_reference: sourceReferenceSchema | null
     - url: string | null
-    - document_type: "filing" | "transcript" | "press_release" | "news" | "analyst_report" | "internal" | null
+    - document_type: string | null
     - excerpt: string | null
     - accessed_at: string | null
-  - tie_out_status: "final" | "provisional" | "flagged"
+  - tie_out_status: string | null
   - last_updated: string | null
-  - availability: "available" | "pending" | "unavailable" | "restricted" | "stale" | "conflicting"
-  - unavailable_reason: string | null (optional, nullable)
-  - confidence: number (0-100)
-  - data_quality: dataQualitySchema | null (optional, nullable)
-    - coverage: number (0-100) | null
-    - auditability: number (0-100) | null
+  - availability: string | null
+  - unavailable_reason: string | null
+  - confidence: number | null (0-100)
+  - data_quality: dataQualitySchema | null
+    - coverage: number | null (0-100)
+    - auditability: number | null (0-100)
     - freshness_days: number | null
-  - decision_context: decisionContextSchema | null (optional, nullable)
-    - confidence_level: "high" | "medium" | "low"
-    - sufficiency_status: "sufficient" | "insufficient"
-    - knowns: array of strings
-    - unknowns: array of strings
-    - what_changes_conclusion: array of strings
-  - definition: metricDefinitionSchema | null (optional, nullable)
+  - decision_context: decisionContextSchema | null
+    - confidence_level: string | null
+    - sufficiency_status: string | null
+    - knowns: array of strings | null
+    - unknowns: array of strings | null
+    - what_changes_conclusion: array of strings | null
+  - definition: metricDefinitionSchema | null
     - metric_name: string | null
     - period: string | null (accepts ANY string like "quarter", "TTM", "NTM", etc.)
-    - basis: string | null (accepts ANY string like "GAAP", "reported", "analyst_consensus", "internal", etc.)
+    - basis: string | null (accepts ANY string like "GAAP", "reported", "analyst_consensus", etc.)
     - currency: string | null
     - unit: string | null
 
-timeSeriesMetricSchema (for history):
-  - horizons: object with keys "1D", "1W", "1M", "1Y", "5Y", "10Y"
+timeSeriesMetricSchema (for history) (nullable, optional):
+  - horizons: object | null
+    Keys: "1D", "1W", "1M", "1Y", "5Y", "10Y"
     Each horizon contains horizonStatsSchema | null:
-      - quarters: object with Q1, Q2, Q3, Q4 (all number | null)
+      - quarters: quarterlySeriesSchema | null
+        - Q1: number | null
+        - Q2: number | null
+        - Q3: number | null
+        - Q4: number | null
       - high: number | null
       - low: number | null
       - average: number | null
       - volatility: number | null
       - change_percent: number | null
-  - availability: "available" | "pending" | "unavailable" | "restricted" | "stale" | "conflicting"
-  - unavailable_reason: string | null (optional, nullable)
-  - confidence: number (0-100)
-  - data_quality: dataQualitySchema | null (optional, nullable)
+  - availability: string | null
+  - unavailable_reason: string | null
+  - confidence: number | null (0-100)
+  - data_quality: dataQualitySchema | null
   - source: string | null
-  - decision_context: decisionContextSchema | null (optional, nullable)
+  - decision_context: decisionContextSchema | null
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 CRITICAL RULES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-1. STRICT SCHEMA COMPLIANCE
-   - No deviations. No missing fields or objects.
-   - All arrays must exist (empty array if no data).
-   - Optional fields may be null if schema allows.
-   - mode in run_metadata MUST be strictly "public" or "private".
+1. SCHEMA COMPLIANCE WITH FULL NULLABILITY
+   - EVERY field can be null or undefined (except sources array items: name, type, last_refresh)
+   - All top-level objects can be null
+   - All nested objects can be null
+   - All arrays can be null or empty
+   - The schema uses .nullable().optional() everywhere
 
-2. NULLABLE FIELDS WITH JUSTIFICATION
-   - Null is acceptable when data genuinely does not exist.
-   - If you return null, you MUST:
-     * Set availability = "unavailable" | "restricted" | "stale" | "conflicting"
-     * Set confidence = 0-30 (low)
-     * Provide detailed unavailable_reason explaining:
-       - What sources you searched
-       - Why the data is not available
-       - What would be needed to obtain it
-       - When it might become available
+2. SOURCES ARRAY SPECIAL HANDLING
+   - sources array itself is nullable/optional: can be null or omitted
+   - BUT if sources array exists and contains items, each item MUST have:
+     * name: string (NOT nullable)
+     * type: "primary" | "secondary" (NOT nullable)
+     * last_refresh: string ISO timestamp (NOT nullable)
 
-3. WEB SEARCH BEFORE NULL
-   - If a metric cannot be found in scraped data, use web search
-   - Prioritize authoritative sources: SEC filings, company IR, regulators, major financial databases
-   - Only after search fails completely should null be returned with full explanation
+3. SCENARIOS STRUCTURE (CRITICAL)
+   - scenarios is an OBJECT (not array), can be null
+   - Must have three properties: base, downside, upside (each can be null)
+   - Each scenario must include DRIVERS array (can be null or empty)
+   - Structure: { base: {...} | null, downside: {...} | null, upside: {...} | null } | null
 
-4. TIME HORIZONS
+4. DRIVERS IN SCENARIOS (MANDATORY FIELD)
+   - Each scenario (base, downside, upside) MUST have a "drivers" property
+   - drivers can be null or an empty array []
+   - When populated, each driver contains: name, category, value, unit, source (all nullable)
+   - Example drivers:
+     json
+     "drivers": [
+       { "name": "Revenue Growth Rate", "category": "revenue", "value": "9.2%", "unit": "%", "source": "judgment" },
+       { "name": "EBITDA Margin", "category": "margin", "value": "25.5%", "unit": "%", "source": "fact" }
+     ]
+     
+
+5. NULLABLE FIELDS BEHAVIOR
+   - Null is acceptable throughout the schema
+   - If returning null for a metric, OPTIONALLY provide:
+     * availability = "unavailable" | "restricted" | "stale" | "conflicting"
+     * confidence = 0-30 (low)
+     * unavailable_reason explaining why
+   - These are helpful but not required since all fields are nullable
+
+6. TIME HORIZONS
    - Horizons: "1D", "1W", "1M", "1Y", "5Y", "10Y"
    - Revenue/EBITDA: 1D and 1W horizons MUST be null (not meaningful for financial metrics)
-   - Stock Price/Volume: ALL horizons (1D through 10Y) must have quarterly data
+   - Stock Price/Volume: ALL horizons should have data when available
    - MAXIMIZE QUARTERS: Fetch as many quarters as possible per horizon
 
-5. HISTORY ASSIGNMENTS
+7. HISTORY ASSIGNMENTS
    - WITH HISTORY (quarterly data): Revenue, EBITDA, Stock Price, Volume
    - NO HISTORY (current only): Revenue Growth, EBITDA Margin, Free Cash Flow, Market Cap, PE Ratio, EV/EBITDA, Target Price, all Private Data metrics
 
-6. DEFINITION FIELD CHANGES
-   - definition.period: accepts ANY STRING (not restricted enum)
-   - definition.basis: accepts ANY STRING (not restricted enum)
-   - Examples: "NTM", "analyst_consensus", "internal", "quarter", "TTM", "GAAP", "reported", etc.
-
-7. DECISION CONTEXT CAN BE NULL
-   - decision_context is nullable at the top level
-   - Can be null when not applicable or insufficient data
-   - When present, must have all required fields: confidence_level, sufficiency_status, knowns, unknowns, what_changes_conclusion
-
 8. DECISION READINESS
-   - Every metric must include value, formatted, source, tie_out_status, last_updated, confidence, availability
-   - Confidence reflects source credibility, freshness, and consistency
-   - Unknowns, conflicts, or stale data must be surfaced via:
+   - When metrics are available, include:
+     * value, formatted, source, tie_out_status, last_updated, confidence, availability
+   - Unknowns, conflicts, or stale data should be surfaced via:
      * availability status
      * confidence scores
      * tie_out_status
      * unavailable_reason
-     * decision_context (when present)
-     * executive_summary implications
+     * decision_context (when applicable)
 
 9. EXECUTIVE SUMMARY
-   - Must reflect data completeness and quality
-   - Acknowledge material unknowns explicitly
-   - Downgrade thesis_status if core metrics are missing or weak:
-     * "intact" = all key data available, high confidence
-     * "challenged" = material gaps or conflicting data
-     * "broken" = critical data missing or fundamentals deteriorated
-   - Use specific numbers and facts from the data (not generic statements)
+   - Should reflect data completeness and quality when available
+   - Can be null if insufficient data
+   - When present, use specific numbers and facts from the data
 
 10. OUTPUT REQUIREMENTS
     - RAW JSON ONLY - NO FORMATTING WRAPPERS
@@ -1619,40 +1858,155 @@ CRITICAL RULES
     - Start directly with the opening brace {
     - End directly with the closing brace }
     - Output must be valid, parseable JSON that can be directly consumed by JSON.parse()
-    - Must allow a sophisticated user to answer: "Is this information sufficient to make a decision — and if not, why?"
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 QUALITY BENCHMARKS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Your output must match these quality standards:
+Your output should strive for these quality standards when data is available:
 
 1. Specific Numbers: Revenue Q3 $892M (not $800M rounded)
 2. Realistic Progression: Q1: $795M, Q2: $834M, Q3: $868M, Q4: $892M
-3. Proper Calculations: volatility and change_percent must reflect actual data
-4. Rich Context: decision_context with specific knowns/unknowns (when present)
-5. Investment-Grade Insights: Specific, actionable, with supporting data
-6. Null Justification: If null, provide detailed unavailable_reason
+3. Proper Calculations: volatility and change_percent should reflect actual data
+4. Rich Context: decision_context with specific knowns/unknowns (when applicable)
+5. Investment-Grade Insights: Specific, actionable, with supporting data (when applicable)
 
-Example unavailable_reason for acceptable null:
+Example unavailable_reason (when providing explanation for null):
 "10-Y historical quarterly revenue data not available. Company went public in 2020, only 16 quarters (4 years) of financial history exists. Searched SEC EDGAR (10-K/10-Q filings back to IPO), company IR site, Bloomberg archives - no pre-IPO quarterly financials accessible to public."
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TYPESCRIPT TYPE SAFETY GUIDANCE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Your output will be consumed by TypeScript code that must handle nulls safely:
+- Always use optional chaining: data?.field?.nested
+- Always provide fallbacks: data?.field ?? defaultValue
+- Filter arrays: array?.filter((item): item is NonNullable<typeof item> => item != null) ?? []
+- Check existence: if (data?.field) { ... }
+
+This means null values are expected and acceptable throughout the structure.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 TASK
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Using the scraped data and web search if needed, populate every field according to the schema. Include:
-- Current metrics with full metadata
-- Historical data with quarterly breakdowns (where applicable)
-- All horizons (1D, 1W, 1M, 1Y, 5Y, 10Y)
-- AI insights with horizon relevance
-- Decision context for all metrics (can be null)
-- Complete executive summary
-- Three scenarios: base, downside, upside
+Using the scraped data, populate as many fields as possible according to the schema. Include:
+- Current metrics with full metadata (when available)
+- Historical data with quarterly breakdowns (when available)
+- All horizons (1D, 1W, 1M, 1Y, 5Y, 10Y) for applicable metrics
+- AI insights with horizon relevance (when applicable)
+- Decision context for metrics (when applicable)
+- Complete executive summary (when sufficient data exists)
+- Three scenarios with DRIVERS: base, downside, upside (structure required, content can be null)
+- Public market metrics (when available)
+- Path indicators, position sizing, variant view, kill switch (when applicable)
 
-Return the complete, decision-ready InvestorDashboard JSON now.
+REMEMBER:
+- Scenarios MUST be an object with base, downside, upside properties (not an array)
+- Each scenario MUST include a "drivers" property (can be null or empty array)
+- Sources array items MUST have name, type, last_refresh (not nullable) IF the array exists
+- All other fields throughout the schema can be null
+- Return complete, valid JSON with no wrapper formatting
 
-Here is a solid sample of the output: 
+Return the complete InvestorDashboard JSON now.
+
+CRITICAL: Your response must begin with { and end with } with NO additional text, backticks, or formatting.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXAMPLE OUTPUT STRUCTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Here is a reference example showing proper structure (especially scenarios with drivers):
+
+json
+{
+  "run_metadata": { "run_id": "...", "entity": "...", "ticker": "...", "mode": "public", "timestamp": "...", "owner": "..." },
+  "executive_summary": { "headline": "...", "key_facts": [...], "implications": [...], "key_risks": [...], "thesis_status": "intact" },
+  "financials": {
+    "revenue": {
+      "current": { "value": 892000000, "formatted": "$892M", "unit": "USD", "source": "10-Q Filing", ... },
+      "history": {
+        "horizons": {
+          "1D": null,
+          "1W": null,
+          "1M": { "quarters": { "Q1": 285000000, "Q2": 289000000, "Q3": 294000000, "Q4": 297000000 }, "high": 297000000, ... },
+          "1Y": { "quarters": { "Q1": 795000000, "Q2": 834000000, "Q3": 868000000, "Q4": 892000000 }, ... },
+          "5Y": { ... },
+          "10Y": { ... }
+        },
+        "availability": "available",
+        "confidence": 95,
+        ...
+      }
+    },
+    "revenue_growth": { "current": { "value": 9.2, "formatted": "9.2%", ... } },
+    "ebitda": { "current": { ... }, "history": { ... } },
+    "ebitda_margin": { "current": { ... } },
+    "free_cash_flow": { "current": { ... } }
+  },
+  "market_data": {
+    "stock_price": { "current": { ... }, "history": { "horizons": { "1D": {...}, "1W": {...}, "1M": {...}, "1Y": {...}, "5Y": {...}, "10Y": {...} }, ... } },
+    "volume": { "current": { ... }, "history": { ... } },
+    "market_cap": { "current": { ... } },
+    "pe_ratio": { "current": { ... } },
+    "ev_ebitda": { "current": { ... } },
+    "target_price": { "current": { ... } }
+  },
+  "scenarios": {
+    "base": {
+      "probability": 0.6,
+      "assumptions": [
+        { "key": "Revenue Growth", "value": "9%" },
+        { "key": "EBITDA Margin", "value": "25.5%" }
+      ],
+      "drivers": [
+        { "name": "Revenue Growth Rate", "category": "revenue", "value": "9.2%", "unit": "%", "source": "judgment" },
+        { "name": "EBITDA Margin", "category": "margin", "value": "25.5%", "unit": "%", "source": "fact" },
+        { "name": "Market Share", "category": "revenue", "value": "18%", "unit": "%", "source": "judgment" }
+      ],
+      "outputs": {
+        "revenue": { "value": 3550000000, "formatted": "$3.55B", ... },
+        "ebitda": { "value": 905000000, "formatted": "$905M", ... },
+        "valuation": { "value": 14500000000, "formatted": "$14.5B", ... }
+      }
+    },
+    "downside": {
+      "probability": 0.25,
+      "assumptions": [ { "key": "Revenue Growth", "value": "5%" }, { "key": "EBITDA Margin", "value": "22%" } ],
+      "drivers": [
+        { "name": "Revenue Growth Rate", "category": "revenue", "value": "5.0%", "unit": "%", "source": "judgment" },
+        { "name": "EBITDA Margin", "category": "margin", "value": "22.0%", "unit": "%", "source": "judgment" }
+      ],
+      "outputs": { "revenue": { ... }, "ebitda": { ... }, "valuation": { ... } }
+    },
+    "upside": {
+      "probability": 0.15,
+      "assumptions": [ { "key": "Revenue Growth", "value": "14%" }, { "key": "EBITDA Margin", "value": "27%" } ],
+      "drivers": [
+        { "name": "Revenue Growth Rate", "category": "revenue", "value": "14.0%", "unit": "%", "source": "judgment" },
+        { "name": "EBITDA Margin", "category": "margin", "value": "27.0%", "unit": "%", "source": "judgment" }
+      ],
+      "outputs": { "revenue": { ... }, "ebitda": { ... }, "valuation": { ... } }
+    }
+  },
+  "events": [ { "id": "evt-1", "date": "2025-01-07", "type": "earnings", ... } ],
+  "risks": [ { "id": "risk-1", "category": "market", "title": "Customer Concentration", ... } ],
+  "sources": [
+    { "name": "SEC EDGAR", "type": "primary", "last_refresh": "2024-12-14T06:00:00Z" },
+    { "name": "Bloomberg Terminal", "type": "primary", "last_refresh": "2024-12-14T09:00:00Z" }
+  ]
+}
+
+
+Note the key structural requirements:
+1. scenarios is an OBJECT with base/downside/upside properties
+2. Each scenario has a drivers ARRAY
+3. sources array items have non-nullable name, type, last_refresh
+4. All other fields can be null as needed
+     Here is a sample of a solid output: 
+    
+
+
 {
   "run_metadata": {
     "run_id": "RUN-2024-1214-001",
@@ -1708,17 +2062,11 @@ Here is a solid sample of the output:
       "current": {
         "value": 892000000,
         "formatted": "$892M",
-        "unit": "USD",
         "source": "10-Q Filing",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       },
       "history": {
         "horizons": {
@@ -1778,45 +2126,30 @@ Here is a solid sample of the output:
           }
         },
         "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "source": "SEC Filings",
-        "decision_context": null
+        "source": "SEC Filings"
       }
     },
     "revenue_growth": {
       "current": {
         "value": 9.2,
         "formatted": "9.2%",
-        "unit": "percent",
         "source": "Calculated",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       }
     },
     "ebitda": {
       "current": {
         "value": 224000000,
         "formatted": "$224M",
-        "unit": "USD",
         "source": "10-Q Filing",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       },
       "history": {
         "horizons": {
@@ -1876,45 +2209,30 @@ Here is a solid sample of the output:
           }
         },
         "availability": "available",
-        "unavailable_reason": null,
         "confidence": 92,
-        "data_quality": null,
-        "source": "Management Reconciliation",
-        "decision_context": null
+        "source": "Management Reconciliation"
       }
     },
     "ebitda_margin": {
       "current": {
         "value": 25.1,
         "formatted": "25.1%",
-        "unit": "percent",
         "source": "Calculated",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       }
     },
     "free_cash_flow": {
       "current": {
         "value": 158000000,
         "formatted": "$158M",
-        "unit": "USD",
         "source": "Calculated",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       }
     }
   },
@@ -1923,17 +2241,11 @@ Here is a solid sample of the output:
       "current": {
         "value": 127.45,
         "formatted": "$127.45",
-        "unit": "USD",
         "source": "Bloomberg",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       },
       "history": {
         "horizons": {
@@ -2017,28 +2329,19 @@ Here is a solid sample of the output:
           }
         },
         "availability": "available",
-        "unavailable_reason": null,
         "confidence": 98,
-        "data_quality": null,
-        "source": "Bloomberg",
-        "decision_context": null
+        "source": "Bloomberg"
       }
     },
     "volume": {
       "current": {
         "value": 1520000,
         "formatted": "1.52M",
-        "unit": "shares",
         "source": "Bloomberg",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       },
       "history": {
         "horizons": {
@@ -2122,79 +2425,53 @@ Here is a solid sample of the output:
           }
         },
         "availability": "available",
-        "unavailable_reason": null,
         "confidence": 96,
-        "data_quality": null,
-        "source": "Bloomberg",
-        "decision_context": null
+        "source": "Bloomberg"
       }
     },
     "market_cap": {
       "current": {
         "value": 12800000000,
         "formatted": "$12.8B",
-        "unit": "USD",
         "source": "Calculated",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       }
     },
     "pe_ratio": {
       "current": {
         "value": 28.4,
         "formatted": "28.4x",
-        "unit": "ratio",
         "source": "Calculated",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       }
     },
     "ev_ebitda": {
       "current": {
         "value": 12.4,
         "formatted": "12.4x",
-        "unit": "ratio",
         "source": "Calculated",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       }
     },
     "target_price": {
       "current": {
         "value": 0,
         "formatted": "Pending",
-        "unit": "USD",
         "source": "Analyst Consensus",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "pending",
-        "unavailable_reason": "Analyst consensus update expected after Q3 earnings",
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "pending",
+        "unavailable_reason": "Analyst consensus update expected after Q3 earnings"
       }
     }
   },
@@ -2203,34 +2480,22 @@ Here is a solid sample of the output:
       "current": {
         "value": 14500000000,
         "formatted": "$14.5B",
-        "unit": "USD",
         "source": "Internal Model",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       }
     },
     "net_leverage": {
       "current": {
         "value": 1.8,
         "formatted": "1.8x",
-        "unit": "ratio",
         "source": "Calculated",
-        "source_reference": null,
         "tie_out_status": "final",
         "last_updated": "2024-12-14T08:00:00Z",
-        "availability": "available",
-        "unavailable_reason": null,
         "confidence": 95,
-        "data_quality": null,
-        "decision_context": null,
-        "definition": null
+        "availability": "available"
       }
     }
   },
@@ -2268,12 +2533,9 @@ Here is a solid sample of the output:
     {
       "id": "ai-1",
       "type": "alert",
+      "confidence_band": "high",
       "title": "Unusual Volume Detected",
       "summary": "Trading volume 2.3x above 20-day average.",
-      "details": null,
-      "assumptions": null,
-      "falsification_criteria": null,
-      "confidence_band": "high",
       "source": "Volume Analysis",
       "generated_at": "2024-12-14T09:00:00Z",
       "horizon_relevance": ["1D", "1W"],
@@ -2283,12 +2545,9 @@ Here is a solid sample of the output:
     {
       "id": "ai-2",
       "type": "hypothesis",
+      "confidence_band": "medium",
       "title": "Price Momentum Building",
       "summary": "7-day RSI indicates bullish momentum.",
-      "details": null,
-      "assumptions": null,
-      "falsification_criteria": null,
-      "confidence_band": "medium",
       "source": "Technical Analysis",
       "generated_at": "2024-12-14T09:00:00Z",
       "horizon_relevance": ["1W", "1M"],
@@ -2298,29 +2557,21 @@ Here is a solid sample of the output:
     {
       "id": "ai-3",
       "type": "analysis",
+      "confidence_band": "high",
       "title": "Earnings Catalyst Approaching",
       "summary": "Q4 earnings in 23 days. Consensus revisions trending positive.",
-      "details": null,
-      "assumptions": null,
-      "falsification_criteria": null,
-      "confidence_band": "high",
       "source": "Earnings Analysis",
       "generated_at": "2024-12-14T09:00:00Z",
       "horizon_relevance": ["1M"],
       "impact_score": 0.6,
       "action_required": true
-    }
-  ],
-  "ai_insights": [
+    },
     {
       "id": "ai-4",
       "type": "hypothesis",
+      "confidence_band": "medium",
       "title": "Sector Rotation Tailwind",
       "summary": "Macro cycle analysis suggests industrials outperformance.",
-      "details": null,
-      "assumptions": null,
-      "falsification_criteria": null,
-      "confidence_band": "medium",
       "source": "Macro Analysis",
       "generated_at": "2024-12-14T09:00:00Z",
       "horizon_relevance": ["1Y"],
@@ -2330,12 +2581,71 @@ Here is a solid sample of the output:
     {
       "id": "ai-5",
       "type": "analysis",
+      "confidence_band": "medium",
       "title": "Competitive Moat Assessment",
       "summary": "Market share gains sustainable. IP portfolio widening.",
-      "details": null,
-      "assumptions": null,
-      "falsification_criteria": null,
+      "source": "Competitive Intelligence",
+      "generated_at": "2024-12-14T09:00:00Z",
+      "horizon_relevance": ["5Y", "10Y"],
+      "impact_score": 0.7,
+      "action_required": false
+    }
+  ],
+  "ai_insights": [
+    {
+      "id": "ai-1",
+      "type": "alert",
+      "confidence_band": "high",
+      "title": "Unusual Volume Detected",
+      "summary": "Trading volume 2.3x above 20-day average.",
+      "source": "Volume Analysis",
+      "generated_at": "2024-12-14T09:00:00Z",
+      "horizon_relevance": ["1D", "1W"],
+      "impact_score": 0.4,
+      "action_required": false
+    },
+    {
+      "id": "ai-2",
+      "type": "hypothesis",
       "confidence_band": "medium",
+      "title": "Price Momentum Building",
+      "summary": "7-day RSI indicates bullish momentum.",
+      "source": "Technical Analysis",
+      "generated_at": "2024-12-14T09:00:00Z",
+      "horizon_relevance": ["1W", "1M"],
+      "impact_score": 0.35,
+      "action_required": false
+    },
+    {
+      "id": "ai-3",
+      "type": "analysis",
+      "confidence_band": "high",
+      "title": "Earnings Catalyst Approaching",
+      "summary": "Q4 earnings in 23 days. Consensus revisions trending positive.",
+      "source": "Earnings Analysis",
+      "generated_at": "2024-12-14T09:00:00Z",
+      "horizon_relevance": ["1M"],
+      "impact_score": 0.6,
+      "action_required": true
+    },
+    {
+      "id": "ai-4",
+      "type": "hypothesis",
+      "confidence_band": "medium",
+      "title": "Sector Rotation Tailwind",
+      "summary": "Macro cycle analysis suggests industrials outperformance.",
+      "source": "Macro Analysis",
+      "generated_at": "2024-12-14T09:00:00Z",
+      "horizon_relevance": ["1Y"],
+      "impact_score": 0.45,
+      "action_required": false
+    },
+    {
+      "id": "ai-5",
+      "type": "analysis",
+      "confidence_band": "medium",
+      "title": "Competitive Moat Assessment",
+      "summary": "Market share gains sustainable. IP portfolio widening.",
       "source": "Competitive Intelligence",
       "generated_at": "2024-12-14T09:00:00Z",
       "horizon_relevance": ["5Y", "10Y"],
@@ -2350,8 +2660,7 @@ Here is a solid sample of the output:
       "type": "earnings",
       "title": "Q4 2024 Earnings Release",
       "description": "Quarterly earnings announcement",
-      "impact": "neutral",
-      "source_url": null
+      "impact": "neutral"
     },
     {
       "id": "evt-2",
@@ -2359,8 +2668,7 @@ Here is a solid sample of the output:
       "type": "filing",
       "title": "10-K Annual Report",
       "description": "Annual filing due",
-      "impact": "neutral",
-      "source_url": null
+      "impact": "neutral"
     }
   ],
   "scenarios": {
@@ -2380,47 +2688,29 @@ Here is a solid sample of the output:
         "revenue": {
           "value": 3550000000,
           "formatted": "$3.55B",
-          "unit": "USD",
           "source": "Model",
-          "source_reference": null,
           "tie_out_status": "final",
           "last_updated": "2024-12-14T08:00:00Z",
-          "availability": "available",
-          "unavailable_reason": null,
           "confidence": 95,
-          "data_quality": null,
-          "decision_context": null,
-          "definition": null
+          "availability": "available"
         },
         "ebitda": {
           "value": 905000000,
           "formatted": "$905M",
-          "unit": "USD",
           "source": "Model",
-          "source_reference": null,
           "tie_out_status": "final",
           "last_updated": "2024-12-14T08:00:00Z",
-          "availability": "available",
-          "unavailable_reason": null,
           "confidence": 95,
-          "data_quality": null,
-          "decision_context": null,
-          "definition": null
+          "availability": "available"
         },
         "valuation": {
           "value": 14500000000,
           "formatted": "$14.5B",
-          "unit": "USD",
           "source": "DCF",
-          "source_reference": null,
           "tie_out_status": "final",
           "last_updated": "2024-12-14T08:00:00Z",
-          "availability": "available",
-          "unavailable_reason": null,
           "confidence": 95,
-          "data_quality": null,
-          "decision_context": null,
-          "definition": null
+          "availability": "available"
         }
       }
     },
@@ -2440,47 +2730,29 @@ Here is a solid sample of the output:
         "revenue": {
           "value": 3280000000,
           "formatted": "$3.28B",
-          "unit": "USD",
           "source": "Model",
-          "source_reference": null,
           "tie_out_status": "final",
           "last_updated": "2024-12-14T08:00:00Z",
-          "availability": "available",
-          "unavailable_reason": null,
           "confidence": 95,
-          "data_quality": null,
-          "decision_context": null,
-          "definition": null
+          "availability": "available"
         },
         "ebitda": {
           "value": 722000000,
           "formatted": "$722M",
-          "unit": "USD",
           "source": "Model",
-          "source_reference": null,
           "tie_out_status": "final",
           "last_updated": "2024-12-14T08:00:00Z",
-          "availability": "available",
-          "unavailable_reason": null,
           "confidence": 95,
-          "data_quality": null,
-          "decision_context": null,
-          "definition": null
+          "availability": "available"
         },
         "valuation": {
           "value": 11200000000,
           "formatted": "$11.2B",
-          "unit": "USD",
           "source": "DCF",
-          "source_reference": null,
           "tie_out_status": "final",
           "last_updated": "2024-12-14T08:00:00Z",
-          "availability": "available",
-          "unavailable_reason": null,
           "confidence": 95,
-          "data_quality": null,
-          "decision_context": null,
-          "definition": null
+          "availability": "available"
         }
       }
     },
@@ -2500,47 +2772,29 @@ Here is a solid sample of the output:
         "revenue": {
           "value": 3850000000,
           "formatted": "$3.85B",
-          "unit": "USD",
           "source": "Model",
-          "source_reference": null,
           "tie_out_status": "final",
           "last_updated": "2024-12-14T08:00:00Z",
-          "availability": "available",
-          "unavailable_reason": null,
           "confidence": 95,
-          "data_quality": null,
-          "decision_context": null,
-          "definition": null
+          "availability": "available"
         },
         "ebitda": {
           "value": 1040000000,
           "formatted": "$1.04B",
-          "unit": "USD",
           "source": "Model",
-          "source_reference": null,
           "tie_out_status": "final",
           "last_updated": "2024-12-14T08:00:00Z",
-          "availability": "available",
-          "unavailable_reason": null,
           "confidence": 95,
-          "data_quality": null,
-          "decision_context": null,
-          "definition": null
+          "availability": "available"
         },
         "valuation": {
           "value": 17800000000,
           "formatted": "$17.8B",
-          "unit": "USD",
           "source": "DCF",
-          "source_reference": null,
           "tie_out_status": "final",
           "last_updated": "2024-12-14T08:00:00Z",
-          "availability": "available",
-          "unavailable_reason": null,
           "confidence": 95,
-          "data_quality": null,
-          "decision_context": null,
-          "definition": null
+          "availability": "available"
         }
       }
     }
@@ -2556,7 +2810,7 @@ Here is a solid sample of the output:
       "mitigation": "Diversification initiatives underway"
     },
     {
-    "id": "risk-2",
+      "id": "risk-2",
       "category": "operational",
       "title": "Management Succession",
       "description": "CEO is 67 years old with no public succession plan",
@@ -2574,30 +2828,157 @@ Here is a solid sample of the output:
       "mitigation": "Price increases implemented Q4"
     }
   ],
-  "sources": [
-    {
-      "name": "SEC EDGAR",
-      "type": "primary",
-      "last_refresh": "2024-12-14T06:00:00Z"
+  "public_market_metrics": {
+    "net_cash_or_debt": {
+      "current": {
+        "value": 1200000000,
+        "formatted": "$1.2B Net Cash",
+        "source": "10-Q Balance Sheet",
+        "tie_out_status": "final",
+        "last_updated": "2024-12-14T08:00:00Z",
+        "confidence": 95,
+        "availability": "available"
+      }
     },
-    {
-      "name": "Bloomberg Terminal",
-      "type": "primary",
-      "last_refresh": "2024-12-14T09:00:00Z"
+    "buyback_capacity": {
+      "current": {
+        "value": 500000000,
+        "formatted": "$500M",
+        "source": "Board Authorization",
+        "tie_out_status": "final",
+        "last_updated": "2024-12-14T08:00:00Z",
+        "confidence": 95,
+        "availability": "available"
+      }
     },
-    {
-      "name": "FactSet",
-      "type": "secondary",
-      "last_refresh": "2024-12-14T08:30:00Z"
-    }
-  ],
-  "run_data_quality": {
-    "coverage": 88,
-    "auditability": 82,
-    "freshness_days": 1
-  }
+    "sbc_percent_revenue": {
+      "current": {
+        "value": 4.2,
+        "formatted": "4.2%",
+        "source": "Calculated from 10-Q",
+        "tie_out_status": "final",
+        "last_updated": "2024-12-14T08:00:00Z",
+        "confidence": 95,
+        "availability": "available"
+      }
+    },
+    "share_count_trend": {
+      "current": {
+        "value": -1.2,
+        "formatted": "-1.2% YoY",
+        "source": "Share Count History",
+        "tie_out_status": "final",
+        "last_updated": "2024-12-14T08:00:00Z",
+        "confidence": 95,
+        "availability": "available"
+      }
+    },
+    "segments": [
+      {
+        "segment_name": "Industrial",
+        "growth_percent": 14.2,
+        "margin_percent": 28.5
+      },
+      {
+        "segment_name": "Commercial",
+        "growth_percent": 8.1,
+        "margin_percent": 22.3
+      },
+      {
+        "segment_name": "Services",
+        "growth_percent": 18.5,
+        "margin_percent": 35.2
+      }
+    ],
+    "guidance_bridge": {
+      "metric": "FY24 Revenue",
+      "company_guidance_low": 3520,
+      "company_guidance_high": 3580,
+      "consensus": 3545,
+      "delta_to_consensus": 0.3
+    },
+    "revisions_momentum": {
+      "eps_revisions_30d": 4,
+      "revenue_revisions_30d": 3,
+"direction": "up"
 }
-                
+},
+"path_indicators": [
+{
+"label": "Revenue vs Plan",
+"value": "+2.0% ahead",
+"status": "on_track",
+"next_check": "Q4 Earnings"
+},
+{
+"label": "Margin Trajectory",
+"value": "25.1% (target: 26%)",
+"status": "on_track",
+"next_check": "Monthly"
+},
+{
+"label": "Market Share",
+"value": "Gaining (+$200M TAM)",
+"status": "on_track",
+"next_check": "Quarterly"
+},
+{
+"label": "Order Book",
+"value": "Pending Q4 disclosure",
+"status": "at_risk",
+"next_check": "Jan 15"
+}
+],
+"position_sizing": {
+"current_percent": 6,
+"max_percent": 10,
+"target_low": 5,
+"target_high": 8
+},
+"variant_view": {
+"summary": "Market underestimates margin expansion from competitor exit and operating leverage. Consensus EPS catching up but still 3-5% below our model.",
+"sensitivity": [
+{
+"label": "EBITDA ±1pp",
+"impact": "±$0.8B EV"
+},
+{
+"label": "Multiple ±1x",
+"impact": "±$0.9B EV"
+}
+]
+},
+"kill_switch": {
+"conditions": [
+"Thesis pillar broken",
+"Customer loss confirmed",
+"Margin <20%"
+]
+},
+"sources": [
+{
+"name": "SEC EDGAR",
+"type": "primary",
+"last_refresh": "2024-12-14T06:00:00Z"
+},
+{
+"name": "Bloomberg Terminal",
+"type": "primary",
+"last_refresh": "2024-12-14T09:00:00Z"
+},
+{
+"name": "FactSet",
+"type": "secondary",
+"last_refresh": "2024-12-14T08:30:00Z"
+}
+],
+"run_data_quality": {
+"coverage": 88,
+"auditability": 82,
+"freshness_days": 1
+}
+}
+     }           
 CRITICAL: Your response must begin with { and end with } with NO additional text, backticks, or formatting.
 `.trim();
 }

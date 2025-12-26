@@ -44,7 +44,7 @@ export function InvestorDashboard({ data, id, user }: InvestorDashboardProps) {
         onModeChange={setMode}
       />
 
-      <main>
+          <main>
         {/* What Changed Since Last Run - TOP OF DASHBOARD */}
         <ChangesSection changes={data.changes_since_last_run} />
         
@@ -83,27 +83,21 @@ export function InvestorDashboard({ data, id, user }: InvestorDashboardProps) {
         
         {/* Public Market Metrics - replaces private noise */}
         {mode === "public" && (
-          <PublicMarketMetrics 
-            data={null} 
-            segments={null}
-            guidance_bridge={null}
-            revisions_momentum={null}
-          />
+          <PublicMarketMetrics data={data.public_market_metrics} />
         )}
         
         {/* Valuation Engine */}
         <ValuationSection valuation={data.valuation} />
         
-        {/* Events Timeline */}
-        {data.events && <EventsTimeline events={data.events} />}
+        <EventsTimeline events={data.events} />
         
         {/* Driver-Based Scenarios - replaces thin scenario panel */}
-        {data.scenarios && <DriverScenariosPanel scenarios={data.scenarios} />}
+        <DriverScenariosPanel scenarios={data.scenarios} />
         
         {/* Enhanced Risks as Tradable Objects */}
-        {data.risks && <RisksPanel risks={data.risks} />}
+        <RisksPanel risks={data.risks} />
         
-        {data.sources && <DataLineage sources={data.sources} />}
+        <DataLineage sources={data.sources} />
       </main>
 
       {/* Chat Toggle Button */}

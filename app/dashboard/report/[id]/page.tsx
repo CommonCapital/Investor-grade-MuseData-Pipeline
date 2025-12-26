@@ -79,7 +79,7 @@ function ReportPage() {
         <p className='text-sm text-black/60 mb-8'>The report you're looking for doesn't exist</p>
         <Button
           onClick={() => router.push('/dashboard')}
-          className='bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-xs tracking-widest uppercase'
+          className='bg-black text-black hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-xs tracking-widest uppercase'
         >
           Back to Dashboard
         </Button>

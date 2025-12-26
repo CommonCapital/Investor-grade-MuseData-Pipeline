@@ -30,7 +30,7 @@ const thesisStatusConfig: Record<string, {
 
 export function ExecutiveSummary({ summary }: ExecutiveSummaryProps) {
   const statusConfig = thesisStatusConfig[summary?.thesis_status || "intact"];
-  const StatusIcon = statusConfig.icon;
+  const StatusIcon = statusConfig.icon ?? "";
 
   return (
     <section className="py-8 border-b border-border animate-fade-in">

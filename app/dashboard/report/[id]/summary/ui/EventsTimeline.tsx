@@ -11,7 +11,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 interface EventsTimelineProps {
-  events: Event[];
+  events: Event[] | null | undefined;
 }
 
 import { Event as SchemaEvent } from "@/lib/seo-schema";
@@ -38,7 +38,9 @@ const impactStyles: Record<Impact, string> = {
 export function EventsTimeline({ events }: EventsTimelineProps) {
  const toTime = (d?: string | null) =>
   d ? new Date(d).getTime() : 0;
-
+if (!events) {
+  return 
+}
 const sortedEvents = [...events].sort(
   (a, b) => toTime(b?.date) - toTime(a?.date)
 );
