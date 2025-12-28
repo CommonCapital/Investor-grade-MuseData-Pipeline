@@ -14,7 +14,7 @@ const Header = () => {
       <header className="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-black/10 z-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="text-xl font-light tracking-tight text-black/60">MUSEDATA</div>
+            <div className="text-xl font-light tracking-tight text-black">MUSEDATA</div>
             
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-8">
@@ -48,10 +48,10 @@ const Header = () => {
 
             {/* Mobile Menu Button */}
             <button 
-              className="md:hidden p-2"
+              className="md:hidden p-2 text-black"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-6 h-6 text-black" /> : <Menu className="w-6 h-6 text-black" />}
             </button>
           </div>
         </div>
@@ -60,9 +60,10 @@ const Header = () => {
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-black/10 bg-white">
             <div className="px-4 py-4 space-y-3">
-              <a href="#reports" className="block text-sm tracking-wide uppercase">Reports</a>
-              <a href="#insights" className="block text-sm tracking-wide uppercase">Insights</a>
-              <a href="#pricing" className="block text-sm tracking-wide uppercase">Pricing</a>
+               <Link href="#reports" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Reports</Link>
+              <Link href="#insights" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Insights</Link>
+              <Link href="/dashboard/billing" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Pricing</Link>
+             
               <Unauthenticated>
                 <SignInButton mode="modal" forceRedirectUrl="/dashboard">
                   <Button className="w-full bg-black text-white hover:bg-white hover:text-black border-2 border-black text-xs tracking-widest uppercase">
