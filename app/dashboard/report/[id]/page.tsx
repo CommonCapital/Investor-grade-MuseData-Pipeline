@@ -242,7 +242,7 @@ function ReportPage() {
             <Button
               onClick={() => router.push('/dashboard')}
               variant='outline'
-              className='h-12 px-8 border-2 border-black/10 hover:border-black bg-white transition-all duration-300 text-xs tracking-widest uppercase'
+              className='h-12 px-8 border-2 border-black/10 text-black hover:border-black bg-white transition-all duration-300 text-xs tracking-widest uppercase'
             >
               <ArrowLeft className='w-4 h-4 mr-2 text-black' />
               Back to Dashboard

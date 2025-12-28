@@ -5,6 +5,7 @@ import { ArrowRight, Menu, Search, X } from 'lucide-react'
 import React, { useState } from 'react'
 import { Button } from '../ui/button'
 import { ModeToggle } from '../ThemeToggle/ThemeToggle'
+import Link from 'next/link'
 
 const Header = () => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -17,9 +18,9 @@ const Header = () => {
             
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-8">
-              <a href="#reports" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black/60">Reports</a>
-              <a href="#insights" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black/60">Insights</a>
-              <a href="#pricing" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black/60">Pricing</a>
+             <Link href="#reports" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Reports</Link>
+              <Link href="#insights" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Insights</Link>
+              <Link href="/dashboard/billing" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Pricing</Link>
               
               <Unauthenticated>
                 <SignInButton mode="modal" forceRedirectUrl="/dashboard">

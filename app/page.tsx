@@ -19,6 +19,7 @@ import {
   Building2,
   Eye
 } from "lucide-react";
+import Link from "next/link";
 
 export default function SEOIntelligenceLanding() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -33,9 +34,9 @@ export default function SEOIntelligenceLanding() {
             
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-8">
-              <a href="#reports" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity">Reports</a>
-              <a href="#insights" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity">Insights</a>
-              <a href="#pricing" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity">Pricing</a>
+              <Link href="#reports" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Reports</Link>
+              <Link href="#insights" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Insights</Link>
+              <Link href="/dashboard/billing" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Pricing</Link>
               
               <Unauthenticated>
                 <SignInButton mode="modal" forceRedirectUrl="/dashboard">
