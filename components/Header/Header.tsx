@@ -58,28 +58,46 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-black/10 bg-white">
-            <div className="px-4 py-4 space-y-3">
-               <Link href="#reports" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Reports</Link>
-              <Link href="#insights" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Insights</Link>
-              <Link href="/dashboard/billing" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Pricing</Link>
-             
-              <Unauthenticated>
-                <SignInButton mode="modal" forceRedirectUrl="/dashboard">
-                  <Button className="w-full bg-black text-white hover:bg-white hover:text-black border-2 border-black text-xs tracking-widest uppercase">
-                    Get Started
-                  </Button>
-                </SignInButton>
-              </Unauthenticated>
-              <Authenticated>
-                <a href="/dashboard" className="block">
-                  <Button className="w-full bg-black text-white hover:bg-white hover:text-black border-2 border-black text-xs tracking-widest uppercase">
-                    Dashboard
-                  </Button>
-                </a>
-              </Authenticated>
-            </div>
-          </div>
+      <div className="md:hidden border-t border-black/10 bg-white">
+  <div className="px-6 py-8 space-y-6">
+    <Link 
+      href="#reports" 
+      className="block text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black"
+    >
+      Reports
+    </Link>
+    <Link 
+      href="#insights" 
+      className="block text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black"
+    >
+      Insights
+    </Link>
+    <Link 
+      href="/dashboard/billing" 
+      className="block text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black"
+    >
+      Pricing
+    </Link>
+    
+    <div className="pt-4">
+      <Unauthenticated>
+        <SignInButton mode="modal" forceRedirectUrl="/dashboard">
+          <Button className="w-full h-12 bg-black text-white hover:bg-white hover:text-black border-2 border-black text-xs tracking-widest uppercase transition-all duration-300">
+            Get Started
+          </Button>
+        </SignInButton>
+      </Unauthenticated>
+      
+      <Authenticated>
+        <a href="/dashboard" className="block">
+          <Button className="w-full h-12 bg-black text-white hover:bg-white hover:text-black border-2 border-black text-xs tracking-widest uppercase transition-all duration-300">
+            Dashboard
+          </Button>
+        </a>
+      </Authenticated>
+    </div>
+  </div>
+</div>
         )}
       </header>
 
