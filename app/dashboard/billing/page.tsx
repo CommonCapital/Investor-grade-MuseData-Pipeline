@@ -3,7 +3,7 @@ import React from 'react'
 
 function Billing() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-black">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <div className="pt-24 lg:pt-32 pb-16 lg:pb-24">
