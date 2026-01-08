@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { InvestorDashboard as InvestorDashboardType } from "@/lib/seo-schema";
-import { useTimeHorizon } from "@/hooks/use-time-horizon";
+
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { MessageCircle, X } from "lucide-react";
 import AIChat from "./AIChat";
+import { useTimeHorizon } from "@/hooks/use-time-horizon";
 import { RunHeader } from "./RunHeader";
 import { ChangesSection } from "./ChangesSection";
 import { ExecutiveSummary } from "./ExecutiveSummary";
@@ -13,13 +14,15 @@ import { TimeSeriesSection } from "./TimeSeriesSection";
 import { AIInsightsPanel } from "./AIInsightsPanel";
 import { FinancialsGrid } from "./FinancialsGrid";
 import { PricePathProtection } from "./PricePathProtection";
-import { PublicMarketMetrics } from "./PublicMarketMetrics";
 import { ValuationSection } from "./ValuationSection";
 import { EventsTimeline } from "./EventsTimeline";
-import { DriverScenariosPanel } from "./DriverScenarioPanel";
+import { DriverScenariosPanel } from "./DriverScenariosPanel";
 import { RisksPanel } from "./RisksPanel";
 import { DataLineage } from "./DataLineage";
 import { DecisionSufficiency } from "./DecisionSufficiency";
+import { MarketExpectationsPanel } from "./MarketExpectationsPanel";
+import { UnitEconomicsPanel } from "./UnitEconomicsPanel";
+
 
 interface InvestorDashboardProps {
   data: InvestorDashboardType;
@@ -28,40 +31,36 @@ interface InvestorDashboardProps {
 }
 
 export function InvestorDashboard({ data, id, user }: InvestorDashboardProps) {
-  const [mode, setMode] = useState<"public" | "private">((data.run_metadata?.mode as "public" | "private") || "public");
+  
   const [isChatOpen, setIsChatOpen] = useState(false);
   const { 
     horizon, 
     setHorizon, 
     isTransitioning 
   } = useTimeHorizon();
+const isPublic = data.company_type === "public";
 
   return (
     <div className="min-h-screen bg-background">
       <RunHeader
         metadata={data.run_metadata}
-        mode={mode}
-        onModeChange={setMode}
+        companyType={data.company_type}
       />
 
-          <main>
-        {/* What Changed Since Last Run - TOP OF DASHBOARD */}
+      <main>
         <ChangesSection changes={data.changes_since_last_run} />
         
-        {/* Decision Sufficiency Assessment */}
         <section className="py-6 px-6 border-b border-border">
           <DecisionSufficiency data={data} />
         </section>
         
         <ExecutiveSummary summary={data.executive_summary} />
         
-        {/* Price → Path → Protection Framework */}
-        {mode === "public" && (
+        {isPublic && (
           <PricePathProtection data={data} />
         )}
         
-        {/* Time-Series Section with functional horizon controls */}
-        {mode === "public" && data.market_data && (
+        {isPublic && data.time_series && (
           <TimeSeriesSection
             data={data}
             horizon={horizon}
@@ -70,7 +69,6 @@ export function InvestorDashboard({ data, id, user }: InvestorDashboardProps) {
           />
         )}
         
-        {/* AI Insights / Hypotheses Panel */}
         {((data.ai_insights && data.ai_insights.length > 0) || (data.hypotheses && data.hypotheses.length > 0)) && (
           <AIInsightsPanel
             insights={data.ai_insights || data.hypotheses || []}
@@ -79,22 +77,22 @@ export function InvestorDashboard({ data, id, user }: InvestorDashboardProps) {
           />
         )}
         
-        <FinancialsGrid data={data} mode={mode} />
+        <FinancialsGrid data={data} />
         
-        {/* Public Market Metrics - replaces private noise */}
-        {mode === "public" && (
-          <PublicMarketMetrics data={data.public_market_metrics} />
+        {data.unit_economics && (
+          <UnitEconomicsPanel data={data} />
         )}
         
-        {/* Valuation Engine */}
-        <ValuationSection valuation={data.valuation} />
+        {(data.guidance_bridge || data.revisions_momentum) && (
+          <MarketExpectationsPanel data={data} />
+        )}
+        
+        <ValuationSection data={data} />
         
         <EventsTimeline events={data.events} />
         
-        {/* Driver-Based Scenarios - replaces thin scenario panel */}
-        <DriverScenariosPanel scenarios={data.scenarios} />
+        <DriverScenariosPanel scenarios={data.scenarios} baseMetrics={data.base_metrics} />
         
-        {/* Enhanced Risks as Tradable Objects */}
         <RisksPanel risks={data.risks} />
         
         <DataLineage sources={data.sources} />
@@ -142,6 +140,7 @@ export function InvestorDashboard({ data, id, user }: InvestorDashboardProps) {
           </span>
         </div>
       </footer>
+    
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { InvestorDashboard, TimeHorizon, MetricWithHistory } from "@/lib/seo-schema";
+import { InvestorDashboard as DashboardData, TimeSeriesMetric, TimeHorizon } from "@/lib/seo-schema";
 import { TIME_HORIZONS, HORIZON_LABELS } from "@/lib/time-series-data";
 import { QuarterlyChart } from "./TimeSeriesChart";
 import { TimeHorizonTabs } from "./TimeHorizonSelector";
@@ -6,26 +6,22 @@ import { cn } from "@/lib/utils";
 import { Activity, AlertCircle } from "lucide-react";
 
 interface TimeSeriesSectionProps {
-  data: InvestorDashboard;
+  data: DashboardData;
   horizon: TimeHorizon;
   onHorizonChange: (h: TimeHorizon) => void;
   isTransitioning?: boolean;
 }
 
-// Helper to check if metric has available history for horizon
-function getHorizonStats(metric: MetricWithHistory | undefined, horizon: TimeHorizon) {
-  if (!metric?.history) return null;
-  if (metric.history.availability !== "available") return null;
+function getHorizonStats(metric: TimeSeriesMetric | undefined | null, horizon: TimeHorizon) {
+  if (!metric) return null;
+ if (metric.availability?.toLowerCase() !== "available") return null;
   
-  const stats = metric.history.horizons?.[horizon];
+  const stats = metric.horizons?.[horizon];
   if (!stats) return null;
   
-  // Check if any quarterly data exists
   const quarters = stats.quarters;
-  if (!quarters) return null;
-  
-  if (quarters.Q1 == null && quarters.Q2 == null && 
-      quarters.Q3 == null && quarters.Q4 == null) {
+  if (!quarters || (quarters.Q1 === null && quarters.Q2 === null && 
+      quarters.Q3 === null && quarters.Q4 === null)) {
     return null;
   }
   
@@ -38,15 +34,14 @@ export function TimeSeriesSection({
   onHorizonChange,
   isTransitioning,
 }: TimeSeriesSectionProps) {
-  // Get horizon stats for each metric with history
-  const stockPriceStats = getHorizonStats(data.market_data?.stock_price, horizon);
-  const volumeStats = getHorizonStats(data.market_data?.volume, horizon);
-  const revenueStats = getHorizonStats(data.financials?.revenue, horizon);
-  const ebitdaStats = getHorizonStats(data.financials?.ebitda, horizon);
+  const ts = data.time_series;
+  
+  const stockPriceStats = getHorizonStats(ts?.stock_price, horizon);
+  const volumeStats = getHorizonStats(ts?.volume, horizon);
+  const revenueStats = getHorizonStats(ts?.revenue, horizon);
+  const ebitdaStats = getHorizonStats(ts?.ebitda, horizon);
 
-  const hasAnyCharts = !!(stockPriceStats || volumeStats || revenueStats || ebitdaStats);
-
-  // Get change percent for header display
+  const hasAnyCharts = stockPriceStats || volumeStats || revenueStats || ebitdaStats;
   const priceChange = stockPriceStats?.change_percent;
 
   return (
@@ -57,7 +52,6 @@ export function TimeSeriesSection({
       )}
     >
       <div className="px-6">
-        {/* Section Header with Horizon Selector */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">
             <Activity className="w-4 h-4 text-muted-foreground" />
@@ -66,16 +60,9 @@ export function TimeSeriesSection({
             </h2>
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* Horizon Tabs */}
-            <TimeHorizonTabs
-              current={horizon}
-              onChange={onHorizonChange}
-            />
-          </div>
+          <TimeHorizonTabs current={horizon} onChange={onHorizonChange} />
         </div>
 
-        {/* Horizon Summary Bar */}
         <div className="flex items-center justify-between bg-secondary/50 px-4 py-3 mb-6">
           <div className="flex items-center gap-6">
             <div>
@@ -91,25 +78,16 @@ export function TimeSeriesSection({
             </div>
           </div>
 
-          {/* Quick Stats - price change if available */}
-          {priceChange != null && (
+          {priceChange !== null && priceChange !== undefined && (
             <div className="flex items-center gap-4">
-              <span
-                className={cn(
-                  "text-lg font-mono",
-                  priceChange >= 0 ? "text-foreground" : "text-muted-foreground"
-                )}
-              >
+              <span className={cn("text-lg font-mono", priceChange >= 0 ? "text-foreground" : "text-muted-foreground")}>
                 {priceChange >= 0 ? "+" : ""}{priceChange.toFixed(1)}%
               </span>
-              <span className="text-micro text-muted-foreground">
-                Price {HORIZON_LABELS[horizon]}
-              </span>
+              <span className="text-micro text-muted-foreground">Price {HORIZON_LABELS[horizon]}</span>
             </div>
           )}
         </div>
 
-        {/* Charts Grid - only render available metrics */}
         {hasAnyCharts ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border">
             {stockPriceStats && (
@@ -117,8 +95,28 @@ export function TimeSeriesSection({
                 horizonStats={stockPriceStats}
                 horizon={horizon}
                 label="Stock Price"
-                currentValue={data.market_data?.stock_price?.current?.value ?? null}
-                currentFormatted={data.market_data?.stock_price?.current?.formatted ?? null}
+                currentValue={data.base_metrics?.stock_price ?? null}
+                currentFormatted={`$${data.base_metrics?.stock_price?.toFixed(2) ?? "—"}`}
+                isTransitioning={isTransitioning}
+              />
+            )}
+            {revenueStats && (
+              <QuarterlyChart
+                horizonStats={revenueStats}
+                horizon={horizon}
+                label="Revenue (Quarterly)"
+                currentValue={data.base_metrics?.revenue ?? null}
+                currentFormatted={`$${((data.base_metrics?.revenue ?? 0) / 1e6).toFixed(0)}M`}
+                isTransitioning={isTransitioning}
+              />
+            )}
+            {ebitdaStats && (
+              <QuarterlyChart
+                horizonStats={ebitdaStats}
+                horizon={horizon}
+                label="EBITDA (Quarterly)"
+                currentValue={data.base_metrics?.ebitda_reported ?? null}
+                currentFormatted={`$${((data.base_metrics?.ebitda_reported ?? 0) / 1e6).toFixed(0)}M`}
                 isTransitioning={isTransitioning}
               />
             )}
@@ -127,28 +125,8 @@ export function TimeSeriesSection({
                 horizonStats={volumeStats}
                 horizon={horizon}
                 label="Volume"
-                currentValue={data.market_data?.volume?.current?.value ?? null}
-                currentFormatted={data.market_data?.volume?.current?.formatted ?? null}
-                isTransitioning={isTransitioning}
-              />
-            )}
-            {revenueStats && (
-              <QuarterlyChart
-                horizonStats={revenueStats}
-                horizon={horizon}
-                label="Revenue"
-                currentValue={data.financials?.revenue?.current?.value ?? null}
-                currentFormatted={data.financials?.revenue?.current?.formatted ?? null}
-                isTransitioning={isTransitioning}
-              />
-            )}
-            {ebitdaStats && (
-              <QuarterlyChart
-                horizonStats={ebitdaStats}
-                horizon={horizon}
-                label="EBITDA"
-                currentValue={data.financials?.ebitda?.current?.value ?? null}
-                currentFormatted={data.financials?.ebitda?.current?.formatted ?? null}
+                currentValue={null}
+                currentFormatted={null}
                 isTransitioning={isTransitioning}
               />
             )}
@@ -158,12 +136,6 @@ export function TimeSeriesSection({
             <AlertCircle className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
             <p className="text-sm text-muted-foreground">
               No quarterly data available for {HORIZON_LABELS[horizon]} horizon.
-            </p>
-            <p className="text-xs text-muted-foreground/70 mt-1">
-              {horizon === "1D" || horizon === "1W" 
-                ? "Daily and weekly horizons don't have quarterly breakdown for financial metrics."
-                : "Historical data may be pending, restricted, or unavailable from sources."
-              }
             </p>
           </div>
         )}

@@ -17,21 +17,30 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (!prompt || isLoading) return
-    setIsLoading(true)
+ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault()
+  if (!prompt || isLoading) return
+  setIsLoading(true)
 
-    try {
-      const response = await initiateLLM(prompt, undefined, country)
-      if (response.ok) {
-        router.push(`/dashboard/report/${response.data.snapshot_id}`)
-      }
-    } finally {
-      setIsLoading(false)
+  try {
+    const response = await initiateLLM(prompt, undefined, country)
+    
+    if (response.ok) {
+      // ✅ Navigate using snapshot_id for URL
+      console.log(`Job created: ${response?.data?.jobId}`)
+      console.log(`Snapshot ID: ${response?.data?.snapshot_id}`)
+      
+      // Use snapshot_id for URL (user-friendly)
+      router.push(`/dashboard/report/${response?.data?.snapshot_id}`)
+    } else {
+      console.error('Failed to create job:', response.error)
     }
+  } catch (error) {
+    console.error('Error creating report:', error)
+  } finally {
+    setIsLoading(false)
   }
-
+}
   return (
     <div className="min-h-screen bg-white text-black">
       <div className="mx-auto max-w-[1200px] px-4 py-24">

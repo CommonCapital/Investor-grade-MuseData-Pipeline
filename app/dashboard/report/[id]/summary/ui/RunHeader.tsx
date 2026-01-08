@@ -1,17 +1,14 @@
-
-import { InvestorDashboard } from "@/lib/seo-schema";
+import { CompanyType, InvestorDashboard } from "@/lib/seo-schema";
 import { cn } from "@/lib/utils";
 
 interface RunHeaderProps {
   metadata: InvestorDashboard["run_metadata"];
-  mode: "public" | "private";
-  onModeChange: (mode: "public" | "private") => void;
+  companyType: CompanyType;
 }
 
-export function RunHeader({ metadata, mode, onModeChange }: RunHeaderProps) {
+export function RunHeader({ metadata, companyType }: RunHeaderProps) {
   return (
     <header className="border-b border-border">
-      {/* Top bar with run metadata */}
       <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-secondary/30">
         <div className="flex items-center gap-6 text-micro font-mono uppercase tracking-wide text-muted-foreground">
           <span>
@@ -21,20 +18,17 @@ export function RunHeader({ metadata, mode, onModeChange }: RunHeaderProps) {
           <span>
             Cut:{" "}
             <span className="text-foreground">
-              {metadata?.timestamp 
-                ? new Date(metadata.timestamp).toLocaleString() 
-                : "N/A"}
+              {metadata?.timestamp ? new Date(metadata.timestamp).toLocaleString() : "—"}
             </span>
           </span>
         </div>
         <div className="flex items-center gap-4 text-micro font-mono uppercase tracking-wide text-muted-foreground">
           <span>
-            Owner: <span className="text-foreground">{metadata?.owner ?? "N/A"}</span>
+            Owner: <span className="text-foreground">{metadata?.owner ?? "Unknown"}</span>
           </span>
         </div>
       </div>
 
-      {/* Main header */}
       <div className="px-6 py-8">
         <div className="flex items-start justify-between">
           <div>
@@ -47,36 +41,19 @@ export function RunHeader({ metadata, mode, onModeChange }: RunHeaderProps) {
                   {metadata.ticker}
                 </span>
               )}
+              {/* Company Type Badge */}
+              <span className={cn(
+                "px-2 py-0.5 text-micro font-mono uppercase",
+                companyType === "public" 
+                  ? "bg-foreground/10 text-foreground border border-foreground/20" 
+                  : "bg-foreground/80 text-background"
+              )}>
+                {companyType === "public" ? "Public" : "Private"}
+              </span>
             </div>
             <h1 className="text-4xl md:text-5xl font-serif font-medium tracking-tight">
               {metadata?.entity ?? "Unknown Entity"}
             </h1>
-          </div>
-
-          {/* Mode toggle */}
-          <div className="flex items-center border border-foreground">
-            <button
-              onClick={() => onModeChange("public")}
-              className={cn(
-                "px-4 py-2 text-micro uppercase tracking-ultra-wide font-sans transition-all duration-150",
-                mode === "public"
-                  ? "bg-foreground text-background"
-                  : "bg-transparent text-foreground hover:bg-foreground/5"
-              )}
-            >
-              Public
-            </button>
-            <button
-              onClick={() => onModeChange("private")}
-              className={cn(
-                "px-4 py-2 text-micro uppercase tracking-ultra-wide font-sans transition-all duration-150",
-                mode === "private"
-                  ? "bg-foreground text-background"
-                  : "bg-transparent text-foreground hover:bg-foreground/5"
-              )}
-            >
-              Proprietary
-            </button>
           </div>
         </div>
       </div>

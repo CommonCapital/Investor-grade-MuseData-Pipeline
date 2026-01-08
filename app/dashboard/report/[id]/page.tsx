@@ -1,52 +1,52 @@
 'use client'
-import { initiateLLM } from '@/actions/initialeLLM';
+import retryJob from '@/actions/retryAnalysisOnly';
 import StatusBadge from '@/components/StatusBadge/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { api } from '@/convex/_generated/api';
-import { formateDateTime, getProgressBarStyle, getProgressPercentage, getReportTitle, getStatusMessage } from '@/lib/status-utils';
-import {useUser} from '@clerk/nextjs'
+import { getProgressBarStyle, getProgressPercentage, getReportTitle, getStatusMessage } from '@/lib/status-utils';
+import { useUser } from '@clerk/nextjs'
 import { useQuery } from 'convex/react';
 import { AlertCircle, ArrowLeft, BarChart3, Calendar, CheckCircle, FileText, Loader2, XCircle } from 'lucide-react';
-import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation'
 import { format } from 'date-fns';
 import React, { useState, useTransition } from 'react'
 
 function ReportPage() {
-  const {id} = useParams<{id: string}>();
-  const {user} = useUser();
+  const { id } = useParams<{ id: string }>();
+  const { user } = useUser();
+  
+  // ✅ FIX: Keep using getJobBySnapshotId since URL contains snapshot ID
   const job = useQuery(api.scrapingJobs.getJobBySnapshotId, {
     snapshotId: id || "skip",
     userId: user?.id || "skip"
   });
+
   const [isPending, startTransition] = useTransition();
-  const [retryError, setRetryError ] = useState<string | null>(null);
+  const [retryError, setRetryError] = useState<string | null>(null);
   const router = useRouter();
+
   const handleRetry = () => {
     if (!job) return;
 
     setRetryError(null);
     startTransition(async () => {
       try {
-        const result = await initiateLLM(job.originalPrompt, job._id);
+        // Use new retry function with job._id (Convex ID)
+        const result = await retryJob(job._id);
+        
         if (result.ok) {
-          if (result.smartRetry) {
-            console.log("Smart retry initiated - staying on current page");
-            return;
-          } else if (result.data?.snapshotId) {
-            router.replace(`/dashboard/report/${result.data.snapshotId}`);
-            return;
-          }
+          console.log("Job retry initiated successfully");
+          // Stay on current page - job will update via live query
         } else {
           setRetryError(result.error || "Failed to retry job");
-
         }
       } catch (error) {
-        setRetryError( error instanceof Error ? error.message : "Unknown error occured");
+        setRetryError(error instanceof Error ? error.message : "Unknown error occurred");
       }
     })
   }
+
   if (!id) {
     return (
       <div className='flex items-center justify-center min-h-screen bg-white'>
@@ -58,7 +58,7 @@ function ReportPage() {
     )
   }
 
-  // Loading state - fetching job
+  // Loading state
   if (job === undefined) {
     return (
       <div className='flex items-center justify-center min-h-screen bg-white'>
@@ -79,7 +79,7 @@ function ReportPage() {
         <p className='text-sm text-black/60 mb-8'>The report you're looking for doesn't exist</p>
         <Button
           onClick={() => router.push('/dashboard')}
-          className='bg-black text-black hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-xs tracking-widest uppercase'
+          className='bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-xs tracking-widest uppercase'
         >
           Back to Dashboard
         </Button>
@@ -97,7 +97,7 @@ function ReportPage() {
               Report Status
             </h1>
             <p className='text-base font-light text-black/70'>
-              Track the progress of your SEO report generation
+              Track the progress of your investor report generation
             </p>
           </div>
 
@@ -127,25 +127,64 @@ function ReportPage() {
                 </div>
               </div>
 
+              {/* Shard Progress for Distributed Jobs */}
+              {job.shards && job.totalShards && (
+                <div className='space-y-3 pt-4 border-t border-black/5'>
+                  <div className='flex items-center justify-between text-sm font-light'>
+                    <span className='tracking-wide'>Data Collection</span>
+                    <span className='font-normal'>
+                      {job.completedGeminis || 0} / {job.totalShards} shards
+                    </span>
+                  </div>
+                  <div className='w-full bg-black/5 h-1.5'>
+                    <div 
+                      className='h-full bg-black/70 transition-all duration-500'
+                      style={{ 
+                        width: `${((job.completedGeminis || 0) / job.totalShards) * 100}%` 
+                      }}
+                    />
+                  </div>
+
+                  {job.status === 'analyzing' && (
+                    <>
+                      <div className='flex items-center justify-between text-sm font-light mt-3'>
+                        <span className='tracking-wide'>AI Analysis</span>
+                        <span className='font-normal'>
+                          {job.completedLLMs || 0} / {job.totalShards} complete
+                        </span>
+                      </div>
+                      <div className='w-full bg-black/5 h-1.5'>
+                        <div 
+                          className='h-full bg-black/70 transition-all duration-500'
+                          style={{ 
+                            width: `${((job.completedLLMs || 0) / job.totalShards) * 100}%` 
+                          }}
+                        />
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+
               {/* Job Details */}
               <div className='space-y-4 pt-4 border-t border-black/5'>
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                   <div className='flex items-start gap-3'>
-                    <FileText className='w-4 h-4  mt-0.5' />
+                    <FileText className='w-4 h-4 mt-0.5' />
                     <div>
-                      <p className='text-sm font-normal mb-1'>Original Query</p>
-                      <p className='text-sm  font-light truncate'>
+                      <p className='text-sm font-normal mb-1'>Company / Query</p>
+                      <p className='text-sm font-light truncate'>
                         {job.originalPrompt}
                       </p>
                     </div>
                   </div>
 
                   <div className='flex items-start gap-3'>
-                    <Calendar className='w-4 h-4  mt-0.5' />
+                    <Calendar className='w-4 h-4 mt-0.5' />
                     <div>
                       <p className='text-sm font-normal mb-1'>Created</p>
-                      <p className='text-sm  font-light'>
-                                         {format(new Date(job.createdAt), 'PPpp')}
+                      <p className='text-sm font-light'>
+                        {format(new Date(job.createdAt), 'PPpp')}
                       </p>
                     </div>
                   </div>
@@ -153,11 +192,11 @@ function ReportPage() {
 
                 {job.completedAt && (
                   <div className='flex items-start gap-3'>
-                    <CheckCircle className='w-4 h-4  mt-0.5' />
+                    <CheckCircle className='w-4 h-4 mt-0.5' />
                     <div>
                       <p className='text-sm font-normal mb-1'>Completed</p>
-                      <p className='text-sm  font-light'>
-                    {format(new Date(job.completedAt), 'PPpp')}
+                      <p className='text-sm font-light'>
+                        {format(new Date(job.completedAt), 'PPpp')}
                       </p>
                     </div>
                   </div>
@@ -165,10 +204,10 @@ function ReportPage() {
 
                 {job.snapshotId && (
                   <div className='flex items-start gap-3'>
-                    <BarChart3 className='w-4 h-4  mt-0.5' />
+                    <BarChart3 className='w-4 h-4 mt-0.5' />
                     <div>
                       <p className='text-sm font-normal mb-1'>Snapshot ID</p>
-                      <p className='text-sm  font-light tracking-wide'>
+                      <p className='text-sm font-light tracking-wide font-mono text-xs'>
                         {job.snapshotId}
                       </p>
                     </div>
@@ -176,12 +215,12 @@ function ReportPage() {
                 )}
 
                 {job.error && (
-                  <div className='p-4 bg-black/5 border border-black/10'>
+                  <div className='p-4 bg-red-50 border border-red-200'>
                     <div className='flex items-start gap-2'>
-                      <XCircle className='w-4 h-4  mt-0.5 flex-shrink-0' />
+                      <XCircle className='w-4 h-4 text-red-600 mt-0.5 flex-shrink-0' />
                       <div>
-                        <p className='text-sm font-normal mb-2'>Error Details</p>
-                        <p className='text-sm  font-light'>{job.error}</p>
+                        <p className='text-sm font-normal mb-2 text-red-900'>Error Details</p>
+                        <p className='text-sm font-light text-red-800'>{job.error}</p>
                       </div>
                     </div>
                   </div>
@@ -189,15 +228,15 @@ function ReportPage() {
               </div>
 
               {/* Results Preview */}
-              {job.status === 'completed' && job.results && job.results.length > 0 && (
+              {job.status === 'completed' && job.seoReport && (
                 <div className='pt-4 border-t border-black/5'>
                   <div className='flex items-center gap-2 mb-3'>
-                    <BarChart3 className='w-4 h-4 ' />
-                    <p className='text-sm font-normal'>Results Available</p>
+                    <CheckCircle className='w-4 h-4 text-green-600' />
+                    <p className='text-sm font-normal'>Report Ready</p>
                   </div>
-                  <div className='p-4 bg-black/5 border border-black/10'>
-                    <p className='text-sm  font-light'>
-                      Your SEO report is ready for analysis
+                  <div className='p-4 bg-green-50 border border-green-200'>
+                    <p className='text-sm font-light text-green-900'>
+                      Your investor dashboard is ready for analysis
                     </p>
                   </div>
                 </div>
@@ -221,20 +260,20 @@ function ReportPage() {
                 <Button
                   onClick={handleRetry}
                   disabled={isPending}
-                  className='h-12 px-8 bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-xs tracking-widest uppercase'
+                  className='h-12 px-8 bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-xs tracking-widest uppercase disabled:opacity-50 disabled:cursor-not-allowed'
                 >
                   {isPending ? (
                     <>
-                      <Loader2 className='w-4 h-4 animate-spin mr-2 text-white' />
+                      <Loader2 className='w-4 h-4 animate-spin mr-2' />
                       Retrying...
                     </>
                   ) : (
-                    'Retry Report'
+                    'Retry Analysis'
                   )}
                 </Button>
 
                 {retryError && (
-                  <p className='text-sm text-black/70 font-light text-center'>{retryError}</p>
+                  <p className='text-sm text-red-600 font-light text-center'>{retryError}</p>
                 )}
               </div>
             )}

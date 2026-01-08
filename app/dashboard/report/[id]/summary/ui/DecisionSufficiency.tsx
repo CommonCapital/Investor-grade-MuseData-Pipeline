@@ -26,9 +26,6 @@ interface DecisionSufficiencyProps {
   className?: string;
 }
 
-type ImpactLevel = "critical" | "material" | "minor";
-type StatusType = "available" | "pending" | "unavailable" | "restricted" | "stale" | "conflicting";
-
 const SUFFICIENCY_CONFIG: Record<SufficiencyLevel, {
   icon: typeof CheckCircle;
   label: string;
@@ -88,13 +85,13 @@ function DataQualityMeter({ score }: { score: number }) {
 }
 
 function UncertaintyItem({ reason }: { reason: UncertaintyReason }) {
-  const impactColors: Record<ImpactLevel, string> = {
+  const impactColors = {
     critical: "border-l-red-500 bg-red-50/50 dark:bg-red-950/20",
     material: "border-l-amber-500 bg-amber-50/50 dark:bg-amber-950/20",
     minor: "border-l-muted-foreground/30 bg-muted/30",
   };
   
-  const statusLabels: Record<StatusType, string> = {
+  const statusLabels = {
     available: "Available",
     pending: "Pending",
     unavailable: "Not Available",
@@ -106,7 +103,7 @@ function UncertaintyItem({ reason }: { reason: UncertaintyReason }) {
   return (
     <div className={cn(
       "border-l-2 pl-3 py-2",
-      impactColors[reason.impact as ImpactLevel] || impactColors.minor
+      impactColors[reason.impact]
     )}>
       <div className="flex items-start justify-between gap-2">
         <span className="font-medium text-sm">{reason.field}</span>
@@ -116,7 +113,8 @@ function UncertaintyItem({ reason }: { reason: UncertaintyReason }) {
           reason.impact === "material" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300" :
           "bg-muted text-muted-foreground"
         )}>
-          {statusLabels[reason.status as StatusType] || reason.status}
+     {statusLabels[reason.status as keyof typeof statusLabels] ?? "Unknown"}
+
         </span>
       </div>
       <p className="text-xs text-muted-foreground mt-1">{reason.explanation}</p>

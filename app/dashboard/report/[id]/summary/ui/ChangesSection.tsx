@@ -8,15 +8,14 @@ import {
   BarChart3, 
   AlertTriangle, 
   Newspaper,
-  ExternalLink,
-  LucideIcon
+  ExternalLink
 } from "lucide-react";
 
 interface ChangesSectionProps {
   changes: Change[] | null | undefined;
 }
 
-const CATEGORY_ICONS: Record<string, LucideIcon> = {
+const CATEGORY_ICONS: Record<string, typeof FileText> = {
   filing: FileText,
   transcript: Mic,
   guidance: TrendingUp,
@@ -50,14 +49,14 @@ export function ChangesSection({ changes }: ChangesSectionProps) {
 
       <div className="space-y-3">
         {displayChanges.map((change, index) => {
-          const categoryKey = change?.category || "news";
-          const Icon = CATEGORY_ICONS[categoryKey] || FileText;
-          const pillarKey = change?.thesis_pillar;
-          const pillarStyle = pillarKey ? PILLAR_STYLES[pillarKey] : null;
+          if (!change) return null;
+          const category = change.category ?? "news";
+          const Icon = CATEGORY_ICONS[category] ?? Newspaper;
+          const pillarStyle = change.thesis_pillar ? PILLAR_STYLES[change.thesis_pillar] : null;
 
           return (
             <div
-              key={change?.id || `change-${index}`}
+              key={change.id ?? index}
               className="bg-card border border-border p-4 hover:shadow-subtle transition-all"
             >
               <div className="flex items-start justify-between gap-4">
@@ -66,7 +65,7 @@ export function ChangesSection({ changes }: ChangesSectionProps) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-micro uppercase tracking-wide text-muted-foreground">
-                        {change?.category?.replace("_", " ") || "update"}
+                        {category.replace("_", " ")}
                       </span>
                       {pillarStyle && (
                         <span
@@ -80,16 +79,12 @@ export function ChangesSection({ changes }: ChangesSectionProps) {
                         </span>
                       )}
                     </div>
-                    <h4 className="font-medium text-foreground mb-1">
-                      {change?.title || "Untitled Change"}
-                    </h4>
-                    <p className="text-sm text-muted-foreground">
-                      {change?.description || "No description available"}
-                    </p>
+                    <h4 className="font-medium text-foreground mb-1">{change.title ?? "Untitled"}</h4>
+                    <p className="text-sm text-muted-foreground">{change.description ?? ""}</p>
                   </div>
                 </div>
 
-                {change?.source_url && (
+                {change.source_url && (
                   <a
                     href={change.source_url}
                     target="_blank"
@@ -101,9 +96,9 @@ export function ChangesSection({ changes }: ChangesSectionProps) {
                 )}
               </div>
 
-              {(change?.so_what || change?.action) && (
+              {(change.so_what || change.action) && (
                 <div className="mt-3 pt-3 border-t border-border grid grid-cols-2 gap-4">
-                  {change?.so_what && (
+                  {change.so_what && (
                     <div>
                       <span className="text-micro uppercase tracking-wide text-muted-foreground block mb-1">
                         So What
@@ -111,7 +106,7 @@ export function ChangesSection({ changes }: ChangesSectionProps) {
                       <span className="text-sm">{change.so_what}</span>
                     </div>
                   )}
-                  {change?.action && (
+                  {change.action && (
                     <div>
                       <span className="text-micro uppercase tracking-wide text-muted-foreground block mb-1">
                         Action

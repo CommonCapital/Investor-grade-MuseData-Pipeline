@@ -7,8 +7,7 @@ import {
   Lightbulb, 
   BarChart3,
   Sparkles,
-  ArrowRight,
-  LucideIcon
+  ArrowRight
 } from "lucide-react";
 
 interface AIInsightsPanelProps {
@@ -17,21 +16,21 @@ interface AIInsightsPanelProps {
   isTransitioning?: boolean;
 }
 
-const INSIGHT_ICONS: Record<string, LucideIcon> = {
+const INSIGHT_ICONS = {
   hypothesis: TrendingUp,
   recommendation: Lightbulb,
   alert: AlertTriangle,
   analysis: BarChart3,
 };
 
-const INSIGHT_STYLES: Record<string, string> = {
+const INSIGHT_STYLES = {
   hypothesis: "border-l-foreground",
   recommendation: "border-l-foreground/60",
   alert: "border-l-foreground",
   analysis: "border-l-foreground/40",
 };
 
-const CONFIDENCE_BAND_STYLES: Record<string, { label: string; width: string; color: string }> = {
+const CONFIDENCE_BAND_STYLES = {
   high: { label: "High Confidence", width: "100%", color: "bg-foreground" },
   medium: { label: "Medium Confidence", width: "66%", color: "bg-foreground/70" },
   low: { label: "Low Confidence", width: "33%", color: "bg-foreground/40" },
@@ -56,15 +55,18 @@ function ConfidenceBand({ band }: { band: string | null | undefined }) {
 }
 
 function InsightCard({ insight }: { insight: AIInsight }) {
-  const insightType = insight?.type || "analysis";
-  const Icon = INSIGHT_ICONS[insightType] || BarChart3;
-  const styleClass = INSIGHT_STYLES[insightType] || "border-l-foreground/40";
+  if (!insight) return null;
+  
+  const insightType = (insight.type === "hypothesis" || insight.type === "recommendation" || insight.type === "alert" || insight.type === "analysis") 
+    ? insight.type 
+    : "analysis";
+  const Icon = INSIGHT_ICONS[insightType];
   
   return (
     <div 
       className={cn(
         "bg-card p-4 border-l-2 transition-all duration-300",
-        styleClass,
+        INSIGHT_STYLES[insightType],
         "hover:bg-secondary/50"
       )}
     >
@@ -75,18 +77,18 @@ function InsightCard({ insight }: { insight: AIInsight }) {
             {insightType}
           </span>
         </div>
-        <ConfidenceBand band={insight?.confidence_band} />
+        <ConfidenceBand band={insight.confidence_band} />
       </div>
       
       <h4 className="font-medium text-foreground mb-1">
-        {insight?.title || "Untitled Insight"}
+        {insight.title ?? "Untitled Insight"}
       </h4>
       
       <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-        {insight?.summary || "No summary available"}
+        {insight.summary ?? ""}
       </p>
       
-      {insight?.details && (
+      {insight.details && (
         <p className="text-micro text-muted-foreground border-t border-border pt-2 mb-3">
           {insight.details}
         </p>
@@ -95,11 +97,11 @@ function InsightCard({ insight }: { insight: AIInsight }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-micro text-muted-foreground font-mono">
-            {insight?.source || "AI Analysis"}
+            {insight.source ?? "Unknown"}
           </span>
         </div>
         
-        {insight?.action_required && (
+        {insight.action_required && (
           <span className="flex items-center gap-1 text-micro uppercase tracking-wide text-foreground">
             Action Required
             <ArrowRight className="w-3 h-3" />
@@ -115,8 +117,8 @@ export function AIInsightsPanel({
   horizon,
   isTransitioning 
 }: AIInsightsPanelProps) {
-  const filteredInsights = insights.filter(i => 
-    i?.horizon_relevance?.includes(horizon)
+  const filteredInsights = (insights ?? []).filter(i => 
+    i && i.horizon_relevance && i.horizon_relevance.includes(horizon)
   );
   
   return (
@@ -154,8 +156,8 @@ export function AIInsightsPanel({
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredInsights.map((insight, index) => (
-              <InsightCard key={insight?.id || `insight-${index}`} insight={insight} />
+            {filteredInsights.map((insight) => (
+              <InsightCard key={insight?.id} insight={insight} />
             ))}
           </div>
         )}

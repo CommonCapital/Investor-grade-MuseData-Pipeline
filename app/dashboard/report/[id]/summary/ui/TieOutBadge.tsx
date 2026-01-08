@@ -22,11 +22,8 @@ const statusConfig: Record<string, { label: string; className: string }> = {
 };
 
 export function TieOutBadge({ status, className }: TieOutBadgeProps) {
- const config =
-  status 
-    ? statusConfig[status] ?? statusConfig.provisional
-    : statusConfig.provisional;
-
+  const normalizedStatus = status ?? "provisional";
+  const config = statusConfig[normalizedStatus] ?? statusConfig.provisional;
 
   return (
     <span
