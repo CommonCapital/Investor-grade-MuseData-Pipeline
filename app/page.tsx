@@ -123,12 +123,12 @@ export default function SEOIntelligenceLanding() {
           <div className="max-w-4xl">
             <div className="mb-6">
               <Badge className="bg-black text-white hover:bg-black/90 text-xs tracking-widest uppercase border-0">
-                SEO Intelligence for Investors
+                MuseData Intelligence for Investors
               </Badge>
             </div>
 
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light leading-[1.1] tracking-tight mb-8 text-black/70">
-              Instant SEO Reports on Any Public Company
+              Instant Reports on Any Public Company
             </h1>
 
             <p className="text-xl sm:text-2xl font-light leading-relaxed text-black/70 mb-12 max-w-3xl">
@@ -200,7 +200,7 @@ export default function SEOIntelligenceLanding() {
             </h2>
             <p className="text-lg font-light text-black/70 leading-relaxed">
               Investors waste time manually researching digital presence. 
-              Get comprehensive SEO intelligence instantly.
+              Get comprehensive research intelligence instantly.
             </p>
           </div>
           
@@ -225,7 +225,7 @@ export default function SEOIntelligenceLanding() {
               <div className="text-4xl font-light mb-3 text-black/60">$15K+</div>
               <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Monthly Cost</div>
               <p className="text-sm font-light text-black/70">
-                Spent on SEO tools and analyst time
+                Spent on Data Pipeline tools and analyst time
               </p>
             </div>
           </div>
@@ -237,7 +237,7 @@ export default function SEOIntelligenceLanding() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto mb-20">
             <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight text-black/70">
-              Comprehensive SEO Intelligence
+              Comprehensive Research Intelligence
             </h2>
             <p className="text-lg font-light text-black/70 leading-relaxed">
               AI-powered reports that give you complete visibility into any public company's digital presence and competitive positioning.
@@ -433,7 +433,7 @@ export default function SEOIntelligenceLanding() {
               Built for Investment Professionals
             </h2>
             <p className="text-lg font-light text-white/70 leading-relaxed mb-12">
-              Fast, comprehensive SEO intelligence for informed investment decisions.
+              Fast, comprehensive Research intelligence for informed investment decisions.
             </p>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -517,7 +517,7 @@ export default function SEOIntelligenceLanding() {
               </div>
               <h3 className="text-xl font-light mb-3 text-black/60">API Access</h3>
               <p className="text-sm font-light text-black/70">
-                Integrate SEO data directly into your investment workflows
+                Integrate Pipeline data directly into your investment workflows
               </p>
             </div>
           </div>
@@ -532,7 +532,7 @@ export default function SEOIntelligenceLanding() {
               Start Generating Reports Today
             </h2>
             <p className="text-lg font-light text-black/70 mb-2 max-w-2xl mx-auto">
-              Get instant access to comprehensive SEO intelligence on any public company.
+              Get instant access to comprehensive Research intelligence on any public company.
             </p>
             <p className="text-sm font-light text-black/60 mb-8">
               Professional reports in seconds, not weeks.
@@ -584,7 +584,7 @@ export default function SEOIntelligenceLanding() {
             </div>
           </div>
           <div className="mt-8 text-center text-xs text-white/40">
-            © 2025 MuseData. SEO intelligence platform for investment professionals.
+            © 2025 MuseData. Research intelligence platform for investment professionals.
           </div>
         </div>
       </footer>

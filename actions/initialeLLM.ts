@@ -8,7 +8,7 @@ import { ApiPath } from "@/lib/constant";
 
 // Each Gemini gets its specific schema portion and scraping instructions
 // Enhanced Gemini Shard Configurations with JSON Examples and Anti-Null Routing
-const SHARD_CONFIGS = [
+ const SHARD_CONFIGS = [
 {
     index: 1,
     name: "financial_metrics",
@@ -2628,7 +2628,6 @@ EXPECTED JSON OUTPUT FORMAT:
   }
 ];
 
-
 export async function initiateLLM(
   prompt: string,
   existingJobId?: string,
@@ -2709,21 +2708,38 @@ export async function initiateLLM(
       {
         originalPrompt: prompt,
         userId,
-        
       }
     );
   }
 
   // ============================================================================
-  // LAUNCH PARALLEL GEMINI SCRAPERS
+  // LAUNCH SEQUENTIAL GEMINI SCRAPERS WITH DELAYS (FIXED FOR RATE LIMITS)
   // ============================================================================
-  const scraperPromises = SHARD_CONFIGS.map(async (shard) => {
+  const DELAY_BETWEEN_SHARDS = 35000; // 25 seconds between each shard
+  const results: Array<{ success: boolean; snapshotId?: string; error?: string }> = [];
+
+  console.log(`🚀 Launching ${SHARD_CONFIGS.length} Gemini scrapers with ${DELAY_BETWEEN_SHARDS}ms delays...`);
+
+  for (let i = 0; i < SHARD_CONFIGS.length; i++) {
+    const shard = SHARD_CONFIGS[i];
+
+    // ✅ ADD DELAY BEFORE EACH REQUEST (except first)
+    if (i > 0) {
+      console.log(`⏳ Waiting ${DELAY_BETWEEN_SHARDS}ms before shard ${shard.index}...`);
+      await new Promise(resolve => setTimeout(resolve, DELAY_BETWEEN_SHARDS));
+    }
+
     const endpoint = `${process.env.NEXT_PUBLIC_CONVEX_SITE_URL}${ApiPath.Webhook}?jobId=${jobId}&shardIndex=${shard.index}`;
     const encodedEndpoint = encodeURIComponent(endpoint);
 
     const url = `https://api.brightdata.com/datasets/v3/trigger?dataset_id=${process.env.BRIGHTDATA_DATASET_ID}&endpoint=${encodedEndpoint}&format=json&uncompressed_webhook=true&include_errors=true`;
 
     const shardPrompt = shard.prompt(prompt);
+
+    // ✅ LOG PROMPT LENGTH TO DETECT ISSUES
+    const promptLength = shardPrompt.length;
+    const estimatedTokens = Math.ceil(promptLength / 4);
+    console.log(`📤 Shard ${shard.index}: ${promptLength} chars (~${estimatedTokens} tokens)`);
 
     try {
       const response = await fetch(url, {
@@ -2750,13 +2766,16 @@ export async function initiateLLM(
           errorText ? `: ${errorText}` : ""
         }`;
 
+        console.error(`❌ BrightData error for shard ${shard.index}:`, errorMsg);
+
         await convex.mutation(api.scrapingJobs.failGeminiShard, {
           jobId: jobId as Id<"scrapingJobs">,
           shardIndex: shard.index,
           error: errorMsg,
         });
 
-        return { success: false, error: errorMsg };
+        results.push({ success: false, error: errorMsg });
+        continue; // ✅ Continue to next shard instead of stopping
       }
 
       const data = await response.json().catch(() => null);
@@ -2770,15 +2789,22 @@ export async function initiateLLM(
             snapshotId: data.snapshot_id,
           }
         );
+
+        console.log(`✅ Shard ${shard.index} launched successfully (snapshot: ${data.snapshot_id})`);
+      } else {
+        console.log(`✅ Shard ${shard.index} launched (no snapshot yet)`);
       }
 
-      return {
+      results.push({
         success: true,
         snapshotId: data?.snapshot_id,
-      };
+      });
+
     } catch (error) {
       const errorMsg =
         error instanceof Error ? error.message : String(error);
+
+      console.error(`❌ Exception launching shard ${shard.index}:`, errorMsg);
 
       await convex.mutation(api.scrapingJobs.failGeminiShard, {
         jobId: jobId as Id<"scrapingJobs">,
@@ -2786,15 +2812,16 @@ export async function initiateLLM(
         error: errorMsg,
       });
 
-      return { success: false, error: errorMsg };
+      results.push({ success: false, error: errorMsg });
     }
-  });
+  }
 
-  const results = await Promise.allSettled(scraperPromises);
+  // ============================================================================
+  // CHECK RESULTS
+  // ============================================================================
+  const successfulLaunches = results.filter(r => r.success);
 
-  const successfulLaunches = results.filter(
-    (r) => r.status === "fulfilled" && r.value.success
-  );
+  console.log(`✅ Successfully launched ${successfulLaunches.length}/${SHARD_CONFIGS.length} scrapers`);
 
   if (successfulLaunches.length === 0) {
     await convex.mutation(api.scrapingJobs.failJob, {

@@ -41,23 +41,24 @@ export const processAllShards = action({
       console.log(`📊 Found ${job.shards.length} shards to process`);
 
       // ✅ BATCH PROCESSING: Process 2 shards at a time with 35s delays
-      const BATCH_SIZE = 2;
+      const BATCH_SIZE = 1;
       const BATCH_DELAY_MS = 35000; // 35 seconds between batches
 
       for (let i = 0; i < job.shards.length; i += BATCH_SIZE) {
-        const batch = job.shards.slice(i, i + BATCH_SIZE);
-        const batchNum = Math.floor(i / BATCH_SIZE);
-        const delayMs = batchNum * BATCH_DELAY_MS;
-        
-        console.log(`📦 Batch ${batchNum + 1}: Scheduling shards ${batch.map(s => s.shardIndex).join(', ')} with ${delayMs}ms delay`);
-        
-        batch.forEach(shard => {
-          ctx.scheduler.runAfter(delayMs, internal.analysis.processSingleShard, {
-            jobId: args.jobId,
-            shardIndex: shard.shardIndex,
-          });
-        });
-      }
+  const batch = job.shards.slice(i, i + BATCH_SIZE);
+  const batchNum = Math.floor(i / BATCH_SIZE);
+  const delayMs = batchNum * BATCH_DELAY_MS;
+
+  console.log(`📦 Batch ${batchNum + 1}: Scheduling shards ${batch.map(s => s.shardIndex).join(', ')} with ${delayMs}ms delay`);
+
+  for (const shard of batch) {
+    await ctx.scheduler.runAfter(delayMs, internal.analysis.processSingleShard, {
+      jobId: args.jobId,
+      shardIndex: shard.shardIndex,
+    });
+  }
+}
+
 
       console.log(`✅ All ${job.shards.length} LLM jobs scheduled in batches`);
       return null;
@@ -275,7 +276,7 @@ const SHARD_CONFIGS: ShardConfig[] = [
       "valuation (dcf, trading_comps, precedent_transactions)",
       "scenarios (base, upside, downside with probability, assumptions, drivers, outputs)"
     ],
-    buildSystemPrompt: () => `You are an expert financial analyst. Analyze the provided Gemini search data and generate a comprehensive financial analysis.
+    buildSystemPrompt: () => `You are an expert financial analyst. Analyze the provided  search data and generate a comprehensive financial analysis.
 
 YOUR RESPONSIBILITY: Analyze and return financial_metrics shard data including company metadata.
 
@@ -298,7 +299,7 @@ Return ONLY the JSON object. No markdown, no explanations, no preamble.`,
 
    
 
-    buildPrompt: (geminiData: any) => `ANALYZE THIS GEMINI SEARCH DATA AND GENERATE FINANCIAL METRICS WITH METADATA:
+    buildPrompt: (geminiData: any) => `ANALYZE THIS MuseData Research Engine's SEARCH DATA AND GENERATE FINANCIAL METRICS WITH METADATA:
 
 ${JSON.stringify(geminiData, null, 2)}
 
@@ -1072,7 +1073,7 @@ Return ONLY this JSON structure. No markdown, no code blocks, no explanations.`,
       "risks (ALL 6 categories: regulatory, market, operational, cybersecurity, financial, strategic)",
       "kill_switch (conditions[])"
     ],
-    buildSystemPrompt: () => `You are an expert risk analyst. Analyze the provided Gemini search data and generate a comprehensive risk assessment.
+    buildSystemPrompt: () => `You are an expert risk analyst. Analyze the provided search data and generate a comprehensive risk assessment.
 
 YOUR RESPONSIBILITY: Analyze and return risk_analysis shard data.
 
@@ -1090,7 +1091,7 @@ CRITICAL REQUIREMENTS:
 
 Return ONLY the JSON object. No markdown, no explanations, no preamble.`,
 
-    buildPrompt: (geminiData: any) => `ANALYZE THIS GEMINI SEARCH DATA AND GENERATE RISK ASSESSMENT:
+    buildPrompt: (geminiData: any) => `ANALYZE THIS MuseData Research Engine's SEARCH DATA AND GENERATE RISK ASSESSMENT:
 
 ${JSON.stringify(geminiData, null, 2)}
 
@@ -1279,7 +1280,7 @@ Return ONLY this JSON structure. No markdown, no code blocks, no explanations.`,
       "hypotheses[] (with falsification_criteria)",
       "ai_insights[] (same structure as hypotheses)"
     ],
-    buildSystemPrompt: () => `You are an expert strategic analyst. Analyze the provided Gemini search data and generate comprehensive strategic insights.
+    buildSystemPrompt: () => `You are an expert strategic analyst. Analyze the provided search data and generate comprehensive strategic insights.
 
 YOUR RESPONSIBILITY: Analyze and return strategic_insights shard data.
 
@@ -1296,7 +1297,7 @@ CRITICAL REQUIREMENTS:
 
 Return ONLY the JSON object. No markdown, no explanations, no preamble.`,
 
-    buildPrompt: (geminiData: any) => `ANALYZE THIS GEMINI SEARCH DATA AND GENERATE STRATEGIC INSIGHTS:
+    buildPrompt: (geminiData: any) => `ANALYZE THIS MuseData Research Engine's SEARCH DATA AND GENERATE STRATEGIC INSIGHTS:
 
 ${JSON.stringify(geminiData, null, 2)}
 
@@ -1461,7 +1462,7 @@ Return ONLY this JSON structure. No markdown, no code blocks, no explanations.`,
       "unit_economics (cac, ltv, ltv_cac_ratio, payback_period_months, investor_context)",
       "segments[] (name, revenue, growth, margin)"
     ],
-    buildSystemPrompt: () => `You are an expert operational analyst. Analyze the provided Gemini search data and generate comprehensive operational metrics.
+    buildSystemPrompt: () => `You are an expert operational analyst. Analyze the provided  search data and generate comprehensive operational metrics.
 
 YOUR RESPONSIBILITY: Analyze and return operational_metrics shard data.
 
@@ -1477,7 +1478,7 @@ CRITICAL REQUIREMENTS:
 
 Return ONLY the JSON object. No markdown, no explanations, no preamble.`,
 
-    buildPrompt: (geminiData: any) => `ANALYZE THIS GEMINI SEARCH DATA AND GENERATE OPERATIONAL METRICS:
+    buildPrompt: (geminiData: any) => `ANALYZE THIS MuseData Research Engine's SEARCH DATA AND GENERATE OPERATIONAL METRICS:
 
 ${JSON.stringify(geminiData, null, 2)}
 
@@ -1698,7 +1699,7 @@ Return ONLY this JSON structure. No markdown, no code blocks, no explanations.`,
       "All with horizons: 1D, 1W, 1M, 1Y, 5Y, 10Y",
       "Each horizon: quarters{Q1-Q4}, high, low, average, volatility, change_percent"
     ],
-    buildSystemPrompt: () => `You are an expert time-series analyst. Analyze the provided Gemini search data and generate comprehensive historical data.
+    buildSystemPrompt: () => `You are an expert time-series analyst. Analyze the provided search data and generate comprehensive historical data.
 
 YOUR RESPONSIBILITY: Analyze and return time_series shard data.
 
@@ -1714,7 +1715,7 @@ CRITICAL REQUIREMENTS:
 
 Return ONLY the JSON object. No markdown, no explanations, no preamble.`,
 
-    buildPrompt: (geminiData: any) => `ANALYZE THIS GEMINI SEARCH DATA AND GENERATE TIME-SERIES DATA:
+    buildPrompt: (geminiData: any) => `ANALYZE THIS MuseData Research Engine's SEARCH DATA AND GENERATE TIME-SERIES DATA:
 
 ${JSON.stringify(geminiData, null, 2)}
 
@@ -1913,7 +1914,7 @@ Return ONLY this JSON structure. No markdown, no code blocks, no explanations.`,
       "revisions_momentum (direction, magnitude, trend)",
       "net_cash_or_debt, buyback_capacity, sbc_percent_revenue, share_count_trend"
     ],
-    buildSystemPrompt: () => `You are an expert market analyst. Analyze the provided Gemini search data and generate comprehensive market positioning metrics.
+    buildSystemPrompt: () => `You are an expert market analyst. Analyze the provided search data and generate comprehensive market positioning metrics.
 
 YOUR RESPONSIBILITY: Analyze and return market_position shard data.
 
@@ -1928,7 +1929,7 @@ CRITICAL REQUIREMENTS:
 
 Return ONLY the JSON object. No markdown, no explanations, no preamble.`,
 
-    buildPrompt: (geminiData: any) => `ANALYZE THIS GEMINI SEARCH DATA AND GENERATE MARKET POSITIONING METRICS:
+    buildPrompt: (geminiData: any) => `ANALYZE THIS MuseData Research Engine's SEARCH DATA AND GENERATE MARKET POSITIONING METRICS:
 
 ${JSON.stringify(geminiData, null, 2)}
 
@@ -2170,7 +2171,7 @@ Return ONLY this JSON structure. No markdown, no code blocks, no explanations.`,
       "path_indicators[] (thesis progress tracking)",
       "position_sizing, variant_view"
     ],
-    buildSystemPrompt: () => `You are an expert events analyst. Analyze the provided Gemini search data and generate comprehensive events timeline and thesis tracking.
+    buildSystemPrompt: () => `You are an expert events analyst. Analyze the provided search data and generate comprehensive events timeline and thesis tracking.
 
 YOUR RESPONSIBILITY: Analyze and return events_timeline shard data.
 
@@ -2187,7 +2188,7 @@ CRITICAL REQUIREMENTS:
 
 Return ONLY the JSON object. No markdown, no explanations, no preamble.`,
 
-    buildPrompt: (geminiData: any) => `ANALYZE THIS GEMINI SEARCH DATA AND GENERATE EVENTS TIMELINE:
+    buildPrompt: (geminiData: any) => `ANALYZE THIS MuseData Research Engine's SEARCH DATA AND GENERATE EVENTS TIMELINE:
 
 ${JSON.stringify(geminiData, null, 2)}
 

@@ -53,8 +53,8 @@ const Dashboard = () => {
                 Create Report
               </CardTitle>
               <CardDescription className="max-w-[680px] text-base leading-relaxed ">
-                Enter a business, product, or website to generate a
-                comprehensive SEO analysis.
+                Enter a business to generate a
+                comprehensive MuseData's analysis.
               </CardDescription>
             </CardHeader>
 
