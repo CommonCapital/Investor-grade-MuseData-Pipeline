@@ -676,7 +676,7 @@ export default function SEOIntelligenceLanding() {
                   </Button>
                 </a>
               </Authenticated>
-              
+              <a href="/sample-report">
               <Button
                 size="lg"
                 variant="outline"
@@ -684,6 +684,7 @@ export default function SEOIntelligenceLanding() {
               >
                 View Sample Pack
               </Button>
+              </a>
             </div>
           </div>
         </div>
