@@ -8,7 +8,35 @@ const http = httpRouter();
 export enum ApiPath {
   Webhook = '/api/webhook'
 }
+// convex/http.ts
 
+http.route({
+  path: "/api/webhooks/clerk",
+  method: "POST",
+  handler: httpAction(async (ctx, req) => {
+    const payload = await req.json();
+    
+    if (payload.type === 'subscription.updated') {
+      const userId = payload.data.payer.user_id; // ✅ Get user_id from payer object
+      const items = payload.data.items;
+      
+      // ✅ Find the active monthly plan in items array
+      const monthlyPlan = items.find((item: any) => 
+        item.plan?.slug === 'monthly' && item.status === 'active'
+      );
+      
+      if (monthlyPlan) {
+        await ctx.runMutation(api.subscriptions.addThirtyReports, {
+          userId,
+        });
+        
+        console.log(`✅ Added +30 reports to user ${userId}`);
+      }
+    }
+    
+    return new Response('OK', { status: 200 });
+  }),
+});
 // Webhook endpoint after BrightData Gemini scraper completes
 http.route({
   path: ApiPath.Webhook,

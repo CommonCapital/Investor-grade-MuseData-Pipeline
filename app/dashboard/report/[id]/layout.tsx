@@ -1,4 +1,7 @@
+import { api } from '@/convex/_generated/api';
 import { auth } from '@clerk/nextjs/server'
+import { ConvexHttpClient } from 'convex/browser';
+import { convexToJson } from 'convex/values';
 import { redirect } from 'next/navigation'
 import React from 'react'
 
@@ -14,9 +17,19 @@ async function Layout({
   }
 
   // Check if user has the monthly plan from session claims
-   const paidUser = has?.({ plan: "monthly" })
-  
-  if (!paidUser) {
+   // ✅ Check if user has paid plan
+  const paidUser = has?.({ plan: "monthly" })
+  const convex = new ConvexHttpClient(
+    process.env.NEXT_PUBLIC_CONVEX_URL!
+  );
+  // ✅ Get user's usage info (accumulative limits)
+  const usageInfo = await convex.query(
+    api.subscriptions.canCreateReport,
+    { userId, isPaidUser: paidUser || false }
+  )
+
+  // ✅ Block if limit reached
+  if (!usageInfo.canCreate) {
     redirect("/dashboard/billing")
   }
 

@@ -11,6 +11,7 @@
 import type * as analysis from "../analysis.js";
 import type * as http from "../http.js";
 import type * as scrapingJobs from "../scrapingJobs.js";
+import type * as subscriptions from "../subscriptions.js";
 
 import type {
   ApiFromModules,
@@ -22,6 +23,7 @@ declare const fullApi: ApiFromModules<{
   analysis: typeof analysis;
   http: typeof http;
   scrapingJobs: typeof scrapingJobs;
+  subscriptions: typeof subscriptions;
 }>;
 
 /**

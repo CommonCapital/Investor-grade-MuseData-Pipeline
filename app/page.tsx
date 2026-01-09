@@ -242,7 +242,7 @@ export default function SEOIntelligenceLanding() {
               Comprehensive Investment Intelligence
             </h2>
             <p className="text-lg font-light text-black/70 leading-relaxed">
-              AI-powered reports that give you everything you need to make informed decisions—with full source attribution.
+              Systematic disclosure monitoring with primary source provenance and exportable research packs.
             </p>
           </div>
 

@@ -6,20 +6,35 @@ import ReportsTable from '@/components/ReportsTable/ReportsTable'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Authenticated, AuthLoading } from 'convex/react'
+import { api } from '@/convex/_generated/api'
+import { useUser } from '@clerk/clerk-react'
+import { Authenticated, AuthLoading, useQuery } from 'convex/react'
 import { BarChart3, FileText, Loader2, Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 const Dashboard = () => {
+  const {user} = useUser()
   const [prompt, setPrompt] = useState('')
   const [country, setCountry] = useState('US')
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+ // ✅ Check if user has paid plan from Clerk
+  const isPaidUser = user?.publicMetadata?.plan === "monthly"
 
+  // ✅ Get report count
+  const usageInfo = useQuery(
+    api.subscriptions.canCreateReport,
+    user?.id ? { userId: user.id, isPaidUser: isPaidUser || false } : "skip"
+  )
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!prompt || isLoading) return
+     // ✅ Check limit before submitting
+    if (usageInfo && !usageInfo.canCreate) {
+      router.push('/dashboard/billing')
+      return
+    }
     setIsLoading(true)
 
     try {
@@ -47,6 +62,50 @@ const Dashboard = () => {
     <div className="min-h-screen bg-white text-black">
       {/* ✅ FIXED: Better mobile padding and max-width */}
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 py-8 sm:py-16 lg:py-24">
+           
+        {/* ✅ Usage Warning */}
+        {usageInfo && (
+          <div className="mb-8">
+            {usageInfo.plan === 'free' && usageInfo.reportsUsed === 0 && (
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded">
+                <p className="text-sm text-blue-900">
+                  🎉 You have <strong>1 free report</strong> available. 
+                  <a href="/dashboard/billing" className="underline ml-1">
+                    Upgrade for 30 reports
+                  </a>
+                </p>
+              </div>
+            )}
+
+            {usageInfo.plan === 'free' && usageInfo.reportsUsed >= 1 && (
+              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded">
+                <p className="text-sm text-yellow-900">
+                  You've used your free report. 
+                  <a href="/dashboard/billing" className="underline ml-1 font-semibold">
+                    Upgrade to create 30 reports
+                  </a>
+                </p>
+              </div>
+            )}
+
+            {usageInfo.plan === 'monthly' && usageInfo.canCreate && (
+              <div className="p-4 bg-green-50 border border-green-200 rounded">
+                <p className="text-sm text-green-900">
+                  📊 <strong>{usageInfo.reportsLimit - usageInfo.reportsUsed}</strong> reports remaining 
+                  (used {usageInfo.reportsUsed} of {usageInfo.reportsLimit})
+                </p>
+              </div>
+            )}
+
+            {usageInfo.plan === 'monthly' && !usageInfo.canCreate && (
+              <div className="p-4 bg-red-50 border border-red-200 rounded">
+                <p className="text-sm text-red-900">
+                  ⚠️ You've used all 30 reports this month. Your limit will reset on your next billing date.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
         <div className="space-y-12 sm:space-y-24">
 
           {/* CREATE REPORT */}

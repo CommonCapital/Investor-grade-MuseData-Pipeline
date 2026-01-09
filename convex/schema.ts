@@ -58,7 +58,14 @@ export default defineSchema({
     .index("by_status", ['status'])
     .index("by_created_at", ['createdAt'])
     .index("by_user", ['userId'])
-    .index("by_user_and_created_at", ['userId', 'createdAt']),
+    .index("by_user_and_created_at", ['userId', 'createdAt']).index("by_user_and_status", ['userId', 'status']), // ✅ NEW INDEX
+
+  // ✅ NEW: Track total report limit per user (accumulative)
+  user_report_limits: defineTable({
+    userId: v.string(),
+    totalLimit: v.number(), // Accumulates: 1 (free) → 31 (after 1st payment) → 61 (after 2nd payment)
+    lastPaymentDate: v.number(),
+  }).index("by_user", ["userId"]),
 
   // ✅ ADD THIS NEW TABLE HERE
   gemini_job_queue: defineTable({
