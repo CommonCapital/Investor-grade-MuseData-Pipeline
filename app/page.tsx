@@ -257,7 +257,7 @@ export default function SEOIntelligenceLanding() {
               <CardHeader>
                 <div className="flex items-start gap-4">
                   <div className="p-3 bg-black/5">
-                    <Link2 className="w-6 h-6 text-black/60" />
+                    <Link2 className="w-6 h-6 text-white/60" />
                   </div>
                   <div>
                     <CardTitle className="text-xl font-light mb-2 text-white/70">
@@ -276,7 +276,7 @@ export default function SEOIntelligenceLanding() {
               <CardHeader>
                 <div className="flex items-start gap-4">
                   <div className="p-3 bg-black/5">
-                    <GitBranch className="w-6 h-6 text-black/60" />
+                    <GitBranch className="w-6 h-6 text-white/60" />
                   </div>
                   <div>
                     <CardTitle className="text-xl font-light mb-2 text-white/70">
@@ -295,7 +295,7 @@ export default function SEOIntelligenceLanding() {
               <CardHeader>
                 <div className="flex items-start gap-4">
                   <div className="p-3 bg-black/5">
-                    <FileText className="w-6 h-6 text-black/60" />
+                    <FileText className="w-6 h-6 text-white/60" />
                   </div>
                   <div>
                     <CardTitle className="text-xl font-light mb-2 text-white/70">
@@ -314,10 +314,10 @@ export default function SEOIntelligenceLanding() {
               <CardHeader>
                 <div className="flex items-start gap-4">
                   <div className="p-3 bg-black/5">
-                    <Settings className="w-6 h-6 text-black/60" />
+                    <Settings className="w-6 h-6 text-white/60" />
                   </div>
                   <div>
-                    <CardTitle className="text-xl font-light mb-2 text-black/70">
+                    <CardTitle className="text-xl font-light mb-2 text-white/70">
                       Methods
                     </CardTitle>
                     <p className="text-sm font-light text-white/70 leading-relaxed">
@@ -621,20 +621,21 @@ export default function SEOIntelligenceLanding() {
           </div>
 
           {/* Metrics */}
-          <div className="grid grid-cols-3 gap-8 max-w-3xl mx-auto">
-            <div className="text-center p-8 bg-black/[0.02] border border-black/10 hover-lift">
-              <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Source Linked</div>
-              <div className="text-3xl font-light text-black/70">By Default</div>
-            </div>
-            <div className="text-center p-8 bg-black/[0.02] border border-black/10 hover-lift">
-              <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Generation Time</div>
-              <div className="text-3xl font-light text-black/70">Minutes</div>
-            </div>
-            <div className="text-center p-8 bg-black/[0.02] border border-black/10 hover-lift">
-              <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Coverage</div>
-              <div className="text-3xl font-light text-black/70">Broad</div>
-            </div>
-          </div>
+         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-3xl mx-auto">
+  <div className="text-center p-8 bg-black/[0.02] border border-black/10 hover-lift">
+    <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Source Linked</div>
+    <div className="text-3xl font-light text-black/70">By Default</div>
+  </div>
+  <div className="text-center p-8 bg-black/[0.02] border border-black/10 hover-lift">
+    <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Generation Time</div>
+    <div className="text-3xl font-light text-black/70">Minutes</div>
+  </div>
+  <div className="text-center p-8 bg-black/[0.02] border border-black/10 hover-lift">
+    <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Coverage</div>
+    <div className="text-3xl font-light text-black/70">Broad</div>
+  </div>
+</div>
+
         </div>
       </section>
 
