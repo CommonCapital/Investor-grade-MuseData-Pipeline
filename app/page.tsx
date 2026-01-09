@@ -17,15 +17,18 @@ import {
   Menu,
   X,
   Building2,
-  Eye
+  Eye,
+  Link2,
+  AlertTriangle,
+  Target,
+  Clock
 } from "lucide-react";
 import Link from "next/link";
 
 export default function SEOIntelligenceLanding() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   return (
-    <div className="min-h-screen bg-white">
+<div className="min-h-screen bg-white">
       {/* Header */}
       <header className="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-black/10 z-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -35,7 +38,7 @@ export default function SEOIntelligenceLanding() {
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-8">
               <Link href="#reports" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Reports</Link>
-              <Link href="#insights" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Insights</Link>
+              <Link href="#methodology" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Methodology</Link>
               <Link href="/dashboard/billing" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Pricing</Link>
               
               <Unauthenticated>
@@ -74,46 +77,46 @@ export default function SEOIntelligenceLanding() {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-         <div className="md:hidden border-t border-black/10 bg-white">
-  <div className="px-6 py-8 space-y-6">
-    <Link 
-      href="#reports" 
-      className="block text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black"
-    >
-      Reports
-    </Link>
-    <Link 
-      href="#insights" 
-      className="block text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black"
-    >
-      Insights
-    </Link>
-    <Link 
-      href="/dashboard/billing" 
-      className="block text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black"
-    >
-      Pricing
-    </Link>
-    
-    <div className="pt-4">
-      <Unauthenticated>
-        <SignInButton mode="modal" forceRedirectUrl="/dashboard">
-          <Button className="w-full h-12 bg-black text-white hover:bg-white hover:text-black border-2 border-black text-xs tracking-widest uppercase transition-all duration-300">
-            Get Started
-          </Button>
-        </SignInButton>
-      </Unauthenticated>
-      
-      <Authenticated>
-        <a href="/dashboard" className="block">
-          <Button className="w-full h-12 bg-black text-white hover:bg-white hover:text-black border-2 border-black text-xs tracking-widest uppercase transition-all duration-300">
-            Dashboard
-          </Button>
-        </a>
-      </Authenticated>
-    </div>
-  </div>
-</div>
+          <div className="md:hidden border-t border-black/10 bg-white">
+            <div className="px-6 py-8 space-y-6">
+              <Link 
+                href="#reports" 
+                className="block text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black"
+              >
+                Reports
+              </Link>
+              <Link 
+                href="#methodology" 
+                className="block text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black"
+              >
+                Methodology
+              </Link>
+              <Link 
+                href="/dashboard/billing" 
+                className="block text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black"
+              >
+                Pricing
+              </Link>
+              
+              <div className="pt-4">
+                <Unauthenticated>
+                  <SignInButton mode="modal" forceRedirectUrl="/dashboard">
+                    <Button className="w-full h-12 bg-black text-white hover:bg-white hover:text-black border-2 border-black text-xs tracking-widest uppercase transition-all duration-300">
+                      Get Started
+                    </Button>
+                  </SignInButton>
+                </Unauthenticated>
+                
+                <Authenticated>
+                  <a href="/dashboard" className="block">
+                    <Button className="w-full h-12 bg-black text-white hover:bg-white hover:text-black border-2 border-black text-xs tracking-widest uppercase transition-all duration-300">
+                      Dashboard
+                    </Button>
+                  </a>
+                </Authenticated>
+              </div>
+            </div>
+          </div>
         )}
       </header>
 
@@ -123,17 +126,17 @@ export default function SEOIntelligenceLanding() {
           <div className="max-w-4xl">
             <div className="mb-6">
               <Badge className="bg-black text-white hover:bg-black/90 text-xs tracking-widest uppercase border-0">
-                MuseData Intelligence for Investors
+                MuseData for Investors
               </Badge>
             </div>
 
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light leading-[1.1] tracking-tight mb-8 text-black/70">
-              Instant Reports on Any Public Company
+              Decision-Grade Reports on Public Companies
             </h1>
 
             <p className="text-xl sm:text-2xl font-light leading-relaxed text-black/70 mb-12 max-w-3xl">
-              AI-powered competitive intelligence for investors. 
-              Search visibility, keyword rankings, and digital presence analysis in seconds.
+              Generate a full diligence snapshot with valuation, key drivers, risks, and "what changed." 
+              Every claim links back to source evidence.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
@@ -174,16 +177,16 @@ export default function SEOIntelligenceLanding() {
             <div className="mt-16 pt-8 border-t border-black/10">
               <div className="grid grid-cols-3 gap-8 max-w-2xl">
                 <div>
-                  <div className="text-3xl font-light mb-1 text-black/70">30 Sec</div>
-                  <div className="text-xs tracking-wider uppercase text-black/60">Report Generation</div>
+                  <div className="text-3xl font-light mb-1 text-black/70">2 Min</div>
+                  <div className="text-xs tracking-wider uppercase text-black/60">Full Report</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-light mb-1 text-black/70">50K+</div>
-                  <div className="text-xs tracking-wider uppercase text-black/60">Companies Tracked</div>
+                  <div className="text-3xl font-light mb-1 text-black/70">5K+</div>
+                  <div className="text-xs tracking-wider uppercase text-black/60">Public Companies</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-light mb-1 text-black/70">Real-Time</div>
-                  <div className="text-xs tracking-wider uppercase text-black/60">Data Updates</div>
+                  <div className="text-3xl font-light mb-1 text-black/70">100%</div>
+                  <div className="text-xs tracking-wider uppercase text-black/60">Sourced</div>
                 </div>
               </div>
             </div>
@@ -196,36 +199,35 @@ export default function SEOIntelligenceLanding() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center mb-16">
             <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight text-black/70">
-              Due Diligence Shouldn't Take Weeks
+              Due Diligence Shouldn't Take Days
             </h2>
             <p className="text-lg font-light text-black/70 leading-relaxed">
-              Investors waste time manually researching digital presence. 
-              Get comprehensive research intelligence instantly.
+              Get the complete picture—thesis, valuation range, key drivers, and recent changes—in minutes, not days.
             </p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="text-center p-8 bg-white border border-black/10">
-              <div className="text-4xl font-light mb-3 text-black/70">5-7 Days</div>
-              <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Manual Research</div>
+              <div className="text-4xl font-light mb-3 text-black/70">3-5 Days</div>
+              <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Traditional DD</div>
               <p className="text-sm font-light text-black/70">
-                Traditional competitive analysis timelines
+                Manual research across multiple sources
               </p>
             </div>
             
             <div className="text-center p-8 bg-white border border-black/10">
-              <div className="text-4xl font-light mb-3 text-black/60">12+ Tools</div>
+              <div className="text-4xl font-light mb-3 text-black/60">8+ Tools</div>
               <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Fragmented Data</div>
               <p className="text-sm font-light text-black/70">
-                Multiple subscriptions for incomplete insights
+                Bloomberg, CapIQ, transcripts, filings, news
               </p>
             </div>
             
             <div className="text-center p-8 bg-white border border-black/10">
-              <div className="text-4xl font-light mb-3 text-black/60">$15K+</div>
-              <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Monthly Cost</div>
+              <div className="text-4xl font-light mb-3 text-black/60">Hours</div>
+              <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Citation Work</div>
               <p className="text-sm font-light text-black/70">
-                Spent on Data Pipeline tools and analyst time
+                Tracking sources for every data point
               </p>
             </div>
           </div>
@@ -233,109 +235,234 @@ export default function SEOIntelligenceLanding() {
       </section>
 
       {/* What You Get */}
-      <section id="insights" className="py-20 sm:py-32">
+      <section id="methodology" className="py-20 sm:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto mb-20">
             <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight text-black/70">
-              Comprehensive Research Intelligence
+              Comprehensive Investment Intelligence
             </h2>
             <p className="text-lg font-light text-black/70 leading-relaxed">
-              AI-powered reports that give you complete visibility into any public company's digital presence and competitive positioning.
+              AI-powered reports that give you everything you need to make informed decisions—with full source attribution.
             </p>
           </div>
 
           <div className="space-y-16 max-w-6xl mx-auto">
-            {/* Search Visibility Analysis */}
+            {/* Sourced Investment Thesis */}
             <div className="grid lg:grid-cols-2 gap-12 items-start">
               <div>
                 <h3 className="text-2xl font-light mb-6 tracking-tight text-black/70">
-                  Search Visibility Analysis
+                  Sourced Investment Thesis
                 </h3>
                 <p className="text-base font-light text-black/70 leading-relaxed mb-6">
-                  Understand how any company appears in search results. Track keyword rankings, 
-                  organic traffic estimates, and SERP features across all major search engines.
+                  Clear bull and bear cases with every claim linked to its source—filings, transcripts, 
+                  news, or analyst reports. Know exactly where each insight comes from.
                 </p>
                 <div className="space-y-3 text-sm font-light">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span className="text-black/70">Keyword ranking positions and trends</span>
+                    <span className="text-black/70">Bull and bear case with source citations</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span className="text-black/70">Organic traffic estimates and projections</span>
+                    <span className="text-black/70">Key investment drivers and catalysts</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span className="text-black/70">SERP feature analysis (featured snippets, knowledge panels)</span>
+                    <span className="text-black/70">Strategic positioning and competitive moats</span>
                   </div>
                 </div>
               </div>
               
               <Card className="border-2 border-black/10 shadow-none">
                 <CardHeader>
-                  <CardTitle className="text-sm tracking-wider uppercase text-white/60 font-normal">
-                    Sample Visibility Metrics
+                  <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
+                    Sample Thesis Structure
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3 text-sm font-light">
-                    <div className="flex justify-between items-center py-2 border-b border-black/5">
-                      <span>Keyword Rankings</span>
-                      <span className="text-white/60 ">15,420 tracked</span>
+                  <div className="space-y-4 text-sm font-light">
+                    <div className="p-3 bg-black/[0.02] border-l-2 border-black/20">
+                      <div className="font-normal mb-1">Bull Case</div>
+                      <div className="text-black/70 text-xs mb-2">Market leadership in cloud infrastructure with 32% YoY growth</div>
+                      <div className="flex items-center gap-2 text-xs text-black/60">
+                        <Link2 className="w-3 h-3" />
+                        <span>Q3 2024 Earnings Call</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between items-center py-2 border-b border-black/5">
-                      <span>Organic Traffic Est.</span>
-                      <span className="text-white/60 ">2.4M monthly</span>
-                    </div>
-                    <div className="flex justify-between items-center py-2 border-b border-black/5">
-                      <span>Domain Authority</span>
-                      <span className="text-white/60 ">78/100</span>
-                    </div>
-                    <div className="flex justify-between items-center py-2">
-                      <span>SERP Features</span>
-                      <span className="text-white/60 ">342 owned</span>
+                    <div className="p-3 bg-black/[0.02] border-l-2 border-black/20">
+                      <div className="font-normal mb-1">Bear Case</div>
+                      <div className="text-black/70 text-xs mb-2">Margin pressure from increased capex and competitive pricing</div>
+                      <div className="flex items-center gap-2 text-xs text-black/60">
+                        <Link2 className="w-3 h-3" />
+                        <span>10-Q Filing, Sep 2024</span>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Competitive Intelligence */}
+            {/* Valuation Range */}
             <div className="grid lg:grid-cols-2 gap-12 items-start">
               <Card className="border-2 border-black/10 shadow-none lg:order-1">
                 <CardHeader>
-                  <CardTitle className="text-sm tracking-wider uppercase text-white/60  font-normal">
-                    Competitive Insights
+                  <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
+                    Valuation Framework
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4 text-sm font-light">
+                    <div className="flex justify-between items-center py-3 border-b border-black/5">
+                      <span>DCF Fair Value</span>
+                      <span className="text-black/60">$185 - $215</span>
+                    </div>
+                    <div className="flex justify-between items-center py-3 border-b border-black/5">
+                      <span>Comparable Multiples</span>
+                      <span className="text-black/60">$175 - $205</span>
+                    </div>
+                    <div className="flex justify-between items-center py-3 border-b border-black/5">
+                      <span>Street Consensus</span>
+                      <span className="text-black/60">$190</span>
+                    </div>
+                    <div className="flex justify-between items-center py-3 pt-4 border-t-2 border-black/20">
+                      <span className="font-normal">Implied Range</span>
+                      <span className="text-black/70 font-normal">$180 - $210</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-black/60 pt-2">
+                      <Link2 className="w-3 h-3" />
+                      <span>Based on 10-K, earnings transcripts, consensus estimates</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="lg:order-2">
+                <h3 className="text-2xl font-light mb-6 tracking-tight text-black/70">
+                  Valuation Range with Methodology
+                </h3>
+                <p className="text-base font-light text-black/70 leading-relaxed mb-6">
+                  Get a principled valuation range using multiple approaches—DCF, comparables, and 
+                  consensus estimates. All assumptions and sources clearly documented.
+                </p>
+                <div className="space-y-3 text-sm font-light">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                    <span className="text-black/70">DCF with transparent assumptions</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                    <span className="text-black/70">Peer comparable multiples analysis</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                    <span className="text-black/70">Implied valuation range with confidence levels</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Key Drivers & Risks */}
+            <div className="grid lg:grid-cols-2 gap-12 items-start">
+              <div>
+                <h3 className="text-2xl font-light mb-6 tracking-tight text-black/70">
+                  Key Drivers & Risk Factors
+                </h3>
+                <p className="text-base font-light text-black/70 leading-relaxed mb-6">
+                  Understand what moves the stock and what could go wrong. Each driver and risk 
+                  is quantified where possible and linked to supporting evidence.
+                </p>
+                <div className="space-y-3 text-sm font-light">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                    <span className="text-black/70">Revenue and margin drivers with sensitivities</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                    <span className="text-black/70">Operational, financial, and market risks</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                    <span className="text-black/70">Regulatory and competitive dynamics</span>
+                  </div>
+                </div>
+              </div>
+              
+              <Card className="border-2 border-black/10 shadow-none">
+                <CardHeader>
+                  <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
+                    Sample Key Drivers
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4 text-sm font-light">
                     <div className="flex items-start gap-3 py-2">
-                      <Building2 className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                      <Target className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
                       <div>
-                        <div className="font-normal mb-1">Direct Competitors</div>
-                        <div className="text-white/60  text-xs">Ranked by keyword overlap and traffic share</div>
+                        <div className="font-normal mb-1">Cloud Revenue Growth</div>
+                        <div className="text-black/70 text-xs mb-1">32% YoY, driving 65% of incremental revenue</div>
+                        <div className="flex items-center gap-2 text-xs text-black/60">
+                          <Link2 className="w-3 h-3" />
+                          <span>Q3 Earnings</span>
+                        </div>
                       </div>
                     </div>
                     <div className="flex items-start gap-3 py-2">
-                      <TrendingUp className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                      <AlertTriangle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
                       <div>
-                        <div className="font-normal mb-1">Market Share Analysis</div>
-                        <div className="text-white/60  text-xs">Search visibility vs. competitors over time</div>
+                        <div className="font-normal mb-1">Margin Pressure Risk</div>
+                        <div className="text-black/70 text-xs mb-1">Capex up 40% YoY, could compress EBITDA 2-3%</div>
+                        <div className="flex items-center gap-2 text-xs text-black/60">
+                          <Link2 className="w-3 h-3" />
+                          <span>CFO Commentary</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* What Changed */}
+            <div className="grid lg:grid-cols-2 gap-12 items-start">
+              <Card className="border-2 border-black/10 shadow-none lg:order-1">
+                <CardHeader>
+                  <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
+                    Recent Developments
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4 text-sm font-light">
+                    <div className="flex items-start gap-3 py-2">
+                      <Clock className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                      <div>
+                        <div className="font-normal mb-1">Q3 Earnings Beat</div>
+                        <div className="text-black/70 text-xs mb-1">EPS $2.15 vs $2.02 est, revenue +28% YoY</div>
+                        <div className="flex items-center gap-2 text-xs text-black/60">
+                          <Link2 className="w-3 h-3" />
+                          <span>3 days ago</span>
+                        </div>
                       </div>
                     </div>
                     <div className="flex items-start gap-3 py-2">
-                      <Eye className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                      <Clock className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
                       <div>
-                        <div className="font-normal mb-1">Content Gap Analysis</div>
-                        <div className="text-white/60  text-xs">Keywords competitors rank for but target doesn't</div>
+                        <div className="font-normal mb-1">Strategic Acquisition</div>
+                        <div className="text-black/70 text-xs mb-1">$2.4B deal for AI infrastructure company announced</div>
+                        <div className="flex items-center gap-2 text-xs text-black/60">
+                          <Link2 className="w-3 h-3" />
+                          <span>1 week ago</span>
+                        </div>
                       </div>
                     </div>
                     <div className="flex items-start gap-3 py-2">
-                      <BarChart3 className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                      <Clock className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
                       <div>
-                        <div className="font-normal mb-1">Growth Trajectories</div>
-                        <div className="text-white/60  text-xs">Historical trends and future projections</div>
+                        <div className="font-normal mb-1">Analyst Upgrades</div>
+                        <div className="text-black/70 text-xs mb-1">3 upgrades, avg PT raised to $195 from $180</div>
+                        <div className="flex items-center gap-2 text-xs text-black/60">
+                          <Link2 className="w-3 h-3" />
+                          <span>Last 2 weeks</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -344,82 +471,27 @@ export default function SEOIntelligenceLanding() {
 
               <div className="lg:order-2">
                 <h3 className="text-2xl font-light mb-6 tracking-tight text-black/70">
-                  Competitive Positioning
+                  What Changed Since Last Run
                 </h3>
                 <p className="text-base font-light text-black/70 leading-relaxed mb-6">
-                  Benchmark any company against their competitors. Identify market leaders, 
-                  emerging threats, and strategic opportunities in their digital landscape.
+                  Track material updates since your last report—earnings, guidance changes, 
+                  M&A activity, analyst revisions, and regulatory developments.
                 </p>
                 <div className="space-y-3 text-sm font-light">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span className="text-black/70">Competitor ranking and traffic benchmarks</span>
+                    <span className="text-black/70">Earnings results and guidance updates</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span className="text-black/70">Market share of voice analysis</span>
+                    <span className="text-black/70">M&A announcements and strategic moves</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span className="text-black/70">Strategic content opportunities</span>
+                    <span className="text-black/70">Analyst rating and estimate changes</span>
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Technical & Content Analysis */}
-            <div className="grid lg:grid-cols-2 gap-12 items-start">
-              <div>
-                <h3 className="text-2xl font-light mb-6 tracking-tight text-black/70">
-                  Technical & Content Analysis
-                </h3>
-                <p className="text-base font-light text-black/70 leading-relaxed mb-6">
-                  Deep dive into website architecture, backlink profiles, and content strategy. 
-                  Understand the technical foundation behind their search performance.
-                </p>
-                <div className="space-y-3 text-sm font-light">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span>Backlink profile and authority distribution</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span className="text-black/70">Content strategy and topic coverage</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span className="text-black/70">Site speed and technical health metrics</span>
-                  </div>
-                </div>
-              </div>
-              
-              <Card className="border-2 border-black/10 shadow-none">
-                <CardHeader>
-                  <CardTitle className="text-sm tracking-wider uppercase text-white/60 font-normal">
-                    Technical Metrics
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3 text-sm font-light">
-                    <div className="flex justify-between items-center py-2 border-b border-black/5">
-                      <span>Total Backlinks</span>
-                      <span className="text-white/60">847K</span>
-                    </div>
-                    <div className="flex justify-between items-center py-2 border-b border-black/5">
-                      <span>Referring Domains</span>
-                      <span className="text-white/60">12.3K</span>
-                    </div>
-                    <div className="flex justify-between items-center py-2 border-b border-black/5">
-                      <span>Indexed Pages</span>
-                      <span className="text-white/60">45,280</span>
-                    </div>
-                    <div className="flex justify-between items-center py-2">
-                      <span>Core Web Vitals</span>
-                      <span className="text-white/60">Good</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           </div>
         </div>
@@ -433,44 +505,44 @@ export default function SEOIntelligenceLanding() {
               Built for Investment Professionals
             </h2>
             <p className="text-lg font-light text-white/70 leading-relaxed mb-12">
-              Fast, comprehensive Research intelligence for informed investment decisions.
+              Fast, comprehensive diligence for informed investment decisions.
             </p>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="p-8 border border-white/20 bg-white/5">
-                <div className="text-2xl font-light mb-2">Venture Capital</div>
+                <div className="text-2xl font-light mb-2">Equity Research</div>
                 <p className="text-sm font-light text-white/60">
-                  Assess digital traction and growth potential of portfolio targets
+                  Initiate coverage and update models with sourced insights
+                </p>
+              </div>
+              <div className="p-8 border border-white/20 bg-white/5">
+                <div className="text-2xl font-light mb-2">Portfolio Management</div>
+                <p className="text-sm font-light text-white/60">
+                  Monitor holdings and track material developments
+                </p>
+              </div>
+              <div className="p-8 border border-white/20 bg-white/5">
+                <div className="text-2xl font-light mb-2">Investment Banking</div>
+                <p className="text-sm font-light text-white/60">
+                  Quick diligence for M&A mandates and pitch books
                 </p>
               </div>
               <div className="p-8 border border-white/20 bg-white/5">
                 <div className="text-2xl font-light mb-2">Private Equity</div>
                 <p className="text-sm font-light text-white/60">
-                  Due diligence on digital assets and market positioning
+                  Screen public comps and market sizing for deals
                 </p>
               </div>
               <div className="p-8 border border-white/20 bg-white/5">
                 <div className="text-2xl font-light mb-2">Hedge Funds</div>
                 <p className="text-sm font-light text-white/60">
-                  Real-time competitive intelligence for trading strategies
+                  Generate long/short ideas with thesis documentation
                 </p>
               </div>
               <div className="p-8 border border-white/20 bg-white/5">
-                <div className="text-2xl font-light mb-2">Investment Banks</div>
+                <div className="text-2xl font-light mb-2">Corp Dev</div>
                 <p className="text-sm font-light text-white/60">
-                  Market analysis for M&A and advisory engagements
-                </p>
-              </div>
-              <div className="p-8 border border-white/20 bg-white/5">
-                <div className="text-2xl font-light mb-2">Research Analysts</div>
-                <p className="text-sm font-light text-white/60">
-                  Quantitative digital presence metrics for equity research
-                </p>
-              </div>
-              <div className="p-8 border border-white/20 bg-white/5">
-                <div className="text-2xl font-light mb-2">Corp Dev Teams</div>
-                <p className="text-sm font-light text-white/60">
-                  Strategic acquisition targets and partnership opportunities
+                  Evaluate strategic acquisition targets and partners
                 </p>
               </div>
             </div>
@@ -482,32 +554,32 @@ export default function SEOIntelligenceLanding() {
       <section className="py-20 sm:py-32 bg-black/[0.02]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center mb-16">
-            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight bg-black">
-              Export-Ready Reports
+            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight text-black/70">
+              Professional, Sourced Reports
             </h2>
-            <p className="text-lg font-light text-black/70 leading-relaxed bg-black">
-              Professional reports formatted for investment committees and board presentations.
+            <p className="text-lg font-light text-black/70 leading-relaxed">
+              Investment-grade documentation with full source attribution and export options.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="text-center p-8 bg-white border border-black/10">
               <div className="inline-flex p-4 mb-4">
-                <FileText className="w-8 h-8 text-black/60" />
+                <Link2 className="w-8 h-8 text-black/60" />
               </div>
-              <h3 className="text-xl font-light mb-3 text-black/60">PDF Export</h3>
+              <h3 className="text-xl font-light mb-3 text-black/70">Full Citations</h3>
               <p className="text-sm font-light text-black/70">
-                Investor-grade reports with charts, tables, and executive summaries
+                Every claim links to source—filings, transcripts, news, or research
               </p>
             </div>
 
             <div className="text-center p-8 bg-white border border-black/10">
               <div className="inline-flex p-4 mb-4">
-                <BarChart3 className="w-8 h-8 text-black/60" />
+                <FileText className="w-8 h-8 text-black/60" />
               </div>
-              <h3 className="text-xl font-light mb-3 text-black/60">Excel Data</h3>
+              <h3 className="text-xl font-light mb-3 text-black/70">PDF Export</h3>
               <p className="text-sm font-light text-black/70">
-                Raw data exports for custom analysis and modeling
+                Professional reports formatted for investment committees
               </p>
             </div>
 
@@ -515,9 +587,9 @@ export default function SEOIntelligenceLanding() {
               <div className="inline-flex p-4 mb-4">
                 <Shield className="w-8 h-8 text-black/60" />
               </div>
-              <h3 className="text-xl font-light mb-3 text-black/60">API Access</h3>
+              <h3 className="text-xl font-light mb-3 text-black/70">API Access</h3>
               <p className="text-sm font-light text-black/70">
-                Integrate Pipeline data directly into your investment workflows
+                Integrate research data into your investment workflow
               </p>
             </div>
           </div>
@@ -528,14 +600,14 @@ export default function SEOIntelligenceLanding() {
       <section id="pricing" className="py-20 sm:py-32">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="border-2 border-black p-12 sm:p-16 text-center">
-            <h2 className="text-3xl sm:text-4xl font-light mb-6 tracking-tight text-black/60">
+            <h2 className="text-3xl sm:text-4xl font-light mb-6 tracking-tight text-black/70">
               Start Generating Reports Today
             </h2>
             <p className="text-lg font-light text-black/70 mb-2 max-w-2xl mx-auto">
-              Get instant access to comprehensive Research intelligence on any public company.
+              Get decision-grade diligence on any public company—thesis, valuation, drivers, and sources.
             </p>
             <p className="text-sm font-light text-black/60 mb-8">
-              Professional reports in seconds, not weeks.
+              Complete investment intelligence in minutes.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -562,10 +634,18 @@ export default function SEOIntelligenceLanding() {
                   </Button>
                 </a>
               </Authenticated>
+              
+              <Button
+                size="lg"
+                variant="outline"
+                className="h-14 px-8 bg-white text-black border-2 border-black hover:bg-black hover:text-white transition-all duration-300 text-sm tracking-widest uppercase"
+              >
+                View Sample Report
+              </Button>
             </div>
             
             <p className="mt-6 text-xs tracking-wider uppercase text-black/60">
-              Real-Time Data • Export to PDF/Excel • API Access Available
+              Sourced Thesis • Valuation Range • Key Drivers • What Changed
             </p>
           </div>
         </div>
@@ -584,7 +664,7 @@ export default function SEOIntelligenceLanding() {
             </div>
           </div>
           <div className="mt-8 text-center text-xs text-white/40">
-            © 2025 MuseData. Research intelligence platform for investment professionals.
+            © 2025 MuseData. Decision-grade investment intelligence for professionals.
           </div>
         </div>
       </footer>
