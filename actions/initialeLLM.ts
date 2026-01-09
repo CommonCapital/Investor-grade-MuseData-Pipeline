@@ -2715,7 +2715,7 @@ export async function initiateLLM(
   // ============================================================================
   // LAUNCH SEQUENTIAL GEMINI SCRAPERS WITH DELAYS (FIXED FOR RATE LIMITS)
   // ============================================================================
-  const DELAY_BETWEEN_SHARDS = 35000; // 25 seconds between each shard
+  const DELAY_BETWEEN_SHARDS = 60000; // 60 seconds between each shard
   const results: Array<{ success: boolean; snapshotId?: string; error?: string }> = [];
 
   console.log(`🚀 Launching ${SHARD_CONFIGS.length} Gemini scrapers with ${DELAY_BETWEEN_SHARDS}ms delays...`);
