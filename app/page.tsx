@@ -206,14 +206,16 @@ export default function SEOIntelligenceLanding() {
                   </Button>
                 </a>
               </Authenticated>
-              
+              <a href="/sample-report">
               <Button
                 size="lg"
                 variant="outline"
                 className="h-14 px-8 bg-white text-black border-2 border-black hover:bg-black hover:text-white transition-all duration-300 text-sm tracking-widest uppercase"
+                
               >
                 View Sample Pack
               </Button>
+              </a>
             </div>
 
             {/* Trust Line */}
@@ -258,10 +260,10 @@ export default function SEOIntelligenceLanding() {
                     <Link2 className="w-6 h-6 text-black/60" />
                   </div>
                   <div>
-                    <CardTitle className="text-xl font-light mb-2 text-black/70">
+                    <CardTitle className="text-xl font-light mb-2 text-white/70">
                       Provenance
                     </CardTitle>
-                    <p className="text-sm font-light text-black/70 leading-relaxed">
+                    <p className="text-sm font-light text-white/70 leading-relaxed">
                       Claim level citations to the originating document and location, with citation IDs and retrieval dates.
                     </p>
                   </div>
@@ -277,10 +279,10 @@ export default function SEOIntelligenceLanding() {
                     <GitBranch className="w-6 h-6 text-black/60" />
                   </div>
                   <div>
-                    <CardTitle className="text-xl font-light mb-2 text-black/70">
+                    <CardTitle className="text-xl font-light mb-2 text-white/70">
                       Change Log
                     </CardTitle>
-                    <p className="text-sm font-light text-black/70 leading-relaxed">
+                    <p className="text-sm font-light text-white/70 leading-relaxed">
                       Material deltas since last run across disclosures, with evidence attached and a documented coverage window.
                     </p>
                   </div>
@@ -296,10 +298,10 @@ export default function SEOIntelligenceLanding() {
                     <FileText className="w-6 h-6 text-black/60" />
                   </div>
                   <div>
-                    <CardTitle className="text-xl font-light mb-2 text-black/70">
+                    <CardTitle className="text-xl font-light mb-2 text-white/70">
                       Exports
                     </CardTitle>
-                    <p className="text-sm font-light text-black/70 leading-relaxed">
+                    <p className="text-sm font-light text-white/70 leading-relaxed">
                       Memo format PDF plus model ready tables with stable field names.
                     </p>
                   </div>
@@ -318,7 +320,7 @@ export default function SEOIntelligenceLanding() {
                     <CardTitle className="text-xl font-light mb-2 text-black/70">
                       Methods
                     </CardTitle>
-                    <p className="text-sm font-light text-black/70 leading-relaxed">
+                    <p className="text-sm font-light text-white/70 leading-relaxed">
                       Calculation rules, inputs, and formulas included so outputs can be audited and rerun.
                     </p>
                   </div>
@@ -376,34 +378,34 @@ export default function SEOIntelligenceLanding() {
                 <table className="w-full text-sm font-light">
                   <thead>
                     <tr className="border-b border-black/10">
-                      <th className="text-left py-3 px-4 font-normal text-black/60 text-xs tracking-wider uppercase">Event</th>
-                      <th className="text-left py-3 px-4 font-normal text-black/60 text-xs tracking-wider uppercase">Delta</th>
-                      <th className="text-left py-3 px-4 font-normal text-black/60 text-xs tracking-wider uppercase">Source</th>
-                      <th className="text-left py-3 px-4 font-normal text-black/60 text-xs tracking-wider uppercase">Timestamp</th>
-                      <th className="text-left py-3 px-4 font-normal text-black/60 text-xs tracking-wider uppercase">Citation ID</th>
+                      <th className="text-left py-3 px-4 font-normal text-white/60 text-xs tracking-wider uppercase">Event</th>
+                      <th className="text-left py-3 px-4 font-normal text-white/60 text-xs tracking-wider uppercase">Delta</th>
+                      <th className="text-left py-3 px-4 font-normal text-white/60 text-xs tracking-wider uppercase">Source</th>
+                      <th className="text-left py-3 px-4 font-normal text-white/60 text-xs tracking-wider uppercase">Timestamp</th>
+                      <th className="text-left py-3 px-4 font-normal text-white/60 text-xs tracking-wider uppercase">Citation ID</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr className="border-b border-black/5 hover:bg-black/[0.02] transition-colors">
-                      <td className="py-3 px-4 text-black/70">Q3 Earnings</td>
-                      <td className="py-3 px-4 text-black/70">EPS $2.15 vs $2.02 est, revenue +28% YoY</td>
-                      <td className="py-3 px-4 text-black/70">8-K Filing</td>
-                      <td className="py-3 px-4 text-black/60">2024-10-24</td>
-                      <td className="py-3 px-4 text-black/60 font-mono text-xs">CIT-2024-1024-001</td>
+                      <td className="py-3 px-4 text-white/70">Q3 Earnings</td>
+                      <td className="py-3 px-4 text-white/70">EPS $2.15 vs $2.02 est, revenue +28% YoY</td>
+                      <td className="py-3 px-4 text-white/70">8-K Filing</td>
+                      <td className="py-3 px-4 text-white/60">2024-10-24</td>
+                      <td className="py-3 px-4 text-white/60 font-mono text-xs">CIT-2024-1024-001</td>
                     </tr>
                     <tr className="border-b border-black/5 hover:bg-black/[0.02] transition-colors">
-                      <td className="py-3 px-4 text-black/70">Guidance Revision</td>
-                      <td className="py-3 px-4 text-black/70">FY24 revenue guidance raised to $48-49B from $46-47B</td>
-                      <td className="py-3 px-4 text-black/70">Earnings Call</td>
-                      <td className="py-3 px-4 text-black/60">2024-10-24</td>
-                      <td className="py-3 px-4 text-black/60 font-mono text-xs">CIT-2024-1024-012</td>
+                      <td className="py-3 px-4 text-white/70">Guidance Revision</td>
+                      <td className="py-3 px-4 text-white/70">FY24 revenue guidance raised to $48-49B from $46-47B</td>
+                      <td className="py-3 px-4 text-white/70">Earnings Call</td>
+                      <td className="py-3 px-4 text-white/60">2024-10-24</td>
+                      <td className="py-3 px-4 text-white/60 font-mono text-xs">CIT-2024-1024-012</td>
                     </tr>
                     <tr className="border-b border-black/5 hover:bg-black/[0.02] transition-colors">
-                      <td className="py-3 px-4 text-black/70">M&A Announcement</td>
-                      <td className="py-3 px-4 text-black/70">$2.4B acquisition announced</td>
-                      <td className="py-3 px-4 text-black/70">Press Release</td>
-                      <td className="py-3 px-4 text-black/60">2024-10-17</td>
-                      <td className="py-3 px-4 text-black/60 font-mono text-xs">CIT-2024-1017-003</td>
+                      <td className="py-3 px-4 text-white/70">M&A Announcement</td>
+                      <td className="py-3 px-4 text-white/70">$2.4B acquisition announced</td>
+                      <td className="py-3 px-4 text-white/70">Press Release</td>
+                      <td className="py-3 px-4 text-white/60">2024-10-17</td>
+                      <td className="py-3 px-4 text-white/60 font-mono text-xs">CIT-2024-1017-003</td>
                     </tr>
                   </tbody>
                 </table>
@@ -425,12 +427,12 @@ export default function SEOIntelligenceLanding() {
           <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
             <Card className="border-2 border-black/10 shadow-none hover-lift">
               <CardHeader>
-                <CardTitle className="text-xl font-light mb-2 text-black/70">
+                <CardTitle className="text-xl font-light mb-2 text-white/70">
                   1. Coverage Refresh
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm font-light text-black/70 leading-relaxed">
+                <p className="text-sm font-light text-white/70 leading-relaxed">
                   Refresh a name with an updated change log, claim register, and citation map.
                 </p>
               </CardContent>
@@ -438,12 +440,12 @@ export default function SEOIntelligenceLanding() {
 
             <Card className="border-2 border-black/10 shadow-none hover-lift">
               <CardHeader>
-                <CardTitle className="text-xl font-light mb-2 text-black/70">
+                <CardTitle className="text-xl font-light mb-2 text-white/70">
                   2. Event Review
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm font-light text-black/70 leading-relaxed">
+                <p className="text-sm font-light text-white/70 leading-relaxed">
                   Pre and post earnings workflow with guidance diffs, KPI deltas, and transcript citations.
                 </p>
               </CardContent>
@@ -451,12 +453,12 @@ export default function SEOIntelligenceLanding() {
 
             <Card className="border-2 border-black/10 shadow-none hover-lift">
               <CardHeader>
-                <CardTitle className="text-xl font-light mb-2 text-black/70">
+                <CardTitle className="text-xl font-light mb-2 text-white/70">
                   3. Portfolio Monitoring
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm font-light text-black/70 leading-relaxed">
+                <p className="text-sm font-light text-white/70 leading-relaxed">
                   Watchlist monitoring that surfaces only names with documented deltas and preserves history.
                 </p>
               </CardContent>
@@ -464,12 +466,12 @@ export default function SEOIntelligenceLanding() {
 
             <Card className="border-2 border-black/10 shadow-none hover-lift">
               <CardHeader>
-                <CardTitle className="text-xl font-light mb-2 text-black/70">
+                <CardTitle className="text-xl font-light mb-2 text-white/70">
                   4. Comps and Valuation Inputs
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm font-light text-black/70 leading-relaxed">
+                <p className="text-sm font-light text-white/70 leading-relaxed">
                   Comparable sets and valuation inputs with a documented assumptions log. No opaque outputs.
                 </p>
               </CardContent>
@@ -493,7 +495,7 @@ export default function SEOIntelligenceLanding() {
             
             <Card className="border-2 border-black/10 shadow-none">
               <CardHeader>
-                <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
+                <CardTitle className="text-sm tracking-wider uppercase text-white/60 font-normal">
                   Sample Claim Register
                 </CardTitle>
               </CardHeader>
@@ -501,16 +503,16 @@ export default function SEOIntelligenceLanding() {
                 <div className="space-y-4 text-sm font-light">
                   <div className="p-3 bg-black/[0.02] border-l-2 border-black/20">
                     <div className="font-normal mb-1">Bull Case</div>
-                    <div className="text-black/70 text-xs mb-2">Cloud infrastructure revenue grew 32% YoY in Q3 2024.</div>
-                    <div className="flex items-center gap-2 text-xs text-black/60">
+                    <div className="text-white/70 text-xs mb-2">Cloud infrastructure revenue grew 32% YoY in Q3 2024.</div>
+                    <div className="flex items-center gap-2 text-xs text-white/60">
                       <Link2 className="w-3 h-3" />
                       <span>Q3 2024 Earnings Call | CIT-2024-1024-005</span>
                     </div>
                   </div>
                   <div className="p-3 bg-black/[0.02] border-l-2 border-black/20">
                     <div className="font-normal mb-1">Bear Case</div>
-                    <div className="text-black/70 text-xs mb-2">Capital expenditures increased 40% YoY, compressing EBITDA margins.</div>
-                    <div className="flex items-center gap-2 text-xs text-black/60">
+                    <div className="text-white/70 text-xs mb-2">Capital expenditures increased 40% YoY, compressing EBITDA margins.</div>
+                    <div className="flex items-center gap-2 text-xs text-white/60">
                       <Link2 className="w-3 h-3" />
                       <span>10-Q Filing, Sep 2024 | CIT-2024-0930-018</span>
                     </div>
@@ -528,7 +530,7 @@ export default function SEOIntelligenceLanding() {
           <div className="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
             <Card className="border-2 border-black/10 shadow-none lg:order-1">
               <CardHeader>
-                <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
+                <CardTitle className="text-sm tracking-wider uppercase text-white/60 font-normal">
                   Valuation Inputs
                 </CardTitle>
               </CardHeader>
@@ -536,21 +538,21 @@ export default function SEOIntelligenceLanding() {
                 <div className="space-y-4 text-sm font-light">
                   <div className="flex justify-between items-center py-3 border-b border-black/5">
                     <span>DCF Fair Value Range</span>
-                    <span className="text-black/60">$185 - $215</span>
+                    <span className="text-white/60">$185 - $215</span>
                   </div>
                   <div className="flex justify-between items-center py-3 border-b border-black/5">
                     <span>Comparable Multiples</span>
-                    <span className="text-black/60">$175 - $205</span>
+                    <span className="text-white/60">$175 - $205</span>
                   </div>
                   <div className="flex justify-between items-center py-3 border-b border-black/5">
                     <span>Consensus Target</span>
-                    <span className="text-black/60">$190</span>
+                    <span className="text-white/60">$190</span>
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-black/60 pt-4 border-t-2 border-black/20">
+                  <div className="flex items-center gap-2 text-xs text-white/60 pt-4 border-t-2 border-black/20">
                     <Link2 className="w-3 h-3" />
                     <span>Based on 10-K (CIT-2024-0228-001), earnings transcripts, consensus estimates (retrieved 2024-10-27)</span>
                   </div>
-                  <div className="text-xs text-black/60 pt-2">
+                  <div className="text-xs text-white/60 pt-2">
                     Coverage window: 2024-02-28 to 2024-10-27
                   </div>
                 </div>
