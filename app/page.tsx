@@ -21,14 +21,58 @@ import {
   Link2,
   AlertTriangle,
   Target,
-  Clock
+  Clock,
+  GitBranch,
+  Settings
 } from "lucide-react";
 import Link from "next/link";
 
 export default function SEOIntelligenceLanding() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
-<div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white">
+      <style jsx global>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        .animate-fade-in-up {
+          animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .animate-fade-in {
+          animation: fadeIn 0.8s ease-out forwards;
+        }
+        
+        .delay-100 { animation-delay: 0.1s; opacity: 0; }
+        .delay-200 { animation-delay: 0.2s; opacity: 0; }
+        .delay-300 { animation-delay: 0.3s; opacity: 0; }
+        .delay-400 { animation-delay: 0.4s; opacity: 0; }
+        .delay-500 { animation-delay: 0.5s; opacity: 0; }
+        .delay-600 { animation-delay: 0.6s; opacity: 0; }
+        
+        .hover-lift {
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .hover-lift:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        }
+      `}</style>
+
       {/* Header */}
       <header className="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-black/10 z-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -37,8 +81,8 @@ export default function SEOIntelligenceLanding() {
             
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-8">
-              <Link href="#reports" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Reports</Link>
-              <Link href="#methodology" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Methodology</Link>
+              <Link href="#library" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Library</Link>
+              <Link href="#packs" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Packs</Link>
               <Link href="/dashboard/billing" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Pricing</Link>
               
               <Unauthenticated>
@@ -61,7 +105,7 @@ export default function SEOIntelligenceLanding() {
                     Dashboard
                   </Button>
                 </a>
-                <UserButton  />
+                <UserButton />
               </Authenticated>
             </nav>
 
@@ -80,16 +124,16 @@ export default function SEOIntelligenceLanding() {
           <div className="md:hidden border-t border-black/10 bg-white">
             <div className="px-6 py-8 space-y-6">
               <Link 
-                href="#reports" 
+                href="#library" 
                 className="block text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black"
               >
-                Reports
+                Library
               </Link>
               <Link 
-                href="#methodology" 
+                href="#packs" 
                 className="block text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black"
               >
-                Methodology
+                Packs
               </Link>
               <Link 
                 href="/dashboard/billing" 
@@ -124,29 +168,28 @@ export default function SEOIntelligenceLanding() {
       <section className="pt-32 pb-20 sm:pt-40 sm:pb-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
-            <div className="mb-6">
+            <div className="mb-6 animate-fade-in-up">
               <Badge className="bg-black text-white hover:bg-black/90 text-xs tracking-widest uppercase border-0">
-                MuseData for Investors
+                MuseData for Public Markets
               </Badge>
             </div>
 
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light leading-[1.1] tracking-tight mb-8 text-black/70">
-              Decision-Grade Reports on Public Companies
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light leading-[1.1] tracking-tight mb-8 text-black/70 animate-fade-in-up delay-100">
+              Systematic disclosure monitoring with claim level provenance
             </h1>
 
-            <p className="text-xl sm:text-2xl font-light leading-relaxed text-black/70 mb-12 max-w-3xl">
-              Generate a full diligence snapshot with valuation, key drivers, risks, and "what changed." 
-              Every claim links back to source evidence.
+            <p className="text-xl sm:text-2xl font-light leading-relaxed text-black/70 mb-12 max-w-3xl animate-fade-in-up delay-200">
+              Produce memo format research packs from filings, transcripts, and IR materials. Each delta includes a citation ID, source excerpt, retrieval date, and coverage window. Tables export with inputs and formulas preserved for reruns.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up delay-300">
               <Unauthenticated>
                 <SignInButton mode="modal" forceRedirectUrl="/dashboard">
                   <Button
                     size="lg"
                     className="h-14 px-8 bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-sm tracking-widest uppercase"
                   >
-                    Generate Report
+                    Produce Pack
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </SignInButton>
@@ -158,7 +201,7 @@ export default function SEOIntelligenceLanding() {
                     size="lg"
                     className="h-14 px-8 bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-sm tracking-widest uppercase"
                   >
-                    Go to Dashboard
+                    Produce Pack
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </a>
@@ -169,25 +212,14 @@ export default function SEOIntelligenceLanding() {
                 variant="outline"
                 className="h-14 px-8 bg-white text-black border-2 border-black hover:bg-black hover:text-white transition-all duration-300 text-sm tracking-widest uppercase"
               >
-                View Sample Report
+                View Sample Pack
               </Button>
             </div>
 
-            {/* Metrics */}
-            <div className="mt-16 pt-8 border-t border-black/10">
-              <div className="grid grid-cols-3 gap-8 max-w-2xl">
-                <div>
-                  <div className="text-3xl font-light mb-1 text-black/70">2 Min</div>
-                  <div className="text-xs tracking-wider uppercase text-black/60">Full Report</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-light mb-1 text-black/70">5K+</div>
-                  <div className="text-xs tracking-wider uppercase text-black/60">Public Companies</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-light mb-1 text-black/70">100%</div>
-                  <div className="text-xs tracking-wider uppercase text-black/60">Sourced</div>
-                </div>
+            {/* Trust Line */}
+            <div className="mt-16 pt-8 border-t border-black/10 animate-fade-in-up delay-400">
+              <div className="text-sm tracking-wider uppercase text-black/60">
+                Provenance first. Change log second. Opinion last.
               </div>
             </div>
           </div>
@@ -195,419 +227,427 @@ export default function SEOIntelligenceLanding() {
       </section>
 
       {/* Problem Statement */}
-      <section id="reports" className="py-20 sm:py-32 bg-black/[0.02]">
+      <section className="py-20 sm:py-32 bg-black/[0.02]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center mb-16">
+          <div className="max-w-4xl mx-auto mb-16">
             <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight text-black/70">
-              Due Diligence Shouldn't Take Days
+              The bottleneck is lineage, not access
             </h2>
             <p className="text-lg font-light text-black/70 leading-relaxed">
-              Get the complete picture—thesis, valuation range, key drivers, and recent changes—in minutes, not days.
+              Facts are available. Attribution degrades with time. Updates break workflows. MuseData maintains a source linked record so research can be reviewed, rerun, and compared across periods.
             </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div className="text-center p-8 bg-white border border-black/10">
-              <div className="text-4xl font-light mb-3 text-black/70">3-5 Days</div>
-              <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Traditional DD</div>
-              <p className="text-sm font-light text-black/70">
-                Manual research across multiple sources
-              </p>
-            </div>
-            
-            <div className="text-center p-8 bg-white border border-black/10">
-              <div className="text-4xl font-light mb-3 text-black/60">8+ Tools</div>
-              <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Fragmented Data</div>
-              <p className="text-sm font-light text-black/70">
-                Bloomberg, CapIQ, transcripts, filings, news
-              </p>
-            </div>
-            
-            <div className="text-center p-8 bg-white border border-black/10">
-              <div className="text-4xl font-light mb-3 text-black/60">Hours</div>
-              <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Citation Work</div>
-              <p className="text-sm font-light text-black/70">
-                Tracking sources for every data point
-              </p>
-            </div>
           </div>
         </div>
       </section>
 
       {/* What You Get */}
-      <section id="methodology" className="py-20 sm:py-32">
+      <section id="packs" className="py-20 sm:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto mb-20">
             <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight text-black/70">
-              Comprehensive Investment Intelligence
+              What you get
             </h2>
-            <p className="text-lg font-light text-black/70 leading-relaxed">
-              Systematic disclosure monitoring with primary source provenance and exportable research packs.
-            </p>
           </div>
 
-          <div className="space-y-16 max-w-6xl mx-auto">
-            {/* Sourced Investment Thesis */}
-            <div className="grid lg:grid-cols-2 gap-12 items-start">
-              <div>
-                <h3 className="text-2xl font-light mb-6 tracking-tight text-black/70">
-                  Sourced Investment Thesis
-                </h3>
-                <p className="text-base font-light text-black/70 leading-relaxed mb-6">
-                  Clear bull and bear cases with every claim linked to its source—filings, transcripts, 
-                  news, or analyst reports. Know exactly where each insight comes from.
-                </p>
-                <div className="space-y-3 text-sm font-light">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span className="text-black/70">Bull and bear case with source citations</span>
+          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {/* Card 1: Provenance */}
+            <Card className="border-2 border-black/10 shadow-none hover-lift">
+              <CardHeader>
+                <div className="flex items-start gap-4">
+                  <div className="p-3 bg-black/5">
+                    <Link2 className="w-6 h-6 text-black/60" />
                   </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span className="text-black/70">Key investment drivers and catalysts</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span className="text-black/70">Strategic positioning and competitive moats</span>
+                  <div>
+                    <CardTitle className="text-xl font-light mb-2 text-black/70">
+                      Provenance
+                    </CardTitle>
+                    <p className="text-sm font-light text-black/70 leading-relaxed">
+                      Claim level citations to the originating document and location, with citation IDs and retrieval dates.
+                    </p>
                   </div>
                 </div>
-              </div>
-              
-              <Card className="border-2 border-black/10 shadow-none">
-                <CardHeader>
-                  <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
-                    Sample Thesis Structure
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4 text-sm font-light">
-                    <div className="p-3 bg-black/[0.02] border-l-2 border-black/20">
-                      <div className="font-normal mb-1">Bull Case</div>
-                      <div className="text-black/70 text-xs mb-2">Market leadership in cloud infrastructure with 32% YoY growth</div>
-                      <div className="flex items-center gap-2 text-xs text-black/60">
-                        <Link2 className="w-3 h-3" />
-                        <span>Q3 2024 Earnings Call</span>
-                      </div>
-                    </div>
-                    <div className="p-3 bg-black/[0.02] border-l-2 border-black/20">
-                      <div className="font-normal mb-1">Bear Case</div>
-                      <div className="text-black/70 text-xs mb-2">Margin pressure from increased capex and competitive pricing</div>
-                      <div className="flex items-center gap-2 text-xs text-black/60">
-                        <Link2 className="w-3 h-3" />
-                        <span>10-Q Filing, Sep 2024</span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+              </CardHeader>
+            </Card>
 
-            {/* Valuation Range */}
-            <div className="grid lg:grid-cols-2 gap-12 items-start">
-              <Card className="border-2 border-black/10 shadow-none lg:order-1">
-                <CardHeader>
-                  <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
-                    Valuation Framework
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4 text-sm font-light">
-                    <div className="flex justify-between items-center py-3 border-b border-black/5">
-                      <span>DCF Fair Value</span>
-                      <span className="text-black/60">$185 - $215</span>
-                    </div>
-                    <div className="flex justify-between items-center py-3 border-b border-black/5">
-                      <span>Comparable Multiples</span>
-                      <span className="text-black/60">$175 - $205</span>
-                    </div>
-                    <div className="flex justify-between items-center py-3 border-b border-black/5">
-                      <span>Street Consensus</span>
-                      <span className="text-black/60">$190</span>
-                    </div>
-                    <div className="flex justify-between items-center py-3 pt-4 border-t-2 border-black/20">
-                      <span className="font-normal">Implied Range</span>
-                      <span className="text-black/70 font-normal">$180 - $210</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-black/60 pt-2">
-                      <Link2 className="w-3 h-3" />
-                      <span>Based on 10-K, earnings transcripts, consensus estimates</span>
-                    </div>
+            {/* Card 2: Change Log */}
+            <Card className="border-2 border-black/10 shadow-none hover-lift">
+              <CardHeader>
+                <div className="flex items-start gap-4">
+                  <div className="p-3 bg-black/5">
+                    <GitBranch className="w-6 h-6 text-black/60" />
                   </div>
-                </CardContent>
-              </Card>
-
-              <div className="lg:order-2">
-                <h3 className="text-2xl font-light mb-6 tracking-tight text-black/70">
-                  Valuation Range with Methodology
-                </h3>
-                <p className="text-base font-light text-black/70 leading-relaxed mb-6">
-                  Get a principled valuation range using multiple approaches—DCF, comparables, and 
-                  consensus estimates. All assumptions and sources clearly documented.
-                </p>
-                <div className="space-y-3 text-sm font-light">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span className="text-black/70">DCF with transparent assumptions</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span className="text-black/70">Peer comparable multiples analysis</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span className="text-black/70">Implied valuation range with confidence levels</span>
+                  <div>
+                    <CardTitle className="text-xl font-light mb-2 text-black/70">
+                      Change Log
+                    </CardTitle>
+                    <p className="text-sm font-light text-black/70 leading-relaxed">
+                      Material deltas since last run across disclosures, with evidence attached and a documented coverage window.
+                    </p>
                   </div>
                 </div>
-              </div>
-            </div>
+              </CardHeader>
+            </Card>
 
-            {/* Key Drivers & Risks */}
-            <div className="grid lg:grid-cols-2 gap-12 items-start">
-              <div>
-                <h3 className="text-2xl font-light mb-6 tracking-tight text-black/70">
-                  Key Drivers & Risk Factors
-                </h3>
-                <p className="text-base font-light text-black/70 leading-relaxed mb-6">
-                  Understand what moves the stock and what could go wrong. Each driver and risk 
-                  is quantified where possible and linked to supporting evidence.
-                </p>
-                <div className="space-y-3 text-sm font-light">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span className="text-black/70">Revenue and margin drivers with sensitivities</span>
+            {/* Card 3: Exports */}
+            <Card className="border-2 border-black/10 shadow-none hover-lift">
+              <CardHeader>
+                <div className="flex items-start gap-4">
+                  <div className="p-3 bg-black/5">
+                    <FileText className="w-6 h-6 text-black/60" />
                   </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span className="text-black/70">Operational, financial, and market risks</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span className="text-black/70">Regulatory and competitive dynamics</span>
+                  <div>
+                    <CardTitle className="text-xl font-light mb-2 text-black/70">
+                      Exports
+                    </CardTitle>
+                    <p className="text-sm font-light text-black/70 leading-relaxed">
+                      Memo format PDF plus model ready tables with stable field names.
+                    </p>
                   </div>
                 </div>
-              </div>
-              
-              <Card className="border-2 border-black/10 shadow-none">
-                <CardHeader>
-                  <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
-                    Sample Key Drivers
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4 text-sm font-light">
-                    <div className="flex items-start gap-3 py-2">
-                      <Target className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                      <div>
-                        <div className="font-normal mb-1">Cloud Revenue Growth</div>
-                        <div className="text-black/70 text-xs mb-1">32% YoY, driving 65% of incremental revenue</div>
-                        <div className="flex items-center gap-2 text-xs text-black/60">
-                          <Link2 className="w-3 h-3" />
-                          <span>Q3 Earnings</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3 py-2">
-                      <AlertTriangle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                      <div>
-                        <div className="font-normal mb-1">Margin Pressure Risk</div>
-                        <div className="text-black/70 text-xs mb-1">Capex up 40% YoY, could compress EBITDA 2-3%</div>
-                        <div className="flex items-center gap-2 text-xs text-black/60">
-                          <Link2 className="w-3 h-3" />
-                          <span>CFO Commentary</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+              </CardHeader>
+            </Card>
 
-            {/* What Changed */}
-            <div className="grid lg:grid-cols-2 gap-12 items-start">
-              <Card className="border-2 border-black/10 shadow-none lg:order-1">
-                <CardHeader>
-                  <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
-                    Recent Developments
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4 text-sm font-light">
-                    <div className="flex items-start gap-3 py-2">
-                      <Clock className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                      <div>
-                        <div className="font-normal mb-1">Q3 Earnings Beat</div>
-                        <div className="text-black/70 text-xs mb-1">EPS $2.15 vs $2.02 est, revenue +28% YoY</div>
-                        <div className="flex items-center gap-2 text-xs text-black/60">
-                          <Link2 className="w-3 h-3" />
-                          <span>3 days ago</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3 py-2">
-                      <Clock className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                      <div>
-                        <div className="font-normal mb-1">Strategic Acquisition</div>
-                        <div className="text-black/70 text-xs mb-1">$2.4B deal for AI infrastructure company announced</div>
-                        <div className="flex items-center gap-2 text-xs text-black/60">
-                          <Link2 className="w-3 h-3" />
-                          <span>1 week ago</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3 py-2">
-                      <Clock className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                      <div>
-                        <div className="font-normal mb-1">Analyst Upgrades</div>
-                        <div className="text-black/70 text-xs mb-1">3 upgrades, avg PT raised to $195 from $180</div>
-                        <div className="flex items-center gap-2 text-xs text-black/60">
-                          <Link2 className="w-3 h-3" />
-                          <span>Last 2 weeks</span>
-                        </div>
-                      </div>
-                    </div>
+            {/* Card 4: Methods */}
+            <Card className="border-2 border-black/10 shadow-none hover-lift">
+              <CardHeader>
+                <div className="flex items-start gap-4">
+                  <div className="p-3 bg-black/5">
+                    <Settings className="w-6 h-6 text-black/60" />
                   </div>
-                </CardContent>
-              </Card>
-
-              <div className="lg:order-2">
-                <h3 className="text-2xl font-light mb-6 tracking-tight text-black/70">
-                  What Changed Since Last Run
-                </h3>
-                <p className="text-base font-light text-black/70 leading-relaxed mb-6">
-                  Track material updates since your last report—earnings, guidance changes, 
-                  M&A activity, analyst revisions, and regulatory developments.
-                </p>
-                <div className="space-y-3 text-sm font-light">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span className="text-black/70">Earnings results and guidance updates</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span className="text-black/70">M&A announcements and strategic moves</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                    <span className="text-black/70">Analyst rating and estimate changes</span>
+                  <div>
+                    <CardTitle className="text-xl font-light mb-2 text-black/70">
+                      Methods
+                    </CardTitle>
+                    <p className="text-sm font-light text-black/70 leading-relaxed">
+                      Calculation rules, inputs, and formulas included so outputs can be audited and rerun.
+                    </p>
                   </div>
                 </div>
-              </div>
-            </div>
+              </CardHeader>
+            </Card>
           </div>
         </div>
       </section>
 
-      {/* Who It's For */}
-      <section className="py-20 bg-black text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight">
-              Built for Investment Professionals
-            </h2>
-            <p className="text-lg font-light text-white/70 leading-relaxed mb-12">
-              Fast, comprehensive diligence for informed investment decisions.
-            </p>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="p-8 border border-white/20 bg-white/5">
-                <div className="text-2xl font-light mb-2">Equity Research</div>
-                <p className="text-sm font-light text-white/60">
-                  Initiate coverage and update models with sourced insights
-                </p>
-              </div>
-              <div className="p-8 border border-white/20 bg-white/5">
-                <div className="text-2xl font-light mb-2">Portfolio Management</div>
-                <p className="text-sm font-light text-white/60">
-                  Monitor holdings and track material developments
-                </p>
-              </div>
-              <div className="p-8 border border-white/20 bg-white/5">
-                <div className="text-2xl font-light mb-2">Investment Banking</div>
-                <p className="text-sm font-light text-white/60">
-                  Quick diligence for M&A mandates and pitch books
-                </p>
-              </div>
-              <div className="p-8 border border-white/20 bg-white/5">
-                <div className="text-2xl font-light mb-2">Private Equity</div>
-                <p className="text-sm font-light text-white/60">
-                  Screen public comps and market sizing for deals
-                </p>
-              </div>
-              <div className="p-8 border border-white/20 bg-white/5">
-                <div className="text-2xl font-light mb-2">Hedge Funds</div>
-                <p className="text-sm font-light text-white/60">
-                  Generate long/short ideas with thesis documentation
-                </p>
-              </div>
-              <div className="p-8 border border-white/20 bg-white/5">
-                <div className="text-2xl font-light mb-2">Corp Dev</div>
-                <p className="text-sm font-light text-white/60">
-                  Evaluate strategic acquisition targets and partners
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Report Features */}
+      {/* What Changed Since Last Run */}
       <section className="py-20 sm:py-32 bg-black/[0.02]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto mb-12">
+            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight text-black/70">
+              Material deltas, attributable to source
+            </h2>
+            <p className="text-lg font-light text-black/70 leading-relaxed mb-8">
+              Track changes since your last pack as discrete deltas with citations, timestamps, and excerpts.
+            </p>
+            
+            <div className="space-y-3 text-sm font-light">
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                <span className="text-black/70">Earnings and guidance</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                <span className="text-black/70">Capital allocation and M&A</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                <span className="text-black/70">Segment disclosures</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                <span className="text-black/70">Estimate and rating revisions</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                <span className="text-black/70">Regulatory and legal updates</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Developments Module */}
+          <Card className="border-2 border-black/10 shadow-none max-w-5xl mx-auto">
+            <CardHeader>
+              <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
+                Recent Developments
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm font-light">
+                  <thead>
+                    <tr className="border-b border-black/10">
+                      <th className="text-left py-3 px-4 font-normal text-black/60 text-xs tracking-wider uppercase">Event</th>
+                      <th className="text-left py-3 px-4 font-normal text-black/60 text-xs tracking-wider uppercase">Delta</th>
+                      <th className="text-left py-3 px-4 font-normal text-black/60 text-xs tracking-wider uppercase">Source</th>
+                      <th className="text-left py-3 px-4 font-normal text-black/60 text-xs tracking-wider uppercase">Timestamp</th>
+                      <th className="text-left py-3 px-4 font-normal text-black/60 text-xs tracking-wider uppercase">Citation ID</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-black/5 hover:bg-black/[0.02] transition-colors">
+                      <td className="py-3 px-4 text-black/70">Q3 Earnings</td>
+                      <td className="py-3 px-4 text-black/70">EPS $2.15 vs $2.02 est, revenue +28% YoY</td>
+                      <td className="py-3 px-4 text-black/70">8-K Filing</td>
+                      <td className="py-3 px-4 text-black/60">2024-10-24</td>
+                      <td className="py-3 px-4 text-black/60 font-mono text-xs">CIT-2024-1024-001</td>
+                    </tr>
+                    <tr className="border-b border-black/5 hover:bg-black/[0.02] transition-colors">
+                      <td className="py-3 px-4 text-black/70">Guidance Revision</td>
+                      <td className="py-3 px-4 text-black/70">FY24 revenue guidance raised to $48-49B from $46-47B</td>
+                      <td className="py-3 px-4 text-black/70">Earnings Call</td>
+                      <td className="py-3 px-4 text-black/60">2024-10-24</td>
+                      <td className="py-3 px-4 text-black/60 font-mono text-xs">CIT-2024-1024-012</td>
+                    </tr>
+                    <tr className="border-b border-black/5 hover:bg-black/[0.02] transition-colors">
+                      <td className="py-3 px-4 text-black/70">M&A Announcement</td>
+                      <td className="py-3 px-4 text-black/70">$2.4B acquisition announced</td>
+                      <td className="py-3 px-4 text-black/70">Press Release</td>
+                      <td className="py-3 px-4 text-black/60">2024-10-17</td>
+                      <td className="py-3 px-4 text-black/60 font-mono text-xs">CIT-2024-1017-003</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Packs for Workflows */}
+      <section className="py-20 sm:py-32">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto mb-20">
+            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight text-black/70">
+              Packs for the workflows that matter
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            <Card className="border-2 border-black/10 shadow-none hover-lift">
+              <CardHeader>
+                <CardTitle className="text-xl font-light mb-2 text-black/70">
+                  1. Coverage Refresh
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm font-light text-black/70 leading-relaxed">
+                  Refresh a name with an updated change log, claim register, and citation map.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-black/10 shadow-none hover-lift">
+              <CardHeader>
+                <CardTitle className="text-xl font-light mb-2 text-black/70">
+                  2. Event Review
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm font-light text-black/70 leading-relaxed">
+                  Pre and post earnings workflow with guidance diffs, KPI deltas, and transcript citations.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-black/10 shadow-none hover-lift">
+              <CardHeader>
+                <CardTitle className="text-xl font-light mb-2 text-black/70">
+                  3. Portfolio Monitoring
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm font-light text-black/70 leading-relaxed">
+                  Watchlist monitoring that surfaces only names with documented deltas and preserves history.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-black/10 shadow-none hover-lift">
+              <CardHeader>
+                <CardTitle className="text-xl font-light mb-2 text-black/70">
+                  4. Comps and Valuation Inputs
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm font-light text-black/70 leading-relaxed">
+                  Comparable sets and valuation inputs with a documented assumptions log. No opaque outputs.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Claim Register */}
+      <section className="py-20 sm:py-32 bg-black/[0.02]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
+            <div>
+              <h3 className="text-2xl font-light mb-6 tracking-tight text-black/70">
+                Bull and bear cases as a claim register
+              </h3>
+              <p className="text-base font-light text-black/70 leading-relaxed">
+                Drivers, risks, and catalysts expressed as discrete claims with sources, measurement hooks, and sensitivity handles where available.
+              </p>
+            </div>
+            
+            <Card className="border-2 border-black/10 shadow-none">
+              <CardHeader>
+                <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
+                  Sample Claim Register
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4 text-sm font-light">
+                  <div className="p-3 bg-black/[0.02] border-l-2 border-black/20">
+                    <div className="font-normal mb-1">Bull Case</div>
+                    <div className="text-black/70 text-xs mb-2">Cloud infrastructure revenue grew 32% YoY in Q3 2024.</div>
+                    <div className="flex items-center gap-2 text-xs text-black/60">
+                      <Link2 className="w-3 h-3" />
+                      <span>Q3 2024 Earnings Call | CIT-2024-1024-005</span>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-black/[0.02] border-l-2 border-black/20">
+                    <div className="font-normal mb-1">Bear Case</div>
+                    <div className="text-black/70 text-xs mb-2">Capital expenditures increased 40% YoY, compressing EBITDA margins.</div>
+                    <div className="flex items-center gap-2 text-xs text-black/60">
+                      <Link2 className="w-3 h-3" />
+                      <span>10-Q Filing, Sep 2024 | CIT-2024-0930-018</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Valuation Inputs */}
+      <section className="py-20 sm:py-32">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
+            <Card className="border-2 border-black/10 shadow-none lg:order-1">
+              <CardHeader>
+                <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
+                  Valuation Inputs
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4 text-sm font-light">
+                  <div className="flex justify-between items-center py-3 border-b border-black/5">
+                    <span>DCF Fair Value Range</span>
+                    <span className="text-black/60">$185 - $215</span>
+                  </div>
+                  <div className="flex justify-between items-center py-3 border-b border-black/5">
+                    <span>Comparable Multiples</span>
+                    <span className="text-black/60">$175 - $205</span>
+                  </div>
+                  <div className="flex justify-between items-center py-3 border-b border-black/5">
+                    <span>Consensus Target</span>
+                    <span className="text-black/60">$190</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-black/60 pt-4 border-t-2 border-black/20">
+                    <Link2 className="w-3 h-3" />
+                    <span>Based on 10-K (CIT-2024-0228-001), earnings transcripts, consensus estimates (retrieved 2024-10-27)</span>
+                  </div>
+                  <div className="text-xs text-black/60 pt-2">
+                    Coverage window: 2024-02-28 to 2024-10-27
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="lg:order-2">
+              <h3 className="text-2xl font-light mb-6 tracking-tight text-black/70">
+                Valuation inputs with an assumptions log
+              </h3>
+              <p className="text-base font-light text-black/70 leading-relaxed mb-6">
+                DCF inputs, comps context, and consensus references with sources, timestamps, and documented assumptions.
+              </p>
+              <p className="text-xs font-light text-black/60 italic">
+                Research workflow tooling. Not investment advice.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Evidence and Controls */}
+      <section className="py-20 sm:py-32 bg-black/[0.02]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight text-black/70">
+              Governed output, not generated prose
+            </h2>
+            
+            <div className="space-y-3 text-sm font-light mt-8">
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                <span className="text-black/70">Citation IDs and retrieval dates for every claim</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                <span className="text-black/70">Coverage window and last updated on every page</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                <span className="text-black/70">Methods include formulas, inputs, and source mapping</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                <span className="text-black/70">PDF plus tables export with stable field names</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
+                <span className="text-black/70">Materiality thresholds documented per pack</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Public Evidence Library */}
+      <section id="library" className="py-20 sm:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center mb-16">
             <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight text-black/70">
-              Professional, Sourced Reports
+              Public Evidence Library
             </h2>
             <p className="text-lg font-light text-black/70 leading-relaxed">
-              Investment-grade documentation with full source attribution and export options.
+              Each ticker maintains a persistent change history. Each update appends to the record. Links remain stable. Comparisons remain consistent.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div className="text-center p-8 bg-white border border-black/10">
-              <div className="inline-flex p-4 mb-4">
-                <Link2 className="w-8 h-8 text-black/60" />
-              </div>
-              <h3 className="text-xl font-light mb-3 text-black/70">Full Citations</h3>
-              <p className="text-sm font-light text-black/70">
-                Every claim links to source—filings, transcripts, news, or research
-              </p>
+          {/* Metrics */}
+          <div className="grid grid-cols-3 gap-8 max-w-3xl mx-auto">
+            <div className="text-center p-8 bg-black/[0.02] border border-black/10 hover-lift">
+              <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Source Linked</div>
+              <div className="text-3xl font-light text-black/70">By Default</div>
             </div>
-
-            <div className="text-center p-8 bg-white border border-black/10">
-              <div className="inline-flex p-4 mb-4">
-                <FileText className="w-8 h-8 text-black/60" />
-              </div>
-              <h3 className="text-xl font-light mb-3 text-black/70">PDF Export</h3>
-              <p className="text-sm font-light text-black/70">
-                Professional reports formatted for investment committees
-              </p>
+            <div className="text-center p-8 bg-black/[0.02] border border-black/10 hover-lift">
+              <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Generation Time</div>
+              <div className="text-3xl font-light text-black/70">Minutes</div>
             </div>
-
-            <div className="text-center p-8 bg-white border border-black/10">
-              <div className="inline-flex p-4 mb-4">
-                <Shield className="w-8 h-8 text-black/60" />
-              </div>
-              <h3 className="text-xl font-light mb-3 text-black/70">API Access</h3>
-              <p className="text-sm font-light text-black/70">
-                Integrate research data into your investment workflow
-              </p>
+            <div className="text-center p-8 bg-black/[0.02] border border-black/10 hover-lift">
+              <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Coverage</div>
+              <div className="text-3xl font-light text-black/70">Broad</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section id="pricing" className="py-20 sm:py-32">
+      <section className="py-20 sm:py-32 bg-black text-white">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <div className="border-2 border-black p-12 sm:p-16 text-center">
-            <h2 className="text-3xl sm:text-4xl font-light mb-6 tracking-tight text-black/70">
-              Start Generating Reports Today
+          <div className="text-center">
+            <h2 className="text-3xl sm:text-4xl font-light mb-6 tracking-tight">
+              Start producing research packs
             </h2>
-            <p className="text-lg font-light text-black/70 mb-2 max-w-2xl mx-auto">
-              Get decision-grade diligence on any public company—thesis, valuation, drivers, and sources.
+            <p className="text-lg font-light text-white/70 mb-2 max-w-2xl mx-auto">
+              Systematic disclosure monitoring with claim level provenance and documented change logs.
             </p>
-            <p className="text-sm font-light text-black/60 mb-8">
-              Complete investment intelligence in minutes.
+            <p className="text-sm font-light text-white/60 mb-8">
+              Source linked by default. Minutes, not days.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -615,9 +655,9 @@ export default function SEOIntelligenceLanding() {
                 <SignInButton mode="modal" forceRedirectUrl="/dashboard">
                   <Button
                     size="lg"
-                    className="h-14 px-8 bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-sm tracking-widest uppercase"
+                    className="h-14 px-8 bg-white text-black hover:bg-black hover:text-white border-2 border-white transition-all duration-300 text-sm tracking-widest uppercase"
                   >
-                    Generate Your First Report
+                    Produce Pack
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </SignInButton>
@@ -627,7 +667,7 @@ export default function SEOIntelligenceLanding() {
                 <a href="/dashboard">
                   <Button
                     size="lg"
-                    className="h-14 px-8 bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-sm tracking-widest uppercase"
+                    className="h-14 px-8 bg-white text-black hover:bg-black hover:text-white border-2 border-white transition-all duration-300 text-sm tracking-widest uppercase"
                   >
                     Access Dashboard
                     <ArrowRight className="w-4 h-4 ml-2" />
@@ -638,33 +678,29 @@ export default function SEOIntelligenceLanding() {
               <Button
                 size="lg"
                 variant="outline"
-                className="h-14 px-8 bg-white text-black border-2 border-black hover:bg-black hover:text-white transition-all duration-300 text-sm tracking-widest uppercase"
+                className="h-14 px-8 bg-black text-white border-2 border-white hover:bg-white hover:text-black transition-all duration-300 text-sm tracking-widest uppercase"
               >
-                View Sample Report
+                View Sample Pack
               </Button>
             </div>
-            
-            <p className="mt-6 text-xs tracking-wider uppercase text-black/60">
-              Sourced Thesis • Valuation Range • Key Drivers • What Changed
-            </p>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-black/10 py-12 bg-black text-white">
+      <footer className="border-t border-black/10 py-12 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="text-xl font-light tracking-tight">MUSEDATA</div>
-            <div className="flex gap-8 text-xs tracking-wider uppercase text-white/60">
-              <a href="#" className="hover:text-white transition-colors">Privacy</a>
-              <a href="#" className="hover:text-white transition-colors">Terms</a>
-              <a href="#" className="hover:text-white transition-colors">Security</a>
-              <a href="#" className="hover:text-white transition-colors">Contact</a>
+            <div className="text-xl font-light tracking-tight text-black">MUSEDATA</div>
+            <div className="flex gap-8 text-xs tracking-wider uppercase text-black/60">
+              <a href="#" className="hover:text-black transition-colors">Privacy</a>
+              <a href="#" className="hover:text-black transition-colors">Terms</a>
+              <a href="#" className="hover:text-black transition-colors">Security</a>
+              <a href="#" className="hover:text-black transition-colors">Contact</a>
             </div>
           </div>
-          <div className="mt-8 text-center text-xs text-white/40">
-            © 2025 MuseData. Decision-grade investment intelligence for professionals.
+          <div className="mt-8 text-center text-xs text-black/40">
+            © 2025 MuseData. Systematic disclosure monitoring with claim level provenance.
           </div>
         </div>
       </footer>
