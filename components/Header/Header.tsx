@@ -14,7 +14,7 @@ const Header = () => {
       <header className="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-black/10 z-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="text-xl font-light tracking-tight text-black">MUSEDATA</div>
+            <a href="/" className="text-xl font-light tracking-tight text-black">MUSEDATA</a>
             
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-8">
