@@ -317,10 +317,10 @@ export default function SEOIntelligenceLanding() {
           <Card className="border-2 border-black/10 shadow-none max-w-6xl mx-auto mb-6">
             <CardHeader className="bg-black/[0.02]">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
+                <CardTitle className="text-sm tracking-wider uppercase text-white/60 font-normal">
                   Evidence Ledger - Live Example
                 </CardTitle>
-                <div className="flex items-center gap-2 text-xs text-black/60">
+                <div className="flex items-center gap-2 text-xs text-white/60">
                   <Database className="w-4 h-4" />
                   <span>Interactive: Click any row</span>
                 </div>
@@ -331,13 +331,13 @@ export default function SEOIntelligenceLanding() {
                 <table className="w-full text-sm font-light">
                   <thead>
                     <tr className="border-b-2 border-black/10">
-                      <th className="text-left py-3 px-3 font-normal text-black/60 text-xs tracking-wider uppercase">Claim ID</th>
-                      <th className="text-left py-3 px-3 font-normal text-black/60 text-xs tracking-wider uppercase">Metric</th>
-                      <th className="text-left py-3 px-3 font-normal text-black/60 text-xs tracking-wider uppercase">Value</th>
-                      <th className="text-left py-3 px-3 font-normal text-black/60 text-xs tracking-wider uppercase">Source</th>
-                      <th className="text-left py-3 px-3 font-normal text-black/60 text-xs tracking-wider uppercase">Retrieved</th>
-                      <th className="text-left py-3 px-3 font-normal text-black/60 text-xs tracking-wider uppercase">Confidence</th>
-                      <th className="text-center py-3 px-3 font-normal text-black/60 text-xs tracking-wider uppercase">Status</th>
+                      <th className="text-left py-3 px-3 font-normal text-white/60 text-xs tracking-wider uppercase">Claim ID</th>
+                      <th className="text-left py-3 px-3 font-normal text-white/60 text-xs tracking-wider uppercase">Metric</th>
+                      <th className="text-left py-3 px-3 font-normal text-white/60 text-xs tracking-wider uppercase">Value</th>
+                      <th className="text-left py-3 px-3 font-normal text-white/60 text-xs tracking-wider uppercase">Source</th>
+                      <th className="text-left py-3 px-3 font-normal text-white/60 text-xs tracking-wider uppercase">Retrieved</th>
+                      <th className="text-left py-3 px-3 font-normal text-white/60 text-xs tracking-wider uppercase">Confidence</th>
+                      <th className="text-center py-3 px-3 font-normal text-white/60 text-xs tracking-wider uppercase">Status</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -346,12 +346,12 @@ export default function SEOIntelligenceLanding() {
                       onClick={() => setSelectedEvidence(selectedEvidence === 1 ? null : 1)}
                     >
                       <td className="py-3 px-3 font-mono text-xs text-blue-600">CIT-2024-1024-001</td>
-                      <td className="py-3 px-3 text-black/70">Q3 EPS</td>
-                      <td className="py-3 px-3 text-black/90 font-semibold">$2.15</td>
+                      <td className="py-3 px-3 text-white/70">Q3 EPS</td>
+                      <td className="py-3 px-3 text-white/90 font-semibold">$2.15</td>
                       <td className="py-3 px-3">
                         <a href="#" className="text-blue-600 hover:underline text-xs">8-K Filing</a>
                       </td>
-                      <td className="py-3 px-3 text-black/60 text-xs">2024-10-24 16:05:23 UTC</td>
+                      <td className="py-3 px-3 text-white/60 text-xs">2024-10-24 16:05:23 UTC</td>
                       <td className="py-3 px-3">
                         <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium">
                           98%
@@ -367,12 +367,12 @@ export default function SEOIntelligenceLanding() {
                       onClick={() => setSelectedEvidence(selectedEvidence === 2 ? null : 2)}
                     >
                       <td className="py-3 px-3 font-mono text-xs text-blue-600">CIT-2024-1024-002</td>
-                      <td className="py-3 px-3 text-black/70">Revenue</td>
-                      <td className="py-3 px-3 text-black/90 font-semibold">$12.4B</td>
+                      <td className="py-3 px-3 text-white/70">Revenue</td>
+                      <td className="py-3 px-3 text-white/90 font-semibold">$12.4B</td>
                       <td className="py-3 px-3">
                         <a href="#" className="text-blue-600 hover:underline text-xs">10-Q Sec 1.2</a>
                       </td>
-                      <td className="py-3 px-3 text-black/60 text-xs">2024-10-24 16:05:45 UTC</td>
+                      <td className="py-3 px-3 text-white/60 text-xs">2024-10-24 16:05:45 UTC</td>
                       <td className="py-3 px-3">
                         <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium">
                           95%
@@ -388,12 +388,12 @@ export default function SEOIntelligenceLanding() {
                       onClick={() => setSelectedEvidence(selectedEvidence === 3 ? null : 3)}
                     >
                       <td className="py-3 px-3 font-mono text-xs text-blue-600">CIT-2024-1024-003</td>
-                      <td className="py-3 px-3 text-black/70">Operating Margin</td>
-                      <td className="py-3 px-3 text-black/90 font-semibold">18.5%</td>
+                      <td className="py-3 px-3 text-white/70">Operating Margin</td>
+                      <td className="py-3 px-3 text-white/90 font-semibold">18.5%</td>
                       <td className="py-3 px-3">
                         <a href="#" className="text-blue-600 hover:underline text-xs">Transcript P.12</a>
                       </td>
-                      <td className="py-3 px-3 text-black/60 text-xs">2024-10-24 18:22:11 UTC</td>
+                      <td className="py-3 px-3 text-white/60 text-xs">2024-10-24 18:22:11 UTC</td>
                       <td className="py-3 px-3">
                         <span className="px-2 py-1 bg-amber-100 text-amber-800 rounded text-xs font-medium">
                           87%
@@ -409,12 +409,12 @@ export default function SEOIntelligenceLanding() {
                       onClick={() => setSelectedEvidence(selectedEvidence === 4 ? null : 4)}
                     >
                       <td className="py-3 px-3 font-mono text-xs text-blue-600">CIT-2024-1024-012</td>
-                      <td className="py-3 px-3 text-black/70">FY24 Guidance</td>
-                      <td className="py-3 px-3 text-black/90 font-semibold">$48-49B</td>
+                      <td className="py-3 px-3 text-white/70">FY24 Guidance</td>
+                      <td className="py-3 px-3 text-white/90 font-semibold">$48-49B</td>
                       <td className="py-3 px-3">
                         <a href="#" className="text-blue-600 hover:underline text-xs">Earnings Call</a>
                       </td>
-                      <td className="py-3 px-3 text-black/60 text-xs">2024-10-24 18:33:02 UTC</td>
+                      <td className="py-3 px-3 text-white/60 text-xs">2024-10-24 18:33:02 UTC</td>
                       <td className="py-3 px-3">
                         <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium">
                           92%
@@ -522,8 +522,8 @@ export default function SEOIntelligenceLanding() {
           <div className="max-w-4xl mx-auto mt-16">
             <Card className="border-2 border-black/10 shadow-none">
               <CardContent className="pt-6">
-                <h3 className="text-lg font-semibold text-black/90 mb-4">Why the Evidence Ledger matters</h3>
-                <div className="space-y-3 text-sm text-black/70">
+                <h3 className="text-lg font-semibold text-white/90 mb-4">Why the Evidence Ledger matters</h3>
+                <div className="space-y-3 text-sm text-white/70">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
                     <span><strong>Auditability:</strong> Every number can be traced back to its source document, location, and extraction method</span>
@@ -581,19 +581,19 @@ export default function SEOIntelligenceLanding() {
               <CardContent className="pt-6">
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between items-center py-2 px-3 rounded">
-                    <span className="text-gray-700">FY24 Revenue Guidance</span>
+                    <span className="text-white">FY24 Revenue Guidance</span>
                     <span className="font-mono font-semibold text-gray-900">$46-47B</span>
                   </div>
                   <div className="flex justify-between items-center py-2 px-3 rounded">
-                    <span className="text-gray-700">Q3 EPS</span>
+                    <span className="text-white">Q3 EPS</span>
                     <span className="font-mono font-semibold text-gray-900">$2.02 est</span>
                   </div>
                   <div className="flex justify-between items-center py-2 px-3 rounded">
-                    <span className="text-gray-700">Cloud Revenue Growth</span>
+                    <span className="text-white">Cloud Revenue Growth</span>
                     <span className="font-mono font-semibold text-gray-900">28% YoY</span>
                   </div>
                   <div className="flex justify-between items-center py-2 px-3 rounded">
-                    <span className="text-gray-700">Operating Margin</span>
+                    <span className="text-white">Operating Margin</span>
                     <span className="font-mono font-semibold text-gray-900">17.2%</span>
                   </div>
                 </div>
@@ -616,25 +616,25 @@ export default function SEOIntelligenceLanding() {
               <CardContent className="pt-6">
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between items-center py-2 px-3 rounded diff-increase">
-                    <span className="text-gray-700">FY24 Revenue Guidance</span>
+                    <span className="text-white">FY24 Revenue Guidance</span>
                     <span className="font-mono font-semibold text-green-900">
                       $48-49B <TrendingUp className="w-4 h-4 inline-block ml-1" />
                     </span>
                   </div>
                   <div className="flex justify-between items-center py-2 px-3 rounded diff-increase">
-                    <span className="text-gray-700">Q3 EPS</span>
+                    <span className="text-white">Q3 EPS</span>
                     <span className="font-mono font-semibold text-green-900">
                       $2.15 (beat) <TrendingUp className="w-4 h-4 inline-block ml-1" />
                     </span>
                   </div>
                   <div className="flex justify-between items-center py-2 px-3 rounded diff-increase">
-                    <span className="text-gray-700">Cloud Revenue Growth</span>
+                    <span className="text-white">Cloud Revenue Growth</span>
                     <span className="font-mono font-semibold text-green-900">
                       32% YoY <TrendingUp className="w-4 h-4 inline-block ml-1" />
                     </span>
                   </div>
                   <div className="flex justify-between items-center py-2 px-3 rounded diff-increase">
-                    <span className="text-gray-700">Operating Margin</span>
+                    <span className="text-white">Operating Margin</span>
                     <span className="font-mono font-semibold text-green-900">
                       18.5% <TrendingUp className="w-4 h-4 inline-block ml-1" />
                     </span>
@@ -722,12 +722,12 @@ export default function SEOIntelligenceLanding() {
           <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             <Card className="border-2 border-black/10 shadow-none hover-lift">
               <CardHeader>
-                <CardTitle className="text-xl font-light mb-2 text-black/70">
+                <CardTitle className="text-xl font-light mb-2 text-white/70">
                   Daily Monitoring
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-black/70">
+                <ul className="space-y-2 text-sm text-white/70">
                   <li className="flex items-start gap-2">
                     <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600" />
                     <span>Earnings & guidance updates</span>
@@ -745,7 +745,7 @@ export default function SEOIntelligenceLanding() {
                     <span>Slack/email digest</span>
                   </li>
                 </ul>
-                <div className="mt-4 pt-4 border-t border-black/10 text-xs text-black/60">
+                <div className="mt-4 pt-4 border-t border-black/10 text-xs text-white/60">
                   For active positions and earnings season
                 </div>
               </CardContent>
@@ -753,12 +753,12 @@ export default function SEOIntelligenceLanding() {
 
             <Card className="border-2 border-black/10 shadow-none hover-lift">
               <CardHeader>
-                <CardTitle className="text-xl font-light mb-2 text-black/70">
+                <CardTitle className="text-xl font-light mb-2 text-white/70">
                   Weekly Deep Dive
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-black/70">
+                <ul className="space-y-2 text-sm text-white/70">
                   <li className="flex items-start gap-2">
                     <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600" />
                     <span>Full coverage refresh</span>
@@ -776,7 +776,7 @@ export default function SEOIntelligenceLanding() {
                     <span>Competitive positioning</span>
                   </li>
                 </ul>
-                <div className="mt-4 pt-4 border-t border-black/10 text-xs text-black/60">
+                <div className="mt-4 pt-4 border-t border-black/10 text-xs text-white/60">
                   For watchlist and research pipeline
                 </div>
               </CardContent>
@@ -784,12 +784,12 @@ export default function SEOIntelligenceLanding() {
 
             <Card className="border-2 border-black/10 shadow-none hover-lift">
               <CardHeader>
-                <CardTitle className="text-xl font-light mb-2 text-black/70">
+                <CardTitle className="text-xl font-light mb-2 text-white/70">
                   Ad Hoc Research
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-black/70">
+                <ul className="space-y-2 text-sm text-white/70">
                   <li className="flex items-start gap-2">
                     <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600" />
                     <span>On-demand pack generation</span>
@@ -807,7 +807,7 @@ export default function SEOIntelligenceLanding() {
                     <span>Evidence pack export</span>
                   </li>
                 </ul>
-                <div className="mt-4 pt-4 border-t border-black/10 text-xs text-black/60">
+                <div className="mt-4 pt-4 border-t border-black/10 text-xs text-white/60">
                   For diligence and deep research
                 </div>
               </CardContent>
@@ -832,25 +832,25 @@ export default function SEOIntelligenceLanding() {
           <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
             <Card className="border-2 border-black/10 shadow-none">
               <CardHeader>
-                <CardTitle className="text-lg font-light text-black/70">Provenance Controls</CardTitle>
+                <CardTitle className="text-lg font-light text-white/70">Provenance Controls</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 text-sm">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
-                    <span className="text-black/70">Citation IDs and retrieval timestamps for every claim</span>
+                    <span className="text-white/70">Citation IDs and retrieval timestamps for every claim</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
-                    <span className="text-black/70">Source excerpts with highlighting and context</span>
+                    <span className="text-white/70">Source excerpts with highlighting and context</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
-                    <span className="text-black/70">Coverage window and last updated on every page</span>
+                    <span className="text-white/70">Coverage window and last updated on every page</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
-                    <span className="text-black/70">Parser version and extraction method documented</span>
+                    <span className="text-white/70">Parser version and extraction method documented</span>
                   </div>
                 </div>
               </CardContent>
@@ -858,25 +858,25 @@ export default function SEOIntelligenceLanding() {
 
             <Card className="border-2 border-black/10 shadow-none">
               <CardHeader>
-                <CardTitle className="text-lg font-light text-black/70">Reproducibility Controls</CardTitle>
+                <CardTitle className="text-lg font-light text-white/70">Reproducibility Controls</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 text-sm">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
-                    <span className="text-black/70">Deterministic reruns with identical outputs from same snapshot</span>
+                    <span className="text-white/70">Deterministic reruns with identical outputs from same snapshot</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
-                    <span className="text-black/70">Methods include formulas, inputs, and source mapping</span>
+                    <span className="text-white/70">Methods include formulas, inputs, and source mapping</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
-                    <span className="text-black/70">Tables export with stable field names and preserved formulas</span>
+                    <span className="text-white/70">Tables export with stable field names and preserved formulas</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
-                    <span className="text-black/70">Run IDs and snapshot semantics for version control</span>
+                    <span className="text-white/70">Run IDs and snapshot semantics for version control</span>
                   </div>
                 </div>
               </CardContent>
@@ -884,25 +884,25 @@ export default function SEOIntelligenceLanding() {
 
             <Card className="border-2 border-black/10 shadow-none">
               <CardHeader>
-                <CardTitle className="text-lg font-light text-black/70">Quality Controls</CardTitle>
+                <CardTitle className="text-lg font-light text-white/70">Quality Controls</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 text-sm">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
-                    <span className="text-black/70">Confidence scores with reasoning for every claim</span>
+                    <span className="text-white/70">Confidence scores with reasoning for every claim</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
-                    <span className="text-black/70">Tie-out verification with pass/warn/fail status</span>
+                    <span className="text-white/70">Tie-out verification with pass/warn/fail status</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
-                    <span className="text-black/70">Materiality thresholds documented per pack</span>
+                    <span className="text-white/70">Materiality thresholds documented per pack</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
-                    <span className="text-black/70">Quality gates that block completion when checks fail</span>
+                    <span className="text-white/70">Quality gates that block completion when checks fail</span>
                   </div>
                 </div>
               </CardContent>
@@ -910,25 +910,25 @@ export default function SEOIntelligenceLanding() {
 
             <Card className="border-2 border-black/10 shadow-none">
               <CardHeader>
-                <CardTitle className="text-lg font-light text-black/70">Change Controls</CardTitle>
+                <CardTitle className="text-lg font-light text-white/70">Change Controls</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 text-sm">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
-                    <span className="text-black/70">Diff engine shows before/after with evidence</span>
+                    <span className="text-white/70">Diff engine shows before/after with evidence</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
-                    <span className="text-black/70">Material delta detection with documented thresholds</span>
+                    <span className="text-white/70">Material delta detection with documented thresholds</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
-                    <span className="text-black/70">Historical comparison across runs and periods</span>
+                    <span className="text-white/70">Historical comparison across runs and periods</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
-                    <span className="text-black/70">Persistent change history with stable links</span>
+                    <span className="text-white/70">Persistent change history with stable links</span>
                   </div>
                 </div>
               </CardContent>
