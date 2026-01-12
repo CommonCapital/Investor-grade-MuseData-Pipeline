@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import {  useState } from "react";
 import { Authenticated, Unauthenticated } from "convex/react";
 import { SignInButton, UserButton } from "@clerk/nextjs";
 import { Badge } from "@/components/ui/badge";
@@ -23,12 +23,18 @@ import {
   Target,
   Clock,
   GitBranch,
-  Settings
+  Settings,
+  GitCompare,
+  Activity,
+  AlertCircle,
+  Database
 } from "lucide-react";
 import Link from "next/link";
 
 export default function SEOIntelligenceLanding() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const[mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [selectedEvidence, setSelectedEvidence] = useState<number | null>(null);
+  
   return (
     <div className="min-h-screen bg-white">
       <style jsx global>{`
@@ -48,6 +54,11 @@ export default function SEOIntelligenceLanding() {
           to { opacity: 1; }
         }
         
+        @keyframes pulse-border {
+          0%, 100% { border-color: rgba(59, 130, 246, 0.5); }
+          50% { border-color: rgba(59, 130, 246, 1); }
+        }
+        
         .animate-fade-in-up {
           animation: fadeInUp 0.8s ease-out forwards;
         }
@@ -61,7 +72,6 @@ export default function SEOIntelligenceLanding() {
         .delay-300 { animation-delay: 0.3s; opacity: 0; }
         .delay-400 { animation-delay: 0.4s; opacity: 0; }
         .delay-500 { animation-delay: 0.5s; opacity: 0; }
-        .delay-600 { animation-delay: 0.6s; opacity: 0; }
         
         .hover-lift {
           transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -70,6 +80,30 @@ export default function SEOIntelligenceLanding() {
         .hover-lift:hover {
           transform: translateY(-4px);
           box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        }
+        
+        .evidence-row {
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        
+        .evidence-row:hover {
+          background-color: rgba(59, 130, 246, 0.05);
+        }
+        
+        .evidence-row.selected {
+          background-color: rgba(59, 130, 246, 0.1);
+          border-left: 3px solid rgb(59, 130, 246);
+        }
+        
+        .diff-increase {
+          background-color: rgba(34, 197, 94, 0.1);
+          border-left: 3px solid rgb(34, 197, 94);
+        }
+        
+        .diff-decrease {
+          background-color: rgba(239, 68, 68, 0.1);
+          border-left: 3px solid rgb(239, 68, 68);
         }
       `}</style>
 
@@ -81,8 +115,8 @@ export default function SEOIntelligenceLanding() {
             
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-8">
-              <Link href="#library" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Library</Link>
-              <Link href="#packs" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Packs</Link>
+              <Link href="#evidence-ledger" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Evidence Ledger</Link>
+              <Link href="#monitoring" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Monitoring</Link>
               <Link href="/dashboard/billing" className="text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black">Pricing</Link>
               
               <Unauthenticated>
@@ -124,20 +158,23 @@ export default function SEOIntelligenceLanding() {
           <div className="md:hidden border-t border-black/10 bg-white">
             <div className="px-6 py-8 space-y-6">
               <Link 
-                href="#library" 
+                href="#evidence-ledger" 
                 className="block text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black"
+                onClick={() => setMobileMenuOpen(false)}
               >
-                Library
+                Evidence Ledger
               </Link>
               <Link 
-                href="#packs" 
+                href="#monitoring" 
                 className="block text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black"
+                onClick={() => setMobileMenuOpen(false)}
               >
-                Packs
+                Monitoring
               </Link>
               <Link 
                 href="/dashboard/billing" 
                 className="block text-sm tracking-wide uppercase hover:opacity-60 transition-opacity text-black"
+                onClick={() => setMobileMenuOpen(false)}
               >
                 Pricing
               </Link>
@@ -164,22 +201,26 @@ export default function SEOIntelligenceLanding() {
         )}
       </header>
 
-      {/* Hero Section */}
+      {/* Hero Section - REVISED */}
       <section className="pt-32 pb-20 sm:pt-40 sm:pb-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
             <div className="mb-6 animate-fade-in-up">
               <Badge className="bg-black text-white hover:bg-black/90 text-xs tracking-widest uppercase border-0">
-                MuseData for Public Markets
+                Deterministic Evidence Engine
               </Badge>
             </div>
 
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light leading-[1.1] tracking-tight mb-8 text-black/70 animate-fade-in-up delay-100">
-              Systematic disclosure monitoring with claim level provenance
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light leading-[1.1] tracking-tight mb-8 text-black/90 animate-fade-in-up delay-100">
+              Every claim has a source.<br/>
+              Every change has a timestamp.<br/>
+              Every number has a tie-out.
             </h1>
 
             <p className="text-xl sm:text-2xl font-light leading-relaxed text-black/70 mb-12 max-w-3xl animate-fade-in-up delay-200">
-              Produce memo format research packs from filings, transcripts, and IR materials. Each delta includes a citation ID, source excerpt, retrieval date, and coverage window. Tables export with inputs and formulas preserved for reruns.
+              MuseData maintains a deterministic evidence ledger for public market disclosures. 
+              Subscribe to watchlist monitoring with citation IDs, source excerpts, and documented change logs. 
+              Compare runs. Audit outputs. Trust the numbers.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up delay-300">
@@ -189,7 +230,7 @@ export default function SEOIntelligenceLanding() {
                     size="lg"
                     className="h-14 px-8 bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-sm tracking-widest uppercase"
                   >
-                    Produce Pack
+                    Start Monitoring
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </SignInButton>
@@ -201,27 +242,38 @@ export default function SEOIntelligenceLanding() {
                     size="lg"
                     className="h-14 px-8 bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-sm tracking-widest uppercase"
                   >
-                    Produce Pack
+                    Start Monitoring
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </a>
               </Authenticated>
+              
               <a href="/sample-report">
-              <Button
-                size="lg"
-                variant="outline"
-                className="h-14 px-8 bg-white text-black border-2 border-black hover:bg-black hover:text-white transition-all duration-300 text-sm tracking-widest uppercase"
-                
-              >
-                View Sample Pack
-              </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="h-14 px-8 bg-white text-black border-2 border-black hover:bg-black hover:text-white transition-all duration-300 text-sm tracking-widest uppercase"
+                >
+                  View Evidence Pack
+                </Button>
               </a>
             </div>
 
-            {/* Trust Line */}
+            {/* Trust Metrics */}
             <div className="mt-16 pt-8 border-t border-black/10 animate-fade-in-up delay-400">
-              <div className="text-sm tracking-wider uppercase text-black/60">
-                Provenance first. Change log second. Opinion last.
+              <div className="grid grid-cols-3 gap-8 text-center">
+                <div>
+                  <div className="text-2xl font-light text-black/90 mb-1">100%</div>
+                  <div className="text-xs tracking-wider uppercase text-black/60">Source Linked</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-light text-black/90 mb-1">&lt; 5min</div>
+                  <div className="text-xs tracking-wider uppercase text-black/60">Update Time</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-light text-black/90 mb-1">Deterministic</div>
+                  <div className="text-xs tracking-wider uppercase text-black/60">Reruns</div>
+                </div>
               </div>
             </div>
           </div>
@@ -231,291 +283,262 @@ export default function SEOIntelligenceLanding() {
       {/* Problem Statement */}
       <section className="py-20 sm:py-32 bg-black/[0.02]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto mb-16">
+          <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight text-black/70">
               The bottleneck is lineage, not access
             </h2>
+            <p className="text-lg font-light text-black/70 leading-relaxed mb-8">
+              Bloomberg gives you data. PitchBook gives you comps. Neither gives you an evidence ledger with claim-level provenance, deterministic reruns, and version-controlled change logs.
+            </p>
             <p className="text-lg font-light text-black/70 leading-relaxed">
-              Facts are available. Attribution degrades with time. Updates break workflows. MuseData maintains a source linked record so research can be reviewed, rerun, and compared across periods.
+              MuseData maintains a source-linked record so research can be audited, rerun, and compared across periods. No hallucinations. No attribution decay. No broken workflows.
             </p>
           </div>
         </div>
       </section>
 
-      {/* What You Get */}
-      <section id="packs" className="py-20 sm:py-32">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto mb-20">
-            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight text-black/70">
-              What you get
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            {/* Card 1: Provenance */}
-            <Card className="border-2 border-black/10 shadow-none hover-lift">
-              <CardHeader>
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-black/5">
-                    <Link2 className="w-6 h-6 text-white/60" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-xl font-light mb-2 text-white/70">
-                      Provenance
-                    </CardTitle>
-                    <p className="text-sm font-light text-white/70 leading-relaxed">
-                      Claim level citations to the originating document and location, with citation IDs and retrieval dates.
-                    </p>
-                  </div>
-                </div>
-              </CardHeader>
-            </Card>
-
-            {/* Card 2: Change Log */}
-            <Card className="border-2 border-black/10 shadow-none hover-lift">
-              <CardHeader>
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-black/5">
-                    <GitBranch className="w-6 h-6 text-white/60" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-xl font-light mb-2 text-white/70">
-                      Change Log
-                    </CardTitle>
-                    <p className="text-sm font-light text-white/70 leading-relaxed">
-                      Material deltas since last run across disclosures, with evidence attached and a documented coverage window.
-                    </p>
-                  </div>
-                </div>
-              </CardHeader>
-            </Card>
-
-            {/* Card 3: Exports */}
-            <Card className="border-2 border-black/10 shadow-none hover-lift">
-              <CardHeader>
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-black/5">
-                    <FileText className="w-6 h-6 text-white/60" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-xl font-light mb-2 text-white/70">
-                      Exports
-                    </CardTitle>
-                    <p className="text-sm font-light text-white/70 leading-relaxed">
-                      Memo format PDF plus model ready tables with stable field names.
-                    </p>
-                  </div>
-                </div>
-              </CardHeader>
-            </Card>
-
-            {/* Card 4: Methods */}
-            <Card className="border-2 border-black/10 shadow-none hover-lift">
-              <CardHeader>
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-black/5">
-                    <Settings className="w-6 h-6 text-white/60" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-xl font-light mb-2 text-white/70">
-                      Methods
-                    </CardTitle>
-                    <p className="text-sm font-light text-white/70 leading-relaxed">
-                      Calculation rules, inputs, and formulas included so outputs can be audited and rerun.
-                    </p>
-                  </div>
-                </div>
-              </CardHeader>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* What Changed Since Last Run */}
-      <section className="py-20 sm:py-32 bg-black/[0.02]">
+      {/* Interactive Evidence Ledger - NEW */}
+      <section id="evidence-ledger" className="py-20 sm:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto mb-12">
             <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight text-black/70">
-              Material deltas, attributable to source
+              The Evidence Ledger
             </h2>
-            <p className="text-lg font-light text-black/70 leading-relaxed mb-8">
-              Track changes since your last pack as discrete deltas with citations, timestamps, and excerpts.
+            <p className="text-lg font-light text-black/70 leading-relaxed mb-4">
+              Every claim is backed by a ledger entry with citation ID, source excerpt, retrieval timestamp, 
+              confidence score, and tie-out status. Click any row to see the full provenance chain.
             </p>
-            
-            <div className="space-y-3 text-sm font-light">
-              <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                <span className="text-black/70">Earnings and guidance</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                <span className="text-black/70">Capital allocation and M&A</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                <span className="text-black/70">Segment disclosures</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                <span className="text-black/70">Estimate and rating revisions</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                <span className="text-black/70">Regulatory and legal updates</span>
-              </div>
-            </div>
+            <p className="text-sm font-light text-black/60 italic">
+              This is the foundation that makes everything else possible.
+            </p>
           </div>
 
-          {/* Recent Developments Module */}
-          <Card className="border-2 border-black/10 shadow-none max-w-5xl mx-auto">
-            <CardHeader>
-              <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
-                Recent Developments
-              </CardTitle>
+          {/* Evidence Ledger Table */}
+          <Card className="border-2 border-black/10 shadow-none max-w-6xl mx-auto mb-6">
+            <CardHeader className="bg-black/[0.02]">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm tracking-wider uppercase text-black/60 font-normal">
+                  Evidence Ledger - Live Example
+                </CardTitle>
+                <div className="flex items-center gap-2 text-xs text-black/60">
+                  <Database className="w-4 h-4" />
+                  <span>Interactive: Click any row</span>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm font-light">
                   <thead>
-                    <tr className="border-b border-black/10">
-                      <th className="text-left py-3 px-4 font-normal text-white/60 text-xs tracking-wider uppercase">Event</th>
-                      <th className="text-left py-3 px-4 font-normal text-white/60 text-xs tracking-wider uppercase">Delta</th>
-                      <th className="text-left py-3 px-4 font-normal text-white/60 text-xs tracking-wider uppercase">Source</th>
-                      <th className="text-left py-3 px-4 font-normal text-white/60 text-xs tracking-wider uppercase">Timestamp</th>
-                      <th className="text-left py-3 px-4 font-normal text-white/60 text-xs tracking-wider uppercase">Citation ID</th>
+                    <tr className="border-b-2 border-black/10">
+                      <th className="text-left py-3 px-3 font-normal text-black/60 text-xs tracking-wider uppercase">Claim ID</th>
+                      <th className="text-left py-3 px-3 font-normal text-black/60 text-xs tracking-wider uppercase">Metric</th>
+                      <th className="text-left py-3 px-3 font-normal text-black/60 text-xs tracking-wider uppercase">Value</th>
+                      <th className="text-left py-3 px-3 font-normal text-black/60 text-xs tracking-wider uppercase">Source</th>
+                      <th className="text-left py-3 px-3 font-normal text-black/60 text-xs tracking-wider uppercase">Retrieved</th>
+                      <th className="text-left py-3 px-3 font-normal text-black/60 text-xs tracking-wider uppercase">Confidence</th>
+                      <th className="text-center py-3 px-3 font-normal text-black/60 text-xs tracking-wider uppercase">Status</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-b border-black/5 hover:bg-black/[0.02] transition-colors">
-                      <td className="py-3 px-4 text-white/70">Q3 Earnings</td>
-                      <td className="py-3 px-4 text-white/70">EPS $2.15 vs $2.02 est, revenue +28% YoY</td>
-                      <td className="py-3 px-4 text-white/70">8-K Filing</td>
-                      <td className="py-3 px-4 text-white/60">2024-10-24</td>
-                      <td className="py-3 px-4 text-white/60 font-mono text-xs">CIT-2024-1024-001</td>
+                    <tr 
+                      className={`border-b border-black/5 evidence-row ${selectedEvidence === 1 ? 'selected' : ''}`}
+                      onClick={() => setSelectedEvidence(selectedEvidence === 1 ? null : 1)}
+                    >
+                      <td className="py-3 px-3 font-mono text-xs text-blue-600">CIT-2024-1024-001</td>
+                      <td className="py-3 px-3 text-black/70">Q3 EPS</td>
+                      <td className="py-3 px-3 text-black/90 font-semibold">$2.15</td>
+                      <td className="py-3 px-3">
+                        <a href="#" className="text-blue-600 hover:underline text-xs">8-K Filing</a>
+                      </td>
+                      <td className="py-3 px-3 text-black/60 text-xs">2024-10-24 16:05:23 UTC</td>
+                      <td className="py-3 px-3">
+                        <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium">
+                          98%
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 text-center">
+                        <CheckCircle className="w-4 h-4 text-green-600 inline-block" />
+                      </td>
                     </tr>
-                    <tr className="border-b border-black/5 hover:bg-black/[0.02] transition-colors">
-                      <td className="py-3 px-4 text-white/70">Guidance Revision</td>
-                      <td className="py-3 px-4 text-white/70">FY24 revenue guidance raised to $48-49B from $46-47B</td>
-                      <td className="py-3 px-4 text-white/70">Earnings Call</td>
-                      <td className="py-3 px-4 text-white/60">2024-10-24</td>
-                      <td className="py-3 px-4 text-white/60 font-mono text-xs">CIT-2024-1024-012</td>
+                    
+                    <tr 
+                      className={`border-b border-black/5 evidence-row ${selectedEvidence === 2 ? 'selected' : ''}`}
+                      onClick={() => setSelectedEvidence(selectedEvidence === 2 ? null : 2)}
+                    >
+                      <td className="py-3 px-3 font-mono text-xs text-blue-600">CIT-2024-1024-002</td>
+                      <td className="py-3 px-3 text-black/70">Revenue</td>
+                      <td className="py-3 px-3 text-black/90 font-semibold">$12.4B</td>
+                      <td className="py-3 px-3">
+                        <a href="#" className="text-blue-600 hover:underline text-xs">10-Q Sec 1.2</a>
+                      </td>
+                      <td className="py-3 px-3 text-black/60 text-xs">2024-10-24 16:05:45 UTC</td>
+                      <td className="py-3 px-3">
+                        <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium">
+                          95%
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 text-center">
+                        <CheckCircle className="w-4 h-4 text-green-600 inline-block" />
+                      </td>
                     </tr>
-                    <tr className="border-b border-black/5 hover:bg-black/[0.02] transition-colors">
-                      <td className="py-3 px-4 text-white/70">M&A Announcement</td>
-                      <td className="py-3 px-4 text-white/70">$2.4B acquisition announced</td>
-                      <td className="py-3 px-4 text-white/70">Press Release</td>
-                      <td className="py-3 px-4 text-white/60">2024-10-17</td>
-                      <td className="py-3 px-4 text-white/60 font-mono text-xs">CIT-2024-1017-003</td>
+                    
+                    <tr 
+                      className={`border-b border-black/5 evidence-row ${selectedEvidence === 3 ? 'selected' : ''}`}
+                      onClick={() => setSelectedEvidence(selectedEvidence === 3 ? null : 3)}
+                    >
+                      <td className="py-3 px-3 font-mono text-xs text-blue-600">CIT-2024-1024-003</td>
+                      <td className="py-3 px-3 text-black/70">Operating Margin</td>
+                      <td className="py-3 px-3 text-black/90 font-semibold">18.5%</td>
+                      <td className="py-3 px-3">
+                        <a href="#" className="text-blue-600 hover:underline text-xs">Transcript P.12</a>
+                      </td>
+                      <td className="py-3 px-3 text-black/60 text-xs">2024-10-24 18:22:11 UTC</td>
+                      <td className="py-3 px-3">
+                        <span className="px-2 py-1 bg-amber-100 text-amber-800 rounded text-xs font-medium">
+                          87%
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 text-center">
+                        <AlertCircle className="w-4 h-4 text-amber-600 inline-block" />
+                      </td>
+                    </tr>
+                    
+                    <tr 
+                      className={`border-b border-black/5 evidence-row ${selectedEvidence === 4 ? 'selected' : ''}`}
+                      onClick={() => setSelectedEvidence(selectedEvidence === 4 ? null : 4)}
+                    >
+                      <td className="py-3 px-3 font-mono text-xs text-blue-600">CIT-2024-1024-012</td>
+                      <td className="py-3 px-3 text-black/70">FY24 Guidance</td>
+                      <td className="py-3 px-3 text-black/90 font-semibold">$48-49B</td>
+                      <td className="py-3 px-3">
+                        <a href="#" className="text-blue-600 hover:underline text-xs">Earnings Call</a>
+                      </td>
+                      <td className="py-3 px-3 text-black/60 text-xs">2024-10-24 18:33:02 UTC</td>
+                      <td className="py-3 px-3">
+                        <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium">
+                          92%
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 text-center">
+                        <CheckCircle className="w-4 h-4 text-green-600 inline-block" />
+                      </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
             </CardContent>
           </Card>
-        </div>
-      </section>
 
-      {/* Packs for Workflows */}
-      <section className="py-20 sm:py-32">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto mb-20">
-            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight text-black/70">
-              Packs for the workflows that matter
-            </h2>
-          </div>
+          {/* Evidence Detail Panel */}
+          {selectedEvidence && (
+            <Card className="border-l-4 border-blue-600 bg-blue-50/50 max-w-6xl mx-auto animate-fade-in">
+              <CardContent className="pt-6">
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <FileText className="w-5 h-5 text-blue-600" />
+                      <span className="text-xs uppercase tracking-wide text-blue-900 font-semibold">Source Excerpt</span>
+                    </div>
+                    <div className="p-4 bg-white border border-blue-200 rounded text-sm leading-relaxed">
+                      {selectedEvidence === 1 && (
+                        <p className="text-gray-800">
+                          "Net income attributable to common stockholders was $5.2 billion, or <mark className="bg-yellow-200 font-semibold">$2.15 per diluted share</mark>, compared to $4.8 billion, or $2.02 per diluted share, in the same quarter last year."
+                        </p>
+                      )}
+                      {selectedEvidence === 2 && (
+                        <p className="text-gray-800">
+                          "Total revenue for the quarter was <mark className="bg-yellow-200 font-semibold">$12.4 billion</mark>, representing an increase of 28% year-over-year from $9.7 billion in Q3 2023."
+                        </p>
+                      )}
+                      {selectedEvidence === 3 && (
+                        <p className="text-gray-800">
+                          "Operating margin for the quarter was approximately <mark className="bg-yellow-200 font-semibold">18.5%</mark>, as we continue to invest heavily in infrastructure and R&D."
+                        </p>
+                      )}
+                      {selectedEvidence === 4 && (
+                        <p className="text-gray-800">
+                          "We are raising our full-year revenue guidance to a range of <mark className="bg-yellow-200 font-semibold">$48 billion to $49 billion</mark>, up from our previous guidance of $46 billion to $47 billion."
+                        </p>
+                      )}
+                    </div>
+                  </div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            <Card className="border-2 border-black/10 shadow-none hover-lift">
-              <CardHeader>
-                <CardTitle className="text-xl font-light mb-2 text-white/70">
-                  1. Coverage Refresh
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm font-light text-white/70 leading-relaxed">
-                  Refresh a name with an updated change log, claim register, and citation map.
-                </p>
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="p-3 bg-white rounded border border-blue-200">
+                      <div className="text-xs uppercase tracking-wide text-blue-900 font-semibold mb-1">Document</div>
+                      <p className="text-sm text-gray-700">
+                        {selectedEvidence === 1 && "Form 8-K filed 2024-10-24"}
+                        {selectedEvidence === 2 && "Form 10-Q Q3 2024"}
+                        {selectedEvidence === 3 && "Earnings Transcript"}
+                        {selectedEvidence === 4 && "Earnings Call Transcript"}
+                      </p>
+                    </div>
+                    
+                    <div className="p-3 bg-white rounded border border-blue-200">
+                      <div className="text-xs uppercase tracking-wide text-blue-900 font-semibold mb-1">Location</div>
+                      <p className="text-sm text-gray-700">
+                        {selectedEvidence === 1 && "Financial Results, P.3, L.42"}
+                        {selectedEvidence === 2 && "Section 1.2, Table 2"}
+                        {selectedEvidence === 3 && "Page 12, Line 8"}
+                        {selectedEvidence === 4 && "Management Remarks, Min 14:32"}
+                      </p>
+                    </div>
+                    
+                    <div className="p-3 bg-white rounded border border-blue-200">
+                      <div className="text-xs uppercase tracking-wide text-blue-900 font-semibold mb-1">Parser</div>
+                      <p className="text-sm text-gray-700 font-mono">
+                        {selectedEvidence === 1 && "v2.4.1-sec"}
+                        {selectedEvidence === 2 && "v2.4.1-sec"}
+                        {selectedEvidence === 3 && "v2.3.8-transcript"}
+                        {selectedEvidence === 4 && "v2.3.8-transcript"}
+                      </p>
+                    </div>
+                    
+                    <div className="p-3 bg-white rounded border border-blue-200">
+                      <div className="text-xs uppercase tracking-wide text-blue-900 font-semibold mb-1">Method</div>
+                      <p className="text-sm text-gray-700">
+                        {selectedEvidence === 1 && "Regex + LLM verify"}
+                        {selectedEvidence === 2 && "Table extraction"}
+                        {selectedEvidence === 3 && "NER + context"}
+                        {selectedEvidence === 4 && "Speech-to-text + NER"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-white rounded border border-blue-200">
+                    <div className="text-xs uppercase tracking-wide text-blue-900 font-semibold mb-2">Provenance Chain</div>
+                    <div className="flex items-center gap-2 text-xs text-gray-600">
+                      <Shield className="w-4 h-4 text-blue-600" />
+                      <span>Source retrieval → Parser v{selectedEvidence === 3 || selectedEvidence === 4 ? '2.3.8' : '2.4.1'} → Entity extraction → Confidence scoring → Ledger commit → Tie-out verification</span>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
+          )}
 
-            <Card className="border-2 border-black/10 shadow-none hover-lift">
-              <CardHeader>
-                <CardTitle className="text-xl font-light mb-2 text-white/70">
-                  2. Event Review
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm font-light text-white/70 leading-relaxed">
-                  Pre and post earnings workflow with guidance diffs, KPI deltas, and transcript citations.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 border-black/10 shadow-none hover-lift">
-              <CardHeader>
-                <CardTitle className="text-xl font-light mb-2 text-white/70">
-                  3. Portfolio Monitoring
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm font-light text-white/70 leading-relaxed">
-                  Watchlist monitoring that surfaces only names with documented deltas and preserves history.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 border-black/10 shadow-none hover-lift">
-              <CardHeader>
-                <CardTitle className="text-xl font-light mb-2 text-white/70">
-                  4. Comps and Valuation Inputs
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm font-light text-white/70 leading-relaxed">
-                  Comparable sets and valuation inputs with a documented assumptions log. No opaque outputs.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Claim Register */}
-      <section className="py-20 sm:py-32 bg-black/[0.02]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
-            <div>
-              <h3 className="text-2xl font-light mb-6 tracking-tight text-black/70">
-                Bull and bear cases as a claim register
-              </h3>
-              <p className="text-base font-light text-black/70 leading-relaxed">
-                Drivers, risks, and catalysts expressed as discrete claims with sources, measurement hooks, and sensitivity handles where available.
-              </p>
-            </div>
-            
+          {/* Why This Matters */}
+          <div className="max-w-4xl mx-auto mt-16">
             <Card className="border-2 border-black/10 shadow-none">
-              <CardHeader>
-                <CardTitle className="text-sm tracking-wider uppercase text-white/60 font-normal">
-                  Sample Claim Register
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4 text-sm font-light">
-                  <div className="p-3 bg-black/[0.02] border-l-2 border-black/20">
-                    <div className="font-normal mb-1">Bull Case</div>
-                    <div className="text-white/70 text-xs mb-2">Cloud infrastructure revenue grew 32% YoY in Q3 2024.</div>
-                    <div className="flex items-center gap-2 text-xs text-white/60">
-                      <Link2 className="w-3 h-3" />
-                      <span>Q3 2024 Earnings Call | CIT-2024-1024-005</span>
-                    </div>
+              <CardContent className="pt-6">
+                <h3 className="text-lg font-semibold text-black/90 mb-4">Why the Evidence Ledger matters</h3>
+                <div className="space-y-3 text-sm text-black/70">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span><strong>Auditability:</strong> Every number can be traced back to its source document, location, and extraction method</span>
                   </div>
-                  <div className="p-3 bg-black/[0.02] border-l-2 border-black/20">
-                    <div className="font-normal mb-1">Bear Case</div>
-                    <div className="text-white/70 text-xs mb-2">Capital expenditures increased 40% YoY, compressing EBITDA margins.</div>
-                    <div className="flex items-center gap-2 text-xs text-white/60">
-                      <Link2 className="w-3 h-3" />
-                      <span>10-Q Filing, Sep 2024 | CIT-2024-0930-018</span>
-                    </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span><strong>Reproducibility:</strong> Deterministic reruns produce identical results from the same source snapshot</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span><strong>Transparency:</strong> Confidence scores and tie-out status expose uncertainty rather than hiding it</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span><strong>Versioning:</strong> Citation IDs and timestamps enable historical comparison and change tracking</span>
                   </div>
                 </div>
               </CardContent>
@@ -524,133 +547,409 @@ export default function SEOIntelligenceLanding() {
         </div>
       </section>
 
-      {/* Valuation Inputs */}
-      <section className="py-20 sm:py-32">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
-            <Card className="border-2 border-black/10 shadow-none lg:order-1">
-              <CardHeader>
-                <CardTitle className="text-sm tracking-wider uppercase text-white/60 font-normal">
-                  Valuation Inputs
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4 text-sm font-light">
-                  <div className="flex justify-between items-center py-3 border-b border-black/5">
-                    <span>DCF Fair Value Range</span>
-                    <span className="text-white/60">$185 - $215</span>
-                  </div>
-                  <div className="flex justify-between items-center py-3 border-b border-black/5">
-                    <span>Comparable Multiples</span>
-                    <span className="text-white/60">$175 - $205</span>
-                  </div>
-                  <div className="flex justify-between items-center py-3 border-b border-black/5">
-                    <span>Consensus Target</span>
-                    <span className="text-white/60">$190</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-white/60 pt-4 border-t-2 border-black/20">
-                    <Link2 className="w-3 h-3" />
-                    <span>Based on 10-K (CIT-2024-0228-001), earnings transcripts, consensus estimates (retrieved 2024-10-27)</span>
-                  </div>
-                  <div className="text-xs text-white/60 pt-2">
-                    Coverage window: 2024-02-28 to 2024-10-27
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <div className="lg:order-2">
-              <h3 className="text-2xl font-light mb-6 tracking-tight text-black/70">
-                Valuation inputs with an assumptions log
-              </h3>
-              <p className="text-base font-light text-black/70 leading-relaxed mb-6">
-                DCF inputs, comps context, and consensus references with sources, timestamps, and documented assumptions.
-              </p>
-              <p className="text-xs font-light text-black/60 italic">
-                Research workflow tooling. Not investment advice.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Evidence and Controls */}
+      {/* Diff View - NEW */}
       <section className="py-20 sm:py-32 bg-black/[0.02]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto mb-12">
             <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight text-black/70">
-              Governed output, not generated prose
+              Diff View: See What Changed
             </h2>
-            
-            <div className="space-y-3 text-sm font-light mt-8">
-              <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                <span className="text-black/70">Citation IDs and retrieval dates for every claim</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                <span className="text-black/70">Coverage window and last updated on every page</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                <span className="text-black/70">Methods include formulas, inputs, and source mapping</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                <span className="text-black/70">PDF plus tables export with stable field names</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-black/70" />
-                <span className="text-black/70">Materiality thresholds documented per pack</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Public Evidence Library */}
-      <section id="library" className="py-20 sm:py-32">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight text-black/70">
-              Public Evidence Library
-            </h2>
-            <p className="text-lg font-light text-black/70 leading-relaxed">
-              Each ticker maintains a persistent change history. Each update appends to the record. Links remain stable. Comparisons remain consistent.
+            <p className="text-lg font-light text-black/70 leading-relaxed mb-4">
+              Every refresh shows exactly what changed since your last run, with before/after comparison, 
+              materiality scoring, and full provenance. This is your moat—Bloomberg doesn't have this.
+            </p>
+            <p className="text-sm font-light text-black/60 italic">
+              Changes are tracked at the claim level with documented evidence for each delta.
             </p>
           </div>
 
-          {/* Metrics */}
-         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-3xl mx-auto">
-  <div className="text-center p-8 bg-black/[0.02] border border-black/10 hover-lift">
-    <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Source Linked</div>
-    <div className="text-3xl font-light text-black/70">By Default</div>
-  </div>
-  <div className="text-center p-8 bg-black/[0.02] border border-black/10 hover-lift">
-    <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Generation Time</div>
-    <div className="text-3xl font-light text-black/70">Minutes</div>
-  </div>
-  <div className="text-center p-8 bg-black/[0.02] border border-black/10 hover-lift">
-    <div className="text-xs tracking-wider uppercase text-black/60 mb-3">Coverage</div>
-    <div className="text-3xl font-light text-black/70">Broad</div>
-  </div>
-</div>
+          {/* Side-by-side Diff */}
+          <div className="grid lg:grid-cols-2 gap-6 max-w-6xl mx-auto mb-6">
+            {/* Previous Run */}
+            <Card className="border-2 border-gray-400">
+              <CardHeader className="bg-gray-50 border-b border-gray-200">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm uppercase tracking-wide text-gray-700 font-semibold">
+                    Previous Run
+                  </CardTitle>
+                  <div className="flex items-center gap-2 text-xs text-gray-600">
+                    <Clock className="w-3 h-3" />
+                    <span>2024-10-17</span>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between items-center py-2 px-3 rounded">
+                    <span className="text-gray-700">FY24 Revenue Guidance</span>
+                    <span className="font-mono font-semibold text-gray-900">$46-47B</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 px-3 rounded">
+                    <span className="text-gray-700">Q3 EPS</span>
+                    <span className="font-mono font-semibold text-gray-900">$2.02 est</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 px-3 rounded">
+                    <span className="text-gray-700">Cloud Revenue Growth</span>
+                    <span className="font-mono font-semibold text-gray-900">28% YoY</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 px-3 rounded">
+                    <span className="text-gray-700">Operating Margin</span>
+                    <span className="font-mono font-semibold text-gray-900">17.2%</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
+            {/* Current Run */}
+            <Card className="border-2 border-green-600 shadow-lg">
+              <CardHeader className="bg-green-50 border-b border-green-200">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm uppercase tracking-wide text-green-900 font-semibold">
+                    Current Run
+                  </CardTitle>
+                  <div className="flex items-center gap-2 text-xs text-green-700">
+                    <Activity className="w-3 h-3" />
+                    <span>2024-10-24</span>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between items-center py-2 px-3 rounded diff-increase">
+                    <span className="text-gray-700">FY24 Revenue Guidance</span>
+                    <span className="font-mono font-semibold text-green-900">
+                      $48-49B <TrendingUp className="w-4 h-4 inline-block ml-1" />
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 px-3 rounded diff-increase">
+                    <span className="text-gray-700">Q3 EPS</span>
+                    <span className="font-mono font-semibold text-green-900">
+                      $2.15 (beat) <TrendingUp className="w-4 h-4 inline-block ml-1" />
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 px-3 rounded diff-increase">
+                    <span className="text-gray-700">Cloud Revenue Growth</span>
+                    <span className="font-mono font-semibold text-green-900">
+                      32% YoY <TrendingUp className="w-4 h-4 inline-block ml-1" />
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 px-3 rounded diff-increase">
+                    <span className="text-gray-700">Operating Margin</span>
+                    <span className="font-mono font-semibold text-green-900">
+                      18.5% <TrendingUp className="w-4 h-4 inline-block ml-1" />
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Delta Summary */}
+          <Card className="border-l-4 border-green-600 bg-green-50/50 max-w-6xl mx-auto">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-4">
+                <GitCompare className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                <div className="flex-1">
+                  <h4 className="font-semibold text-green-900 mb-3">4 Material Changes Detected</h4>
+                  <div className="space-y-2 text-sm text-gray-700">
+                    <div className="p-3 bg-white rounded border border-green-200">
+                      <div className="flex items-start justify-between mb-1">
+                        <span className="font-semibold">FY24 guidance raised by $2B</span>
+                        <span className="text-xs text-green-700 font-mono">+4.3%</span>
+                      </div>
+                      <div className="text-xs text-gray-600 flex items-center gap-2">
+                        <Link2 className="w-3 h-3" />
+                        <span>Source: CIT-2024-1024-012 | Materiality: HIGH</span>
+                      </div>
+                    </div>
+                    
+                    <div className="p-3 bg-white rounded border border-green-200">
+                      <div className="flex items-start justify-between mb-1">
+                        <span className="font-semibold">Q3 EPS beat consensus by $0.13</span>
+                        <span className="text-xs text-green-700 font-mono">+6.4%</span>
+                      </div>
+                      <div className="text-xs text-gray-600 flex items-center gap-2">
+                        <Link2 className="w-3 h-3" />
+                        <span>Source: CIT-2024-1024-001 | Materiality: HIGH</span>
+                      </div>
+                    </div>
+                    
+                    <div className="p-3 bg-white rounded border border-green-200">
+                      <div className="flex items-start justify-between mb-1">
+                        <span className="font-semibold">Cloud growth accelerated by 400bps QoQ</span>
+                        <span className="text-xs text-green-700 font-mono">+14.3%</span>
+                      </div>
+                      <div className="text-xs text-gray-600 flex items-center gap-2">
+                        <Link2 className="w-3 h-3" />
+                        <span>Source: CIT-2024-1024-005 | Materiality: MEDIUM</span>
+                      </div>
+                    </div>
+                    
+                    <div className="p-3 bg-white rounded border border-green-200">
+                      <div className="flex items-start justify-between mb-1">
+                        <span className="font-semibold">Operating margin expanded by 130bps</span>
+                        <span className="text-xs text-green-700 font-mono">+7.6%</span>
+                      </div>
+                      <div className="text-xs text-gray-600 flex items-center gap-2">
+                        <Link2 className="w-3 h-3" />
+                        <span>Source: CIT-2024-1024-003 | Materiality: MEDIUM</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
-      {/* CTA */}
+      {/* Subscribe to Monitoring, Not Reports - REVISED */}
+      <section id="monitoring" className="py-20 sm:py-32">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto mb-12">
+            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight text-black/70">
+              Subscribe to Coverage, Not Reports
+            </h2>
+            <p className="text-lg font-light text-black/70 leading-relaxed mb-4">
+              Watchlist-based monitoring with scheduled updates. Each refresh shows only what changed, 
+              with full provenance. Build institutional memory over time.
+            </p>
+            <p className="text-sm font-light text-black/60 italic">
+              This is not a report generator. This is a monitoring engine with version control for financial data.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <Card className="border-2 border-black/10 shadow-none hover-lift">
+              <CardHeader>
+                <CardTitle className="text-xl font-light mb-2 text-black/70">
+                  Daily Monitoring
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm text-black/70">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span>Earnings & guidance updates</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span>Material event alerts</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span>Same-day diff delivery</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span>Slack/email digest</span>
+                  </li>
+                </ul>
+                <div className="mt-4 pt-4 border-t border-black/10 text-xs text-black/60">
+                  For active positions and earnings season
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-black/10 shadow-none hover-lift">
+              <CardHeader>
+                <CardTitle className="text-xl font-light mb-2 text-black/70">
+                  Weekly Deep Dive
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm text-black/70">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span>Full coverage refresh</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span>Segment & product trends</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span>KPI progression tracking</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span>Competitive positioning</span>
+                  </li>
+                </ul>
+                <div className="mt-4 pt-4 border-t border-black/10 text-xs text-black/60">
+                  For watchlist and research pipeline
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-black/10 shadow-none hover-lift">
+              <CardHeader>
+                <CardTitle className="text-xl font-light mb-2 text-black/70">
+                  Ad Hoc Research
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm text-black/70">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span>On-demand pack generation</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span>Custom query builder</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span>Historical comparison</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span>Evidence pack export</span>
+                  </li>
+                </ul>
+                <div className="mt-4 pt-4 border-t border-black/10 text-xs text-black/60">
+                  For diligence and deep research
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Governance and Controls */}
+      <section className="py-20 sm:py-32 bg-black/[0.02]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto mb-12">
+            <h2 className="text-3xl sm:text-5xl font-light mb-6 tracking-tight text-black/70">
+              Governed Output, Not Generated Prose
+            </h2>
+            <p className="text-lg font-light text-black/70 leading-relaxed">
+              No black boxes. No hallucinations. No attribution decay. Every output includes the controls 
+              needed for institutional acceptance.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            <Card className="border-2 border-black/10 shadow-none">
+              <CardHeader>
+                <CardTitle className="text-lg font-light text-black/70">Provenance Controls</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span className="text-black/70">Citation IDs and retrieval timestamps for every claim</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span className="text-black/70">Source excerpts with highlighting and context</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span className="text-black/70">Coverage window and last updated on every page</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span className="text-black/70">Parser version and extraction method documented</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-black/10 shadow-none">
+              <CardHeader>
+                <CardTitle className="text-lg font-light text-black/70">Reproducibility Controls</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span className="text-black/70">Deterministic reruns with identical outputs from same snapshot</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span className="text-black/70">Methods include formulas, inputs, and source mapping</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span className="text-black/70">Tables export with stable field names and preserved formulas</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span className="text-black/70">Run IDs and snapshot semantics for version control</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-black/10 shadow-none">
+              <CardHeader>
+                <CardTitle className="text-lg font-light text-black/70">Quality Controls</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span className="text-black/70">Confidence scores with reasoning for every claim</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span className="text-black/70">Tie-out verification with pass/warn/fail status</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span className="text-black/70">Materiality thresholds documented per pack</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span className="text-black/70">Quality gates that block completion when checks fail</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-black/10 shadow-none">
+              <CardHeader>
+                <CardTitle className="text-lg font-light text-black/70">Change Controls</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span className="text-black/70">Diff engine shows before/after with evidence</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span className="text-black/70">Material delta detection with documented thresholds</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span className="text-black/70">Historical comparison across runs and periods</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <span className="text-black/70">Persistent change history with stable links</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
       <section className="py-20 sm:py-32 bg-black text-white">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2 className="text-3xl sm:text-4xl font-light mb-6 tracking-tight">
-              Start producing research packs
+              Build Institutional Memory with Evidence
             </h2>
-            <p className="text-lg font-light text-white/70 mb-2 max-w-2xl mx-auto">
-              Systematic disclosure monitoring with claim level provenance and documented change logs.
+            <p className="text-lg font-light text-white/80 mb-2 max-w-2xl mx-auto">
+              Deterministic monitoring with claim-level provenance. Every number has a source. 
+              Every change has a timestamp. Every pack can be audited.
             </p>
             <p className="text-sm font-light text-white/60 mb-8">
-              Source linked by default. Minutes, not days.
+              Minutes to audited update. Not days to debatable report.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -660,7 +959,7 @@ export default function SEOIntelligenceLanding() {
                     size="lg"
                     className="h-14 px-8 bg-white text-black hover:bg-black hover:text-white border-2 border-white transition-all duration-300 text-sm tracking-widest uppercase"
                   >
-                    Produce Pack
+                    Start Monitoring
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </SignInButton>
@@ -677,14 +976,15 @@ export default function SEOIntelligenceLanding() {
                   </Button>
                 </a>
               </Authenticated>
+              
               <a href="/sample-report">
-              <Button
-                size="lg"
-                variant="outline"
-                className="h-14 px-8 bg-black text-white border-2 border-white hover:bg-white hover:text-black transition-all duration-300 text-sm tracking-widest uppercase"
-              >
-                View Sample Pack
-              </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="h-14 px-8 bg-black text-white border-2 border-white hover:bg-white hover:text-black transition-all duration-300 text-sm tracking-widest uppercase"
+                >
+                  View Evidence Pack
+                </Button>
               </a>
             </div>
           </div>
@@ -704,7 +1004,7 @@ export default function SEOIntelligenceLanding() {
             </div>
           </div>
           <div className="mt-8 text-center text-xs text-black/40">
-            © 2025 MuseData. Systematic disclosure monitoring with claim level provenance.
+            © 2026 MuseData. Deterministic evidence engine for public market monitoring.
           </div>
         </div>
       </footer>

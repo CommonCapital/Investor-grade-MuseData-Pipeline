@@ -1,10 +1,6 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
-// The schema is entirely optional.
-// You can delete this file (schema.ts) and the
-// app will continue to work.
-// The schema provides more precise TypeScript types.
 export default defineSchema({
   scrapingJobs: defineTable({
     userId: v.string(),
@@ -19,7 +15,8 @@ export default defineSchema({
       v.literal("analyzing"),
       v.literal("merging"),
       v.literal("completed"),
-      v.literal("failed")
+      v.literal("failed"),
+      v.literal("retrying") // ✅ NEW: Added retrying status
     ),
     results: v.optional(v.array(v.any())),
     seoReport: v.optional(v.any()),
@@ -37,12 +34,17 @@ export default defineSchema({
         v.literal("pending"),
         v.literal("scraping"),
         v.literal("completed"),
-        v.literal("failed")
+        v.literal("failed"),
+        v.literal("retry_needed") // ✅ NEW: Not failed, just needs retry
       ),
       geminiSnapshotId: v.optional(v.string()),
       geminiRawData: v.optional(v.any()),
       geminiCompletedAt: v.optional(v.number()),
       geminiError: v.optional(v.string()),
+      // ✅ NEW: Retry tracking fields
+      retryCount: v.optional(v.number()),
+      lastRetryAt: v.optional(v.number()),
+      retryReason: v.optional(v.string()),
       llmStatus: v.union(
         v.literal("pending"),
         v.literal("processing"),
@@ -58,21 +60,20 @@ export default defineSchema({
     .index("by_status", ['status'])
     .index("by_created_at", ['createdAt'])
     .index("by_user", ['userId'])
-    .index("by_user_and_created_at", ['userId', 'createdAt']).index("by_user_and_status", ['userId', 'status']), // ✅ NEW INDEX
+    .index("by_user_and_created_at", ['userId', 'createdAt'])
+    .index("by_user_and_status", ['userId', 'status']),
 
-  // ✅ NEW: Track total report limit per user (accumulative)
   user_report_limits: defineTable({
     userId: v.string(),
-    totalLimit: v.number(), // Accumulates: 1 (free) → 31 (after 1st payment) → 61 (after 2nd payment)
+    totalLimit: v.number(),
     lastPaymentDate: v.number(),
   }).index("by_user", ["userId"]),
 
-  // ✅ ADD THIS NEW TABLE HERE
   gemini_job_queue: defineTable({
     job_id: v.id("scrapingJobs"),
     entity: v.string(),
     user_id: v.string(),
-    status: v.string(), // "queued" | "processing" | "completed" | "failed"
+    status: v.string(),
     created_at: v.number(),
   }).index("by_status_created", ["status", "created_at"]),
 });

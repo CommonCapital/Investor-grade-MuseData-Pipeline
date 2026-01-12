@@ -38,17 +38,17 @@ http.route({
   }),
 });
 // Webhook endpoint after BrightData Gemini scraper completes
+// In convex/http.ts - Update the webhook handler
 http.route({
   path: ApiPath.Webhook,
   method: "POST",
   handler: httpAction(async (ctx, req) => {
-    // ✅ FIX: Make shards optional in type definition
     type Job = {
       _id: Id<"scrapingJobs">;
       originalPrompt: string;
       status: string;
-      shards?: any[]; // Optional - might not exist for old jobs
-      totalShards?: number; // Optional - might not exist for old jobs
+      shards?: any[];
+      totalShards?: number;
     };
 
     let job: Job | null = null;
@@ -57,48 +57,206 @@ http.route({
       const data = await req.json();
       console.log("Webhook received data:", data);
 
-      // Parse jobId and shardIndex from URL
       const url = new URL(req.url);
       const jobId = url.searchParams.get("jobId");
       const shardIndexParam = url.searchParams.get("shardIndex");
 
-      if (!jobId) {
-        console.error("No job ID found in webhook URL");
-        return new Response("No job ID found", { status: 400 });
+      if (!jobId || !shardIndexParam) {
+        return new Response("Missing jobId or shardIndex", { status: 400 });
       }
 
-      if (!shardIndexParam) {
-        console.error("No shard index found in webhook URL");
-        return new Response("No shard index found", { status: 400 });
-      }
-
-      // Fetch job
       job = await ctx.runQuery(api.scrapingJobs.getJobById, {
         jobId: jobId as Id<'scrapingJobs'>
       });
 
       if (!job) {
-        console.error(`No job found for job ID: ${jobId}`);
         return new Response("Job not found", { status: 404 });
       }
 
-      // ✅ Verify this is a distributed job (has shards)
       if (!job.shards || !job.totalShards) {
-        console.error(`Job ${jobId} is not a distributed job - missing shards or totalShards`);
-        return new Response("Invalid job type - expected distributed job with shards", { status: 400 });
+        return new Response("Invalid job type", { status: 400 });
       }
 
-      // Parse and validate shard index
       const shardIndex = parseInt(shardIndexParam, 10);
 
       if (isNaN(shardIndex) || shardIndex < 1 || shardIndex > 7) {
-        console.error(`Invalid shard index: ${shardIndexParam} (must be 1-7)`);
-        return new Response("Invalid shard index (must be 1-7)", { status: 400 });
+        return new Response("Invalid shard index", { status: 400 });
       }
 
       console.log(`📥 Webhook: Shard ${shardIndex} completed for job ${jobId}`);
 
-      // Save this shard's Gemini result
+      // ✅ Check if data is empty or invalid
+      const isEmpty = !data || 
+                      data.length === 0 || 
+                      !data[0]?.answer_text ||
+                      data[0].answer_text.trim() === '' ||
+                      data[0].answer_text === '{}';
+
+      if (isEmpty) {
+        console.warn(`⚠️ Shard ${shardIndex} returned empty data - marking for retry`);
+        
+        await ctx.runMutation(api.scrapingJobs.markShardForRetry, {
+          jobId: job._id,
+          shardIndex: shardIndex,
+          reason: "Empty response from Gemini"
+        });
+
+        return new Response(JSON.stringify({ 
+          status: "retry_needed",
+          shardIndex,
+          message: "Empty data - will retry automatically"
+        }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+
+      // ✅ Extract and validate JSON structure
+      let rawText = data[0].answer_text.trim();
+
+      // Strip common malformed prefixes added by LLMs
+      if (rawText.startsWith("JSON ")) {
+        rawText = rawText.slice(5).trim();
+      } else if (rawText.startsWith("JSON\n")) {
+        rawText = rawText.slice(5).trim();
+      } else if (rawText.startsWith("JSON\r\n")) {
+        rawText = rawText.slice(6).trim();
+      }
+
+      // ✅ Extract only the JSON portion (handles trailing text like "Would you like me to...")
+      let jsonStart = -1;
+      let jsonEnd = -1;
+
+      // Find start of JSON
+      const firstCurly = rawText.indexOf('{');
+      const firstBracket = rawText.indexOf('[');
+
+      if (firstCurly !== -1 && (firstBracket === -1 || firstCurly < firstBracket)) {
+        jsonStart = firstCurly;
+        // Find matching closing brace
+        let depth = 0;
+        for (let i = firstCurly; i < rawText.length; i++) {
+          if (rawText[i] === '{') depth++;
+          if (rawText[i] === '}') {
+            depth--;
+            if (depth === 0) {
+              jsonEnd = i + 1;
+              break;
+            }
+          }
+        }
+      } else if (firstBracket !== -1) {
+        jsonStart = firstBracket;
+        // Find matching closing bracket
+        let depth = 0;
+        for (let i = firstBracket; i < rawText.length; i++) {
+          if (rawText[i] === '[') depth++;
+          if (rawText[i] === ']') {
+            depth--;
+            if (depth === 0) {
+              jsonEnd = i + 1;
+              break;
+            }
+          }
+        }
+      }
+
+      if (jsonStart === -1 || jsonEnd === -1) {
+        console.warn(`⚠️ Shard ${shardIndex} - no valid JSON structure found - marking for retry`);
+        
+        await ctx.runMutation(api.scrapingJobs.markShardForRetry, {
+          jobId: job._id,
+          shardIndex: shardIndex,
+          reason: "No JSON structure found in response"
+        });
+
+        return new Response(JSON.stringify({ 
+          status: "retry_needed",
+          shardIndex,
+          message: "No JSON structure - will retry automatically"
+        }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+
+      // Extract only the JSON portion (removes trailing text)
+      rawText = rawText.substring(jsonStart, jsonEnd);
+
+      // Try to parse the extracted JSON
+      let parsedData;
+      try {
+        parsedData = JSON.parse(rawText);
+      } catch (parseError) {
+        console.warn(`⚠️ Shard ${shardIndex} returned invalid JSON after cleaning - marking for retry`);
+        console.warn(`Extracted text (first 200 chars): ${rawText.substring(0, 200)}...`);
+        
+        await ctx.runMutation(api.scrapingJobs.markShardForRetry, {
+          jobId: job._id,
+          shardIndex: shardIndex,
+          reason: "Invalid JSON response"
+        });
+
+        return new Response(JSON.stringify({ 
+          status: "retry_needed",
+          shardIndex,
+          message: "Invalid JSON - will retry automatically"
+        }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+
+      // ✅ Basic validation - if critical fields missing, mark for retry
+      const validationErrors: string[] = [];
+      
+      switch (shardIndex) {
+        case 1:
+          if (!parsedData.base_metrics) validationErrors.push("Missing base_metrics");
+          if (!parsedData.valuation) validationErrors.push("Missing valuation");
+          if (!parsedData.scenarios) validationErrors.push("Missing scenarios");
+          break;
+        case 2:
+          if (!parsedData.risks) validationErrors.push("Missing risks object");
+          break;
+        case 3:
+          if (!parsedData.executive_summary) validationErrors.push("Missing executive_summary");
+          break;
+        case 4:
+          if (!parsedData.base_metrics) validationErrors.push("Missing base_metrics");
+          break;
+        case 5:
+          if (!parsedData.time_series) validationErrors.push("Missing time_series");
+          break;
+        case 6:
+          if (!parsedData.guidance_bridge) validationErrors.push("Missing guidance_bridge");
+          break;
+        case 7:
+          if (!parsedData.events) validationErrors.push("Missing events array");
+          break;
+      }
+
+      if (validationErrors.length > 0) {
+        console.warn(`⚠️ Shard ${shardIndex} missing fields: ${validationErrors.join(', ')} - marking for retry`);
+        
+        await ctx.runMutation(api.scrapingJobs.markShardForRetry, {
+          jobId: job._id,
+          shardIndex: shardIndex,
+          reason: `Incomplete data: ${validationErrors.join(', ')}`
+        });
+
+        return new Response(JSON.stringify({ 
+          status: "retry_needed",
+          shardIndex,
+          message: "Incomplete data - will retry automatically",
+          details: validationErrors
+        }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+
+      // ✅ Data is valid - save it
       const result = await ctx.runMutation(internal.scrapingJobs.saveGeminiResult, {
         jobId: job._id,
         shardIndex: shardIndex,
@@ -107,7 +265,7 @@ http.route({
 
       console.log(`✅ Shard ${shardIndex} saved. Progress: ${result.completedCount}/${result.totalCount}`);
 
-      // If all Gemini scrapers are complete, trigger LLM phase
+      // ✅ Check what to do next based on result
       if (result.allGeminisComplete) {
         console.log(`🎯 All ${result.totalCount} Gemini scrapers complete - starting LLM phase`);
         
@@ -116,6 +274,13 @@ http.route({
         });
 
         console.log(`🚀 LLM orchestrator scheduled for job ${job._id}`);
+      } else if (result.hasRetryNeeded) {
+        // ✅ Some shards need retry - schedule retry check
+        console.log(`🔄 Some shards need retry - scheduling retry in 30 seconds`);
+        
+        await ctx.scheduler.runAfter(30000, internal.scrapingJobs.retryNeededShards, {
+          jobId: job._id,
+        });
       } else {
         console.log(`⏳ Waiting for ${result.totalCount - result.completedCount} more Gemini scrapers...`);
       }
@@ -124,8 +289,8 @@ http.route({
 
     } catch (error) {
       console.error("❌ Webhook error:", error);
-
-      // Try to mark shard as failed
+      
+      // Even on error, try to mark for retry instead of failing
       if (job) {
         try {
           const url = new URL(req.url);
@@ -135,36 +300,20 @@ http.route({
             const shardIndex = parseInt(shardIndexParam, 10);
             
             if (!isNaN(shardIndex)) {
-              await ctx.runMutation(api.scrapingJobs.failGeminiShard, {
+              await ctx.runMutation(api.scrapingJobs.markShardForRetry, {
                 jobId: job._id,
                 shardIndex: shardIndex,
-                error: error instanceof Error ? error.message : "Unknown webhook error",
+                reason: error instanceof Error ? error.message : "Unknown webhook error"
               });
-
-              console.log(`Shard ${shardIndex} marked as failed for job ${job._id}`);
             }
-          } else {
-            // No shard index - fail entire job
-            await ctx.runMutation(api.scrapingJobs.failJob, {
-              jobId: job._id,
-              error: error instanceof Error ? error.message : "Unknown webhook error",
-            });
-
-            console.log(`Job ${job._id} marked as failed`);
           }
-        } catch (failError) {
-          console.error("Failed to update job status:", failError);
+        } catch (retryError) {
+          console.error("Failed to mark for retry:", retryError);
         }
-      }
-
-      if (error instanceof Error && error.message.includes("schema")) {
-        console.error("Schema validation failed");
-        console.error("Error details:", error.message);
       }
 
       return new Response("Internal Server Error", { status: 500 });
     }
   }),
 });
-
 export default http;
