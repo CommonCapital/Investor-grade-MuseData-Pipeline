@@ -15,6 +15,7 @@ const Header = () => {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
+              <Link href="/">
               <svg width="40" height="40" viewBox="0 0 100 100">
                 <rect x="10" y="10" width="22" height="22" fill="#2D5F73"/>
                 <rect x="39" y="10" width="22" height="22" fill="#1C4E64"/>
@@ -26,7 +27,9 @@ const Header = () => {
                 <rect x="39" y="68" width="22" height="22" fill="#245167"/>
                 <circle cx="79" cy="79" r="11" fill="#000000"/>
               </svg>
-              <span className="text-xl font-bold text-[#1C4E64]">MUSEDATA</span>
+            
+              <span  className="text-xl font-bold text-[#1C4E64]">MUSEDATA</span>
+              </Link>
             </div>
             
             {/* Desktop Navigation */}
