@@ -110,33 +110,7 @@ export default function ScheduleSprintPage() {
       </div>
 
       {/* Header */}
-      <header className="relative z-10 border-b border-white/20 bg-white/50 backdrop-blur-sm">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            <Link href="/" className="flex items-center gap-3 group">
-              <svg width="40" height="40" viewBox="0 0 100 100">
-                <rect x="10" y="10" width="22" height="22" fill="#2D5F73"/>
-                <rect x="39" y="10" width="22" height="22" fill="#1C4E64"/>
-                <rect x="68" y="10" width="22" height="22" fill="#3A7A94"/>
-                <rect x="10" y="39" width="22" height="22" fill="#2D5F73"/>
-                <rect x="39" y="39" width="22" height="22" fill="#245167"/>
-                <rect x="68" y="39" width="22" height="22" fill="#0F2B3A"/>
-                <rect x="10" y="68" width="22" height="22" fill="#2D5F73"/>
-                <rect x="39" y="68" width="22" height="22" fill="#245167"/>
-                <circle cx="79" cy="79" r="11" fill="#000000"/>
-              </svg>
-              <span className="text-2xl font-bold text-[#1C4E64] group-hover:text-[#2D5F73] transition-colors">
-                MUSEDATA
-              </span>
-            </Link>
-            <Link href="/">
-              <Button variant="ghost" className="text-[#1C4E64] hover:text-[#2D5F73] hover:bg-[#1C4E64]/5">
-                ← Back to Home
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+    
 
       <main className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         {/* Hero Section */}
