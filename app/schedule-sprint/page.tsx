@@ -383,7 +383,7 @@ export default function ScheduleSprintPage() {
       <footer className="relative z-10 border-t border-white/20 bg-white/50 backdrop-blur-sm py-8 mt-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-sm text-gray-600">
-            © 2026 MUSEDATA. Institutional-Grade Finance Infrastructure.
+            © 2026 MUSEDATA.ai Institutional-Grade Finance Infrastructure.
           </p>
         </div>
       </footer>
