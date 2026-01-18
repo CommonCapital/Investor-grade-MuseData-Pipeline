@@ -247,30 +247,30 @@ export default function MuseDataLanding() {
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
             <Card className="border-t-4 border-[#1C4E64] shadow-lg animate-fade-in-up">
               <CardContent className="p-6 sm:p-8 text-center">
-                <h3 className="text-lg sm:text-xl font-semibold mb-3 text-gray-900">
+                <h3 className="text-lg sm:text-xl font-semibold mb-3 text-white">
                   72-Hour QoE Evidence Sprint
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-white">
                   Fully reconciled investor pack delivered within 30 days.
                 </p>
               </CardContent>
             </Card>
             <Card className="border-t-4 border-[#2D5F73] shadow-lg animate-fade-in-up delay-100">
               <CardContent className="p-6 sm:p-8 text-center">
-                <h3 className="text-lg sm:text-xl font-semibold mb-3 text-gray-900">
+                <h3 className="text-lg sm:text-xl font-semibold mb-3 text-white">
                   Board Layer
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-white">
                   Monthly KPI governance with repeatable reporting cadence.
                 </p>
               </CardContent>
             </Card>
             <Card className="border-t-4 border-[#3A7A94] shadow-lg animate-fade-in-up delay-200">
               <CardContent className="p-6 sm:p-8 text-center">
-                <h3 className="text-lg sm:text-xl font-semibold mb-3 text-gray-900">
+                <h3 className="text-lg sm:text-xl font-semibold mb-3 text-white">
                   Enterprise Portfolio
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-white">
                   Portfolio-wide rollouts for companies from $5M to $100M ARR.
                 </p>
               </CardContent>
@@ -293,10 +293,10 @@ export default function MuseDataLanding() {
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             <Card className="shadow-lg border-l-4 border-[#1C4E64]">
               <CardHeader>
-                <CardTitle className="text-xl text-gray-900">Quality of Earnings (QoE) Sprint</CardTitle>
+                <CardTitle className="text-xl text-white">Quality of Earnings (QoE) Sprint</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3 text-sm text-gray-700">
+                <div className="space-y-3 text-sm text-white">
                   <div className="flex items-start gap-2">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
                     <span>72-hour turnaround for initial evidence pack</span>
@@ -315,7 +315,7 @@ export default function MuseDataLanding() {
                   </div>
                 </div>
                 <div className="mt-6 pt-4 border-t border-gray-200">
-                  <p className="text-xs text-gray-500 italic">
+                  <p className="text-xs text-white italic">
                     Ideal for companies preparing for due diligence or Series A/B funding
                   </p>
                 </div>
@@ -324,10 +324,10 @@ export default function MuseDataLanding() {
 
             <Card className="shadow-lg border-l-4 border-[#2D5F73]">
               <CardHeader>
-                <CardTitle className="text-xl text-gray-900">Board Layer Governance</CardTitle>
+                <CardTitle className="text-xl text-white">Board Layer Governance</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3 text-sm text-gray-700">
+                <div className="space-y-3 text-sm text-white">
                   <div className="flex items-start gap-2">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
                     <span>Monthly KPI dashboards and reporting</span>
@@ -346,7 +346,7 @@ export default function MuseDataLanding() {
                   </div>
                 </div>
                 <div className="mt-6 pt-4 border-t border-gray-200">
-                  <p className="text-xs text-gray-500 italic">
+                  <p className="text-xs text-white italic">
                     For post-raise companies needing consistent investor updates
                   </p>
                 </div>
@@ -355,10 +355,10 @@ export default function MuseDataLanding() {
 
             <Card className="shadow-lg border-l-4 border-[#3A7A94]">
               <CardHeader>
-                <CardTitle className="text-xl text-gray-900">Enterprise Portfolio</CardTitle>
+                <CardTitle className="text-xl text-white">Enterprise Portfolio</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3 text-sm text-gray-700">
+                <div className="space-y-3 text-sm text-white">
                   <div className="flex items-start gap-2">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
                     <span>Portfolio-wide financial infrastructure</span>
@@ -377,7 +377,7 @@ export default function MuseDataLanding() {
                   </div>
                 </div>
                 <div className="mt-6 pt-4 border-t border-gray-200">
-                  <p className="text-xs text-gray-500 italic">
+                  <p className="text-xs text-white italic">
                     For VCs managing multiple portfolio companies
                   </p>
                 </div>
@@ -386,10 +386,10 @@ export default function MuseDataLanding() {
 
             <Card className="shadow-lg border-l-4 border-[#245167]">
               <CardHeader>
-                <CardTitle className="text-xl text-gray-900">CFO Advisory</CardTitle>
+                <CardTitle className="text-xl text-white">CFO Advisory</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3 text-sm text-gray-700">
+                <div className="space-y-3 text-sm text-white">
                   <div className="flex items-start gap-2">
                     <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
                     <span>Seasoned CFO guidance and best practices</span>
@@ -408,7 +408,7 @@ export default function MuseDataLanding() {
                   </div>
                 </div>
                 <div className="mt-6 pt-4 border-t border-gray-200">
-                  <p className="text-xs text-gray-500 italic">
+                  <p className="text-xs text-white italic">
                     Expert guidance for scaling finance operations
                   </p>
                 </div>
