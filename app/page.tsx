@@ -134,7 +134,7 @@ export default function MuseDataLanding() {
             that automates cash forecasting, board pack generation, and pitch-ready analysis.
           </p>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
-            <Card className="border-t-4 border-[#1C4E64] shadow-lg animate-fade-in-up">
+            <Card className="border-t-4 border-[#1C4E64] shadow-lg animate-fade-in-up bg-black">
               <CardContent className="p-6 sm:p-8 text-center">
                 <h3 className="text-lg sm:text-xl font-semibold mb-3 text-white">
                   72-Hour QoE Evidence Sprint
@@ -144,7 +144,7 @@ export default function MuseDataLanding() {
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-t-4 border-[#2D5F73] shadow-lg animate-fade-in-up delay-100">
+            <Card className="border-t-4 border-[#2D5F73] shadow-lg animate-fade-in-up delay-100 bg-black">
               <CardContent className="p-6 sm:p-8 text-center">
                 <h3 className="text-lg sm:text-xl font-semibold mb-3 text-white">
                   Board Layer
@@ -154,7 +154,7 @@ export default function MuseDataLanding() {
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-t-4 border-[#3A7A94] shadow-lg animate-fade-in-up delay-200">
+            <Card className="border-t-4 border-[#3A7A94] shadow-lg animate-fade-in-up delay-200 bg-black">
               <CardContent className="p-6 sm:p-8 text-center">
                 <h3 className="text-lg sm:text-xl font-semibold mb-3 text-white">
                   Enterprise Portfolio
@@ -180,7 +180,7 @@ export default function MuseDataLanding() {
           </p>
           
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <Card className="shadow-lg border-l-4 border-[#1C4E64]">
+            <Card className="shadow-lg border-l-4 border-[#1C4E64] bg-black">
               <CardHeader>
                 <CardTitle className="text-xl text-white">Quality of Earnings (QoE) Sprint</CardTitle>
               </CardHeader>
@@ -211,7 +211,7 @@ export default function MuseDataLanding() {
               </CardContent>
             </Card>
 
-            <Card className="shadow-lg border-l-4 border-[#2D5F73]">
+            <Card className="shadow-lg border-l-4 border-[#2D5F73] bg-black">
               <CardHeader>
                 <CardTitle className="text-xl text-white">Board Layer Governance</CardTitle>
               </CardHeader>
@@ -242,7 +242,7 @@ export default function MuseDataLanding() {
               </CardContent>
             </Card>
 
-            <Card className="shadow-lg border-l-4 border-[#3A7A94]">
+            <Card className="shadow-lg border-l-4 border-[#3A7A94] bg-black">
               <CardHeader>
                 <CardTitle className="text-xl text-white">Enterprise Portfolio</CardTitle>
               </CardHeader>
@@ -273,7 +273,7 @@ export default function MuseDataLanding() {
               </CardContent>
             </Card>
 
-            <Card className="shadow-lg border-l-4 border-[#245167]">
+            <Card className="shadow-lg border-l-4 border-[#245167] bg-black">
               <CardHeader>
                 <CardTitle className="text-xl text-white">CFO Advisory</CardTitle>
               </CardHeader>
