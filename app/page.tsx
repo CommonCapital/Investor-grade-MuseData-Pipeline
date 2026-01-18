@@ -387,7 +387,7 @@ export default function MuseDataLanding() {
           <p className="text-sm opacity-75">© 2026 MUSEDATA. All rights reserved.</p>
           <p className="text-sm opacity-75 mt-4">
             <a href="mailto:collin@musedata.ai" className="hover:underline">
-              collin@musedata.ai
+              partners@musedata.ai
             </a>
           </p>
         </div>

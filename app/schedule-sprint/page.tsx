@@ -10,7 +10,7 @@ export default function ScheduleSprintPage() {
   const [copied, setCopied] = useState(false);
 
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText("collin@musedata.ai");
+    navigator.clipboard.writeText("partners@musedata.ai");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -233,10 +233,10 @@ export default function ScheduleSprintPage() {
                   <div className="shimmer absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   <p className="text-sm text-white/80 mb-2 font-medium uppercase tracking-wide">Send your inquiry to</p>
                   <a 
-                    href="mailto:collin@musedata.ai" 
+                    href="mailto:partners@musedata.ai" 
                     className="text-2xl sm:text-3xl font-bold text-white hover:text-blue-100 transition-colors block break-all relative z-10"
                   >
-                    collin@musedata.ai
+                    partners@musedata.ai
                   </a>
                 </div>
 
@@ -259,7 +259,7 @@ export default function ScheduleSprintPage() {
                     )}
                   </Button>
 
-                  <a href="mailto:collin@musedata.ai?subject=72-Hour QoE Evidence Sprint Request" className="block">
+                  <a href="mailto:partners@musedata.ai?subject=72-Hour QoE Evidence Sprint Request" className="block">
                     <Button className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-[#1C4E64] to-[#2D5F73] text-white hover:opacity-90 transition-all duration-300 shadow-xl">
                       Open Email Client
                       <ArrowRight className="w-5 h-5 ml-2" />
