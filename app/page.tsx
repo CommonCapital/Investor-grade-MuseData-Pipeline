@@ -69,7 +69,7 @@ export default function MuseDataLanding() {
                       size="lg"
                       className="h-14 px-8 bg-[#1C4E64] text-white hover:bg-[#163B4F] transition-all duration-300"
                     >
-                     Access Dashboard 
+                     Access Search 
                     </Button>
                   </SignInButton>
                 </Unauthenticated>
@@ -80,7 +80,7 @@ export default function MuseDataLanding() {
                       size="lg"
                       className="h-14 px-8 bg-[#1C4E64] text-white hover:bg-[#163B4F] transition-all duration-300"
                     >
-                      Access Dashboard 
+                      Access Search 
                     </Button>
                   </a>
                 </Authenticated>

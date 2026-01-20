@@ -14,23 +14,22 @@ const Header = () => {
          <header className="sticky top-0 z-50 bg-white shadow-sm">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
-              <Link href="/">
-              <svg width="40" height="40" viewBox="0 0 100 100">
-                <rect x="10" y="10" width="22" height="22" fill="#2D5F73"/>
-                <rect x="39" y="10" width="22" height="22" fill="#1C4E64"/>
-                <rect x="68" y="10" width="22" height="22" fill="#3A7A94"/>
-                <rect x="10" y="39" width="22" height="22" fill="#2D5F73"/>
-                <rect x="39" y="39" width="22" height="22" fill="#245167"/>
-                <rect x="68" y="39" width="22" height="22" fill="#0F2B3A"/>
-                <rect x="10" y="68" width="22" height="22" fill="#2D5F73"/>
-                <rect x="39" y="68" width="22" height="22" fill="#245167"/>
-                <circle cx="79" cy="79" r="11" fill="#000000"/>
-              </svg>
-            
-              <span  className="text-xl font-bold text-[#1C4E64]">MUSEDATA</span>
-              </Link>
-            </div>
+        <div className="flex items-center gap-3">
+  <Link href="/" className="flex items-center gap-3">
+    <svg width="40" height="40" viewBox="0 0 100 100">
+      <rect x="10" y="10" width="22" height="22" fill="#2D5F73"/>
+      <rect x="39" y="10" width="22" height="22" fill="#1C4E64"/>
+      <rect x="68" y="10" width="22" height="22" fill="#3A7A94"/>
+      <rect x="10" y="39" width="22" height="22" fill="#2D5F73"/>
+      <rect x="39" y="39" width="22" height="22" fill="#245167"/>
+      <rect x="68" y="39" width="22" height="22" fill="#0F2B3A"/>
+      <rect x="10" y="68" width="22" height="22" fill="#2D5F73"/>
+      <rect x="39" y="68" width="22" height="22" fill="#245167"/>
+      <circle cx="79" cy="79" r="11" fill="#000000"/>
+    </svg>
+    <span className="text-xl font-bold text-black">MUSEDATA</span>
+  </Link>
+</div>
             
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-6">
@@ -45,7 +44,7 @@ const Header = () => {
               </Link>
               
               <Unauthenticated>
-                <SignInButton mode="modal" forceRedirectUrl="/dashboard">
+                <SignInButton mode="modal" forceRedirectUrl="/central-hub">
                   <Button 
                     size="sm"
                     className="h-10 px-6 bg-[#1C4E64] text-white hover:bg-[#163B4F] transition-all duration-300"
@@ -56,12 +55,12 @@ const Header = () => {
               </Unauthenticated>
 
               <Authenticated>
-                <a href="/dashboard">
+                <a href="/central-hub">
                   <Button 
                     size="sm"
                     className="h-10 px-6 bg-[#1C4E64] text-white hover:bg-[#163B4F] transition-all duration-300"
                   >
-                    Dashboard
+                    Central Hub
                   </Button>
                 </a>
                 <UserButton />
@@ -106,7 +105,7 @@ const Header = () => {
               
               <div className="pt-4">
                 <Unauthenticated>
-                  <SignInButton mode="modal" forceRedirectUrl="/dashboard">
+                  <SignInButton mode="modal" forceRedirectUrl="/central-hub">
                     <Button className="w-full bg-[#1C4E64] text-white hover:bg-[#163B4F] transition-all duration-300">
                       Get Started
                     </Button>
@@ -114,9 +113,9 @@ const Header = () => {
                 </Unauthenticated>
                 
                 <Authenticated>
-                  <a href="/dashboard" className="block">
+                  <a href="/central-hub" className="block">
                     <Button className="w-full bg-[#1C4E64] text-white hover:bg-[#163B4F] transition-all duration-300">
-                      Dashboard
+                      Central Hub
                     </Button>
                   </a>
                 </Authenticated>

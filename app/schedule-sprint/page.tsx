@@ -234,7 +234,7 @@ export default function ScheduleSprintPage() {
                   <p className="text-sm text-white/80 mb-2 font-medium uppercase tracking-wide">Send your inquiry to</p>
                   <a 
                     href="mailto:partners@musedata.ai" 
-                    className="text-2xl sm:text-3xl font-bold text-white hover:text-blue-100 transition-colors block break-all relative z-10"
+                    className="text-xl sm:text-2xl font-bold text-white hover:text-blue-100 transition-colors block break-all relative z-10"
                   >
                     partners@musedata.ai
                   </a>
