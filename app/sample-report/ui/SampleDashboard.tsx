@@ -7,21 +7,21 @@ import { cn } from "@/lib/utils";
 import { MessageCircle, X } from "lucide-react";
 
 import { useTimeHorizon } from "@/hooks/use-time-horizon";
-import { RunHeader } from "@/app/dashboard/report/[id]/summary/ui/RunHeader";
-import { ChangesSection } from "@/app/dashboard/report/[id]/summary/ui/ChangesSection";
-import { DecisionSufficiency } from "@/app/dashboard/report/[id]/summary/ui/DecisionSufficiency";
-import { ExecutiveSummary } from "@/app/dashboard/report/[id]/summary/ui/ExecutiveSummary";
-import { PricePathProtection } from "@/app/dashboard/report/[id]/summary/ui/PricePathProtection";
-import { TimeSeriesSection } from "@/app/dashboard/report/[id]/summary/ui/TimeSeriesSection";
-import { AIInsightsPanel } from "@/app/dashboard/report/[id]/summary/ui/AIInsightsPanel";
-import { FinancialsGrid } from "@/app/dashboard/report/[id]/summary/ui/FinancialsGrid";
-import { UnitEconomicsPanel } from "@/app/dashboard/report/[id]/summary/ui/UnitEconomicsPanel";
-import { MarketExpectationsPanel } from "@/app/dashboard/report/[id]/summary/ui/MarketExpectationsPanel";
-import { ValuationSection } from "@/app/dashboard/report/[id]/summary/ui/ValuationSection";
-import { EventsTimeline } from "@/app/dashboard/report/[id]/summary/ui/EventsTimeline";
-import { DriverScenariosPanel } from "@/app/dashboard/report/[id]/summary/ui/DriverScenariosPanel";
-import { RisksPanel } from "@/app/dashboard/report/[id]/summary/ui/RisksPanel";
-import { DataLineage } from "@/app/dashboard/report/[id]/summary/ui/DataLineage";
+import { RunHeader } from "@/app/search/report/[id]/summary/ui/RunHeader";
+import { ChangesSection } from "@/app/search/report/[id]/summary/ui/ChangesSection";
+import { DecisionSufficiency } from "@/app/search/report/[id]/summary/ui/DecisionSufficiency";
+import { ExecutiveSummary } from "@/app/search/report/[id]/summary/ui/ExecutiveSummary";
+import { PricePathProtection } from "@/app/search/report/[id]/summary/ui/PricePathProtection";
+import { TimeSeriesSection } from "@/app/search/report/[id]/summary/ui/TimeSeriesSection";
+import { AIInsightsPanel } from "@/app/search/report/[id]/summary/ui/AIInsightsPanel";
+import { FinancialsGrid } from "@/app/search/report/[id]/summary/ui/FinancialsGrid";
+import { UnitEconomicsPanel } from "@/app/search/report/[id]/summary/ui/UnitEconomicsPanel";
+import { MarketExpectationsPanel } from "@/app/search/report/[id]/summary/ui/MarketExpectationsPanel";
+import { ValuationSection } from "@/app/search/report/[id]/summary/ui/ValuationSection";
+import { EventsTimeline } from "@/app/search/report/[id]/summary/ui/EventsTimeline";
+import { DriverScenariosPanel } from "@/app/search/report/[id]/summary/ui/DriverScenariosPanel";
+import { RisksPanel } from "@/app/search/report/[id]/summary/ui/RisksPanel";
+import { DataLineage } from "@/app/search/report/[id]/summary/ui/DataLineage";
 
 
 interface InvestorDashboardProps {

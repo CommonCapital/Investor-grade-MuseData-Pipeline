@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { InvestorDashboard } from '../dashboard/report/[id]/summary/ui/InvestorDashboard';
+import { InvestorDashboard } from '../search/report/[id]/summary/ui/InvestorDashboard';
 import { SampleDashboard } from './ui/SampleDashboard';
 
 const SampleReport = () => {

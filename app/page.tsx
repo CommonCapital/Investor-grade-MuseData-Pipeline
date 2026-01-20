@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+
 export default function MuseDataLanding() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -64,7 +65,7 @@ export default function MuseDataLanding() {
               
               <div className="flex flex-col sm:flex-row gap-4">
                 <Unauthenticated>
-                  <SignInButton mode="modal" forceRedirectUrl="/dashboard">
+                  <SignInButton mode="modal" forceRedirectUrl="/search">
                     <Button
                       size="lg"
                       className="h-14 px-8 bg-[#1C4E64] text-white hover:bg-[#163B4F] transition-all duration-300"
@@ -75,7 +76,7 @@ export default function MuseDataLanding() {
                 </Unauthenticated>
 
                 <Authenticated>
-                  <a href="/dashboard">
+                  <a href="/search">
                     <Button
                       size="lg"
                       className="h-14 px-8 bg-[#1C4E64] text-white hover:bg-[#163B4F] transition-all duration-300"
