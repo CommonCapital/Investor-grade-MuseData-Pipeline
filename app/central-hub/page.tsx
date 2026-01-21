@@ -1,6 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import { AlertCircle, Lock, CheckCircle, Clock, Menu, X, ArrowRight, ChevronRight, RefreshCw, Plus, Search, Filter, Download } from 'lucide-react';
+import Script from 'next/script';
 interface  Companies {
     id: number;
     name: string;
@@ -143,7 +144,12 @@ const MuseDataRoadmap = () => {
   );
 
   const LandingPage = () => (
+    
     <div className="min-h-screen bg-white">
+      <Script
+        src="https://www.buildmyagent.io/widget/69706ea5e966c51847e406ff/widget-professional.js?widgetId=69706ea5e966c51847e406ff"
+        strategy="lazyOnload"
+      />
       <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">

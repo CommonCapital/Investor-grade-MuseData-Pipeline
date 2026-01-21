@@ -13,6 +13,7 @@ import {
   CheckCircle
 } from "lucide-react";
 import Link from "next/link";
+import Script from "next/script";
 
 
 export default function MuseDataLanding() {
@@ -20,7 +21,12 @@ export default function MuseDataLanding() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <style jsx global>{`
+       <Script 
+        src="https://www.buildmyagent.io/widget/69706ea5e966c51847e406ff/widget-professional.js?widgetId=69706ea5e966c51847e406ff"
+        strategy="lazyOnload"
+      />
+
+        <style jsx global>{`
         @keyframes fadeInUp {
           from {
             opacity: 0;
@@ -362,24 +368,7 @@ export default function MuseDataLanding() {
         </div>
       </section>
 
-      {/* Sticky CTA Button */}
-      <div className="fixed bottom-6 right-6 z-30 animate-fade-in-up delay-300">
-        <Unauthenticated>
-          <SignInButton mode="modal" forceRedirectUrl="/schedule-sprint">
-            <Button className="bg-[#1C4E64] hover:bg-[#163B4F] text-white shadow-lg h-12 px-6">
-              Schedule Sprint
-            </Button>
-          </SignInButton>
-        </Unauthenticated>
-        
-        <Authenticated>
-          <a href="/schedule-sprint">
-            <Button className="bg-[#1C4E64] hover:bg-[#163B4F] text-white shadow-lg h-12 px-6">
-              Schedule Sprint
-            </Button>
-          </a>
-        </Authenticated>
-      </div>
+      
 
       {/* Footer */}
       <footer className="bg-[#1C4E64] text-white py-8 px-4 sm:px-6">

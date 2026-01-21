@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowRight, Mail, Clock, CheckCircle, Calendar, FileText, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import Script from "next/script";
 
 export default function ScheduleSprintPage() {
   const [copied, setCopied] = useState(false);
@@ -17,6 +18,10 @@ export default function ScheduleSprintPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
+       <Script
+        src="https://www.buildmyagent.io/widget/69706ea5e966c51847e406ff/widget-professional.js?widgetId=69706ea5e966c51847e406ff"
+        strategy="lazyOnload"
+      />
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
         
