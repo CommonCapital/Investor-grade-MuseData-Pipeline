@@ -21,6 +21,7 @@ export const metadata: Metadata = {
   description: "Institutional-Grade Finance Infrastructure for VC-Backed Software Companies",
   icons: {
     icon: "/logo.png",
+    
   },
 };
 
