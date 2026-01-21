@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   title: "Growth Equity",
   description: "Institutional-Grade Finance Infrastructure for VC-Backed Software Companies",
   icons: {
-    icon: "/logo.png",
+    icon: "/favicon.ico",
     
   },
 };
