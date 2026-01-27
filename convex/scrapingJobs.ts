@@ -2864,7 +2864,7 @@ EXPECTED JSON OUTPUT FORMAT:
        const response = await fetch(url, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${process.env.BRIGHTDATA_API_KEY}`,
+          Authorization: `Bearer ${process.env.BRIGHTDATA_API_KEY_2}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({

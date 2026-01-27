@@ -78,7 +78,7 @@ function ReportPage() {
         <h2 className='text-2xl font-light mb-2'>Report Not Found</h2>
         <p className='text-sm text-black/60 mb-8'>The report you're looking for doesn't exist</p>
         <Button
-          onClick={() => router.push('/dashboard')}
+          onClick={() => router.push('/search')}
           className='bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-xs tracking-widest uppercase'
         >
           Back to Dashboard
@@ -248,7 +248,7 @@ function ReportPage() {
           <div className='flex flex-col sm:flex-row gap-4 justify-center items-center'>
             {job.status === 'completed' && (
               <Button
-                onClick={() => router.push(`/dashboard/report/${id}/summary`)}
+                onClick={() => router.push(`/search/report/${id}/summary`)}
                 className='h-12 px-8 bg-black text-white hover:bg-white hover:text-black border-2 border-black transition-all duration-300 text-xs tracking-widest uppercase'
               >
                 View Full Report
@@ -279,7 +279,7 @@ function ReportPage() {
             )}
 
             <Button
-              onClick={() => router.push('/dashboard')}
+              onClick={() => router.push('/search')}
               variant='outline'
               className='h-12 px-8 border-2 border-black/10 text-black hover:border-black bg-white transition-all duration-300 text-xs tracking-widest uppercase'
             >

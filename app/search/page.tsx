@@ -32,7 +32,7 @@ const Dashboard = () => {
     if (!prompt || isLoading) return
      // ✅ Check limit before submitting
     if (usageInfo && !usageInfo.canCreate) {
-      router.push('/dashboard/billing')
+      router.push('/search/billing')
       return
     }
     setIsLoading(true)
@@ -45,7 +45,7 @@ const Dashboard = () => {
         console.log(`Snapshot ID: ${response?.data?.snapshot_id}`)
         
         // ✅ Use snapshot_id for URL
-        router.push(`/dashboard/report/${response?.data?.snapshot_id}`)
+        router.push(`/search/report/${response?.data?.snapshot_id}`)
       } else {
         console.error('Failed to create job:', response.error)
         alert(`Error: ${response.error}`) // ✅ Show error on mobile
@@ -70,7 +70,7 @@ const Dashboard = () => {
               <div className="p-4 bg-blue-50 border border-blue-200 rounded">
                 <p className="text-sm text-blue-900">
                   🎉 You have <strong>1 free report</strong> available. 
-                  <a href="/dashboard/billing" className="underline ml-1">
+                  <a href="/search/billing" className="underline ml-1">
                     Upgrade for 30 reports
                   </a>
                 </p>
@@ -81,7 +81,7 @@ const Dashboard = () => {
               <div className="p-4 bg-yellow-50 border border-yellow-200 rounded">
                 <p className="text-sm text-yellow-900">
                   You've used your free report. 
-                  <a href="/dashboard/billing" className="underline ml-1 font-semibold">
+                  <a href="/search/billing" className="underline ml-1 font-semibold">
                     Upgrade to create 30 reports
                   </a>
                 </p>

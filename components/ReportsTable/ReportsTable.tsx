@@ -20,7 +20,7 @@ const ReportsTable = () => {
 
 const handleRowClick = (snapshotId: string | undefined) => {
   if (snapshotId) {
-    router.push(`/dashboard/report/${snapshotId}`)
+    router.push(`/search/report/${snapshotId}`)
   }
 };
 const handleDelete = async (e: React.MouseEvent, jobId: string) => {

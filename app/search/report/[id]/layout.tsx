@@ -30,7 +30,7 @@ async function Layout({
 
   // ✅ Block if limit reached
   if (!usageInfo.canCreate) {
-    redirect("/dashboard/billing")
+    redirect("/search/billing")
   }
 
   return (
