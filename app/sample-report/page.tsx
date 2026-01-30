@@ -24,8 +24,8 @@ ChartJS.register(
   BarElement,
   LineElement,
   PointElement,
-  BarController,   // ✅ Added
-  LineController,  // ✅ Added
+  BarController,
+  LineController,
   Title,
   Tooltip,
   Legend
@@ -80,6 +80,7 @@ interface SheetData {
 const MusedataDashboard: React.FC = () => {
   const [activeSheet, setActiveSheet] = useState(0);
   const [currentDateTime, setCurrentDateTime] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
 
   const years = ['2023 A', '2024 A', '2025 A', '2026 P'];
 
@@ -250,6 +251,14 @@ const MusedataDashboard: React.FC = () => {
     const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     setCurrentDateTime(`${dateStr} ${timeStr}`);
+
+    // Check mobile on mount and resize
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const arrBridgeChartData: any = {
@@ -266,9 +275,9 @@ const MusedataDashboard: React.FC = () => {
         type: 'line',
         borderColor: '#5CB85C',
         backgroundColor: '#5CB85C',
-        borderWidth: 3,
-        pointRadius: 5,
-        pointHoverRadius: 7,
+        borderWidth: isMobile ? 2 : 3,
+        pointRadius: isMobile ? 3 : 5,
+        pointHoverRadius: isMobile ? 5 : 7,
         tension: 0,
         order: 0,
       },
@@ -277,8 +286,19 @@ const MusedataDashboard: React.FC = () => {
 
   const arrBridgeChartOptions: ChartOptions<'bar'> = {
     responsive: true,
+    maintainAspectRatio: true,
+    aspectRatio: isMobile ? 1 : 2,
     plugins: {
-      legend: { position: 'top' },
+      legend: { 
+        position: isMobile ? 'bottom' : 'top',
+        labels: {
+          font: {
+            size: isMobile ? 10 : 12,
+          },
+          boxWidth: isMobile ? 15 : 40,
+          padding: isMobile ? 8 : 10,
+        }
+      },
       tooltip: {
         callbacks: {
           label: function (context: TooltipItem<'bar'>) {
@@ -295,10 +315,20 @@ const MusedataDashboard: React.FC = () => {
       },
     },
     scales: {
-      x: { stacked: true },
+      x: { 
+        stacked: true,
+        ticks: {
+          font: {
+            size: isMobile ? 9 : 11,
+          }
+        }
+      },
       y: {
         stacked: true,
         ticks: {
+          font: {
+            size: isMobile ? 9 : 11,
+          },
           callback: function (value) {
             return '$' + (Number(value) / 1000000).toFixed(1) + 'M';
           },
@@ -334,9 +364,9 @@ const MusedataDashboard: React.FC = () => {
         type: 'line',
         borderColor: '#5CB85C',
         backgroundColor: '#5CB85C',
-        borderWidth: 3,
-        pointRadius: 6,
-        pointHoverRadius: 8,
+        borderWidth: isMobile ? 2 : 3,
+        pointRadius: isMobile ? 4 : 6,
+        pointHoverRadius: isMobile ? 6 : 8,
         tension: 0.2,
         yAxisID: 'y1',
         order: 0,
@@ -346,25 +376,34 @@ const MusedataDashboard: React.FC = () => {
 
   const revenueCashChartOptions: ChartOptions<'bar'> = {
     responsive: true,
+    maintainAspectRatio: true,
+    aspectRatio: isMobile ? 1 : 2,
     interaction: {
       mode: 'index',
       intersect: false,
     },
     plugins: {
       legend: {
-        position: 'top',
+        position: isMobile ? 'bottom' : 'top',
         labels: {
           usePointStyle: true,
-          padding: 15,
+          padding: isMobile ? 8 : 15,
           font: {
-            size: 12,
+            size: isMobile ? 10 : 12,
             weight: 'bold' as const,
           },
+          boxWidth: isMobile ? 15 : 20,
         },
       },
       tooltip: {
         backgroundColor: 'rgba(0,0,0,0.8)',
-        padding: 12,
+        padding: isMobile ? 8 : 12,
+        titleFont: {
+          size: isMobile ? 11 : 13,
+        },
+        bodyFont: {
+          size: isMobile ? 10 : 12,
+        },
         callbacks: {
           label: function (context: TooltipItem<'bar'>) {
             let label = context.dataset.label || '';
@@ -383,7 +422,7 @@ const MusedataDashboard: React.FC = () => {
         },
       },
       title: {
-        display: true,
+        display: !isMobile,
         text: 'Revenue vs. Cash Collection Analysis',
         font: {
           size: 16,
@@ -402,7 +441,7 @@ const MusedataDashboard: React.FC = () => {
         },
         ticks: {
           font: {
-            size: 12,
+            size: isMobile ? 9 : 12,
             weight: 'bold' as const,
           },
         },
@@ -417,11 +456,11 @@ const MusedataDashboard: React.FC = () => {
             return '$' + (Number(value) / 1000000).toFixed(1) + 'M';
           },
           font: {
-            size: 11,
+            size: isMobile ? 9 : 11,
           },
         },
         title: {
-          display: true,
+          display: !isMobile,
           text: 'Revenue & Cash',
           font: {
             size: 12,
@@ -441,11 +480,11 @@ const MusedataDashboard: React.FC = () => {
             return value + '%';
           },
           font: {
-            size: 11,
+            size: isMobile ? 9 : 11,
           },
         },
         title: {
-          display: true,
+          display: !isMobile,
           text: 'Cash Conversion',
           font: {
             size: 12,
@@ -457,146 +496,169 @@ const MusedataDashboard: React.FC = () => {
   };
 
   return (
-    <div style={styles.body}>
-      <div style={styles.container}>
-        <div style={styles.header}>
-          <h1 style={styles.headerH1}>MUSEDATA QoE Template</h1>
-          <p style={styles.headerP}>
-            SaaSCo Inc. (Confidential) • FY 2023 - 2026P • {currentDateTime}
-          </p>
+    <>
+      <style jsx global>{`
+        * {
+          box-sizing: border-box;
+        }
+        
+        @media (max-width: 768px) {
+          body {
+            margin: 0;
+            padding: 0;
+          }
+        }
+      `}</style>
+      
+      <div style={styles.body}>
+        <div style={isMobile ? styles.containerMobile : styles.container}>
+          <div style={isMobile ? styles.headerMobile : styles.header}>
+            <h1 style={isMobile ? styles.headerH1Mobile : styles.headerH1}>
+              MUSEDATA QoE Template
+            </h1>
+            <p style={isMobile ? styles.headerPMobile : styles.headerP}>
+              SaaSCo Inc. (Confidential) • FY 2023 - 2026P {!isMobile && `• ${currentDateTime}`}
+            </p>
 
-          <div style={styles.metadataBar as React.CSSProperties}>
-            <div style={styles.metaItem}>
-              <span style={styles.metaLabel}>Data Sources:</span>
-              <div style={styles.sourceBadges}>
-                <span style={styles.sourceBadge}>QuickBooks</span>
-                <span style={styles.sourceBadge}>Salesforce</span>
-                <span style={styles.sourceBadge}>Stripe</span>
-                <span style={styles.sourceBadge}>Excel</span>
+            <div style={isMobile ? styles.metadataBarMobile : styles.metadataBar}>
+              <div style={styles.metaItem}>
+                {!isMobile && <span style={styles.metaLabel}>Data Sources:</span>}
+                <div style={styles.sourceBadges}>
+                  <span style={styles.sourceBadge}>QuickBooks</span>
+                  <span style={styles.sourceBadge}>Salesforce</span>
+                  <span style={styles.sourceBadge}>Stripe</span>
+                  <span style={styles.sourceBadge}>Excel</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div style={styles.tabs}>
-          {sheetsData.map((sheet, i) => (
-            <button
-              key={i}
-              style={{
-                ...styles.tab,
-                ...(activeSheet === i ? styles.tabActive : {}),
-              }}
-              onClick={() => setActiveSheet(i)}
-            >
-              {sheet.name}
-            </button>
-          ))}
-        </div>
+          <div style={styles.tabs}>
+            {sheetsData.map((sheet, i) => (
+              <button
+                key={i}
+                style={{
+                  ...styles.tab,
+                  ...(isMobile ? styles.tabMobile : {}),
+                  ...(activeSheet === i ? styles.tabActive : {}),
+                }}
+                onClick={() => setActiveSheet(i)}
+              >
+                {isMobile ? sheet.name.split(' ')[0] : sheet.name}
+              </button>
+            ))}
+          </div>
 
-        <div style={styles.sheetContainer}>
-          {sheetsData.map((sheet, sheetIndex) => (
-            <div
-              key={sheetIndex}
-              style={{
-                ...styles.sheet,
-                display: activeSheet === sheetIndex ? 'block' : 'none',
-              }}
-            >
-              {sheet.name === 'Executive Summary' && (
-                <div style={styles.icCard}>
-                  <h2 style={styles.icCardH2}>Quality Assessment</h2>
-                  <div style={styles.flags}>
-                    <span style={styles.flag}>Revenue Quality</span>
-                    <span style={styles.flag}>ARR Consistency</span>
-                    <span style={styles.flag}>EBITDA Validation</span>
-                    <span style={styles.flag}>Cash Flow Accuracy</span>
-                    <span style={styles.flag}>Deferred Revenue Check</span>
+          <div style={styles.sheetContainer}>
+            {sheetsData.map((sheet, sheetIndex) => (
+              <div
+                key={sheetIndex}
+                style={{
+                  ...styles.sheet,
+                  ...(isMobile ? styles.sheetMobile : {}),
+                  display: activeSheet === sheetIndex ? 'block' : 'none',
+                }}
+              >
+                {sheet.name === 'Executive Summary' && (
+                  <div style={isMobile ? styles.icCardMobile : styles.icCard}>
+                    <h2 style={isMobile ? styles.icCardH2Mobile : styles.icCardH2}>
+                      Quality Assessment
+                    </h2>
+                    <div style={styles.flags}>
+                      <span style={isMobile ? styles.flagMobile : styles.flag}>Revenue Quality</span>
+                      <span style={isMobile ? styles.flagMobile : styles.flag}>ARR Consistency</span>
+                      <span style={isMobile ? styles.flagMobile : styles.flag}>EBITDA Validation</span>
+                      <span style={isMobile ? styles.flagMobile : styles.flag}>Cash Flow Accuracy</span>
+                      <span style={isMobile ? styles.flagMobile : styles.flag}>Deferred Revenue Check</span>
+                    </div>
+                    <div style={isMobile ? styles.bridgeNoteMobile : styles.bridgeNote}>
+                      <strong>Revenue Quality Bridge:</strong> Ending ARR driven by New Logo and Expansion ARR, offset by Churn/Contraction.
+                    </div>
+                    <div style={isMobile ? styles.wcNoteMobile : styles.wcNote}>
+                      <strong>Working Capital Narrative:</strong> Accounts receivable and deferred revenue movements analyzed for cash conversion efficiency.
+                    </div>
+                    <div style={isMobile ? styles.confidenceNoteMobile : styles.confidenceNote}>
+                      <strong>Data Confidence Rating:</strong> High – all core metrics reconciled and verified.
+                    </div>
                   </div>
-                  <div style={styles.bridgeNote}>
-                    <strong>Revenue Quality Bridge:</strong> Ending ARR driven by New Logo and Expansion ARR, offset by Churn/Contraction.
+                )}
+
+                <div style={{ overflowX: 'auto', width: '100%' }}>
+                  <table style={isMobile ? styles.tableMobile : styles.table}>
+                    <thead>
+                      <tr>
+                        <th style={isMobile ? styles.theadMobile : styles.thead}>Metric</th>
+                        {sheet.isDefinition ? (
+                          <>
+                            <th style={isMobile ? styles.theadMobile : styles.thead}>Definition</th>
+                            {!isMobile && <th style={styles.thead}>Formula/Source</th>}
+                            {!isMobile && <th style={styles.thead}>Inclusion/Exclusion</th>}
+                            {!isMobile && <th style={styles.thead}>Common Pitfalls</th>}
+                          </>
+                        ) : (
+                          years.map((y, i) => (
+                            <th key={i} style={isMobile ? styles.theadMobile : styles.thead}>
+                              {isMobile ? y.replace(' A', '').replace(' P', 'P') : y}
+                            </th>
+                          ))
+                        )}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sheet.rows.map((r, idx) => (
+                        <tr
+                          key={idx}
+                          style={idx % 2 === 0 ? styles.evenRow : styles.oddRow}
+                        >
+                          <td style={isMobile ? styles.lblMobile : styles.lbl}>{r[0]}</td>
+                          {sheet.isDefinition ? (
+                            <>
+                              <td style={isMobile ? styles.frmMobile : styles.frm}>{r[1]}</td>
+                              {!isMobile && <td style={styles.frm}>{r[2]}</td>}
+                              {!isMobile && <td style={styles.frm}>{r[3]}</td>}
+                              {!isMobile && <td style={styles.frm}>{r[4]}</td>}
+                            </>
+                          ) : (
+                            (r[1] as string[]).map((c, cellIdx) => {
+                              let cellStyle = isMobile ? styles.frmMobile : styles.frm;
+                              if (c === 'PASS') cellStyle = isMobile ? styles.passMobile : styles.pass;
+                              else if (c === 'FAIL') cellStyle = isMobile ? styles.failMobile : styles.fail;
+                              return (
+                                <td key={cellIdx} style={cellStyle}>
+                                  {c}
+                                </td>
+                              );
+                            })
+                          )}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {sheet.chartId === 'arrBridgeChart' && (
+                  <div style={isMobile ? styles.chartContainerMobile : styles.chartContainer}>
+                    <Chart type="bar" data={arrBridgeChartData} options={arrBridgeChartOptions} />
                   </div>
-                  <div style={styles.wcNote}>
-                    <strong>Working Capital Narrative:</strong> Accounts receivable and deferred revenue movements analyzed for cash conversion efficiency.
+                )}
+
+                {sheet.chartId === 'revenueCashChart' && (
+                  <div style={isMobile ? styles.chartContainerMobile : styles.chartContainer}>
+                    <Chart type="bar" data={revenueCashChartData} options={revenueCashChartOptions} />
                   </div>
-                  <div style={styles.confidenceNote}>
-                    <strong>Data Confidence Rating:</strong> High – all core metrics reconciled and verified.
+                )}
+
+                {sheet.isDefinition && (
+                  <div style={isMobile ? styles.noteMobile : styles.note}>
+                    All definitions audited from a $1bn team of growth equity enterprise software experts.
                   </div>
-                </div>
-              )}
-
-              <table style={styles.table}>
-                <thead>
-                  <tr>
-                    <th style={styles.thead}>Metric</th>
-                    {sheet.isDefinition ? (
-                      <>
-                        <th style={styles.thead}>Definition</th>
-                        <th style={styles.thead}>Formula/Source</th>
-                        <th style={styles.thead}>Inclusion/Exclusion</th>
-                        <th style={styles.thead}>Common Pitfalls</th>
-                      </>
-                    ) : (
-                      years.map((y, i) => (
-                        <th key={i} style={styles.thead}>
-                          {y}
-                        </th>
-                      ))
-                    )}
-                  </tr>
-                </thead>
-                <tbody>
-                  {sheet.rows.map((r, idx) => (
-                    <tr
-                      key={idx}
-                      style={idx % 2 === 0 ? styles.evenRow : styles.oddRow}
-                    >
-                      <td style={styles.lbl as React.CSSProperties}>{r[0]}</td>
-                      {sheet.isDefinition ? (
-                        <>
-                          <td style={styles.frm}>{r[1]}</td>
-                          <td style={styles.frm}>{r[2]}</td>
-                          <td style={styles.frm}>{r[3]}</td>
-                          <td style={styles.frm}>{r[4]}</td>
-                        </>
-                      ) : (
-                        (r[1] as string[]).map((c, cellIdx) => {
-                          let cellStyle = styles.frm;
-                          if (c === 'PASS') cellStyle = styles.pass;
-                          else if (c === 'FAIL') cellStyle = styles.fail;
-                          return (
-                            <td key={cellIdx} style={cellStyle}>
-                              {c}
-                            </td>
-                          );
-                        })
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-
-              {sheet.chartId === 'arrBridgeChart' && (
-                <div style={styles.chartContainer}>
-                  <Chart type="bar" data={arrBridgeChartData} options={arrBridgeChartOptions} />
-                </div>
-              )}
-
-              {sheet.chartId === 'revenueCashChart' && (
-                <div style={styles.chartContainer}>
-                  <Chart type="bar" data={revenueCashChartData} options={revenueCashChartOptions} />
-                </div>
-              )}
-
-              {sheet.isDefinition && (
-                <div style={styles.note}>
-                  All definitions audited from a $1bn team of growth equity enterprise software experts.
-                </div>
-              )}
-            </div>
-          ))}
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
@@ -612,6 +674,11 @@ const styles: { [key: string]: React.CSSProperties } = {
     maxWidth: '1400px',
     margin: '0 auto',
   },
+  containerMobile: {
+    maxWidth: '100%',
+    margin: '0',
+    padding: '0 10px',
+  },
   header: {
     background: 'white',
     padding: '20px 24px',
@@ -620,14 +687,35 @@ const styles: { [key: string]: React.CSSProperties } = {
     boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
     position: 'relative',
   },
+  headerMobile: {
+    background: 'white',
+    padding: '15px 12px 60px 12px',
+    borderRadius: '8px',
+    marginBottom: '15px',
+    boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+    position: 'relative',
+  },
   headerH1: {
     color: '#1E3A4D',
     fontSize: '24px',
     marginBottom: '6px',
+    margin: 0,
+  },
+  headerH1Mobile: {
+    color: '#1E3A4D',
+    fontSize: '18px',
+    marginBottom: '6px',
+    margin: 0,
   },
   headerP: {
     color: '#4A7C8C',
     fontSize: '14px',
+    margin: 0,
+  },
+  headerPMobile: {
+    color: '#4A7C8C',
+    fontSize: '11px',
+    margin: 0,
   },
   metadataBar: {
     position: 'absolute',
@@ -638,12 +726,23 @@ const styles: { [key: string]: React.CSSProperties } = {
     gap: '8px',
     alignItems: 'flex-end',
   },
+  metadataBarMobile: {
+    position: 'absolute',
+    bottom: '12px',
+    left: '12px',
+    right: '12px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '6px',
+    alignItems: 'flex-start',
+  },
   metaItem: {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
     fontSize: '12px',
     color: '#2B5266',
+    flexWrap: 'wrap',
   },
   metaLabel: {
     fontWeight: '600',
@@ -653,7 +752,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     gap: '4px',
     flexWrap: 'wrap',
-    justifyContent: 'flex-end',
   },
   sourceBadge: {
     background: '#4A7C8C',
@@ -670,6 +768,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: '10px',
     borderRadius: '8px 8px 0 0',
     overflowX: 'auto',
+    WebkitOverflowScrolling: 'touch',
   },
   tab: {
     background: 'rgba(255,255,255,0.2)',
@@ -681,6 +780,11 @@ const styles: { [key: string]: React.CSSProperties } = {
     whiteSpace: 'nowrap',
     transition: 'all 0.3s',
     border: 'none',
+    flexShrink: 0,
+  },
+  tabMobile: {
+    padding: '8px 12px',
+    fontSize: '12px',
   },
   tabActive: {
     background: 'white',
@@ -698,11 +802,22 @@ const styles: { [key: string]: React.CSSProperties } = {
     minWidth: '800px',
     padding: '20px',
   },
+  sheetMobile: {
+    minWidth: 'unset',
+    padding: '12px',
+  },
   table: {
     width: '100%',
     borderCollapse: 'collapse',
     fontSize: '13px',
     marginBottom: '15px',
+  },
+  tableMobile: {
+    width: '100%',
+    borderCollapse: 'collapse',
+    fontSize: '11px',
+    marginBottom: '12px',
+    minWidth: '500px',
   },
   thead: {
     position: 'sticky',
@@ -716,6 +831,18 @@ const styles: { [key: string]: React.CSSProperties } = {
     textAlign: 'center',
     letterSpacing: '0.3px',
   },
+  theadMobile: {
+    position: 'sticky',
+    top: 0,
+    background: '#1E3A4D',
+    color: 'white',
+    zIndex: 2,
+    padding: '8px 6px',
+    fontWeight: '700',
+    fontSize: '10px',
+    textAlign: 'center',
+    letterSpacing: '0.2px',
+  },
   lbl: {
     color: '#0A1419',
     fontWeight: '600',
@@ -726,6 +853,18 @@ const styles: { [key: string]: React.CSSProperties } = {
     zIndex: 1,
     padding: '10px',
     textAlign: 'left',
+  },
+  lblMobile: {
+    color: '#0A1419',
+    fontWeight: '600',
+    minWidth: '120px',
+    position: 'sticky',
+    left: 0,
+    background: 'inherit',
+    zIndex: 1,
+    padding: '8px 6px',
+    textAlign: 'left',
+    fontSize: '10px',
   },
   evenRow: {
     background: '#F8FAFB',
@@ -741,6 +880,15 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: '10px',
     borderBottom: '1px solid #E0E8EA',
   },
+  frmMobile: {
+    background: '#E8F2F4',
+    color: '#2B5266',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    padding: '8px 4px',
+    borderBottom: '1px solid #E0E8EA',
+    fontSize: '10px',
+  },
   pass: {
     background: '#5CB85C',
     color: 'white',
@@ -749,6 +897,15 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderRadius: '12px',
     padding: '3px 8px',
     fontSize: '12px',
+  },
+  passMobile: {
+    background: '#5CB85C',
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    borderRadius: '8px',
+    padding: '2px 6px',
+    fontSize: '10px',
   },
   fail: {
     background: '#D9534F',
@@ -759,6 +916,15 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: '3px 8px',
     fontSize: '12px',
   },
+  failMobile: {
+    background: '#D9534F',
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    borderRadius: '8px',
+    padding: '2px 6px',
+    fontSize: '10px',
+  },
   chartContainer: {
     width: '100%',
     maxWidth: '1000px',
@@ -768,6 +934,14 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderRadius: '12px',
     border: '1px solid #eee',
   },
+  chartContainerMobile: {
+    width: '100%',
+    margin: '15px auto',
+    background: 'white',
+    padding: '10px',
+    borderRadius: '8px',
+    border: '1px solid #eee',
+  },
   icCard: {
     background: 'white',
     borderRadius: '12px',
@@ -775,10 +949,24 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: '20px',
     boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
   },
+  icCardMobile: {
+    background: 'white',
+    borderRadius: '8px',
+    padding: '12px',
+    marginBottom: '15px',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+  },
   icCardH2: {
     color: '#1E3A4D',
     fontSize: '20px',
     marginBottom: '12px',
+    margin: '0 0 12px 0',
+  },
+  icCardH2Mobile: {
+    color: '#1E3A4D',
+    fontSize: '16px',
+    marginBottom: '10px',
+    margin: '0 0 10px 0',
   },
   flags: {
     display: 'flex',
@@ -794,26 +982,59 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontSize: '12px',
     fontWeight: 'bold',
   },
+  flagMobile: {
+    background: '#4A7C8C',
+    color: 'white',
+    padding: '4px 8px',
+    borderRadius: '8px',
+    fontSize: '10px',
+    fontWeight: 'bold',
+  },
   bridgeNote: {
     fontSize: '13px',
     marginBottom: '6px',
     color: '#2B5266',
+  },
+  bridgeNoteMobile: {
+    fontSize: '11px',
+    marginBottom: '6px',
+    color: '#2B5266',
+    lineHeight: '1.4',
   },
   wcNote: {
     fontSize: '13px',
     marginBottom: '6px',
     color: '#2B5266',
   },
+  wcNoteMobile: {
+    fontSize: '11px',
+    marginBottom: '6px',
+    color: '#2B5266',
+    lineHeight: '1.4',
+  },
   confidenceNote: {
     fontSize: '13px',
     marginBottom: '6px',
     color: '#2B5266',
+  },
+  confidenceNoteMobile: {
+    fontSize: '11px',
+    marginBottom: '6px',
+    color: '#2B5266',
+    lineHeight: '1.4',
   },
   note: {
     fontSize: '12px',
     color: '#4A7C8C',
     marginTop: '5px',
     fontStyle: 'italic',
+  },
+  noteMobile: {
+    fontSize: '10px',
+    color: '#4A7C8C',
+    marginTop: '5px',
+    fontStyle: 'italic',
+    lineHeight: '1.4',
   },
 };
 
