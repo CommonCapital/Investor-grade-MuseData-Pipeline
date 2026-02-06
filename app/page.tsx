@@ -10,15 +10,17 @@ import {
   ArrowRight, 
   Menu,
   X,
-  CheckCircle
+  CheckCircle,
+  Mail
 } from "lucide-react";
 import Link from "next/link";
 import Script from "next/script";
+import { useRouter } from "next/navigation";
 
 
 export default function MuseDataLanding() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+const router = useRouter()
   return (
     <div className="min-h-screen bg-gray-50">
        <Script 
@@ -49,22 +51,34 @@ export default function MuseDataLanding() {
 
   
 
-      {/* Hero Section */}
-      <section className="bg-white py-16 sm:py-28 px-4 sm:px-6">
-        <div className="mx-auto max-w-7xl">
+      {/* Hero Section with Background Image */}
+      <section className="relative py-16 sm:py-28 px-4 sm:px-6 overflow-hidden">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: 'url("/background.jpeg")',
+          }}
+        />
+        
+        {/* Dark Overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/70 to-black/60" />
+        
+        {/* Content */}
+        <div className="relative mx-auto max-w-7xl z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="text-center md:text-left animate-fade-in-up">
-              <div className="text-sm font-semibold text-[#1C4E64] mb-3 uppercase tracking-wide">
+              <div className="text-sm font-semibold text-blue-300 mb-3 uppercase tracking-wide">
                 Global Focus
               </div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 leading-tight text-gray-900">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 leading-tight text-white">
                 Institutional-Grade Finance Infrastructure for VC-Backed Software Companies
               </h1>
-              <p className="text-lg md:text-xl text-gray-700 mb-6">
+              <p className="text-lg md:text-xl text-gray-100 mb-6">
                 We help CFOs at $3–7M ARR transition from founder-led finance to{" "}
-                <span className="font-semibold">investor-ready</span> operations.
+                <span className="font-semibold text-white">investor-ready</span> operations.
               </p>
-              <p className="text-base text-gray-600 mb-10">
+              <p className="text-base text-gray-200 mb-10">
                 Our platform unifies financials, enforces growth discipline, and produces audit-ready 
                 reporting, backed by seasoned CFOs and operators.
               </p>
@@ -74,7 +88,7 @@ export default function MuseDataLanding() {
                   <SignInButton mode="modal" forceRedirectUrl="/search">
                     <Button
                       size="lg"
-                      className="h-14 px-8 bg-[#1C4E64] text-white hover:bg-[#163B4F] transition-all duration-300"
+                      className="h-14 px-8 bg-white text-[#1C4E64] hover:bg-gray-100 transition-all duration-300 shadow-xl"
                     >
                      Access Search 
                     </Button>
@@ -85,7 +99,7 @@ export default function MuseDataLanding() {
                   <a href="/search">
                     <Button
                       size="lg"
-                      className="h-14 px-8 bg-[#1C4E64] text-white hover:bg-[#163B4F] transition-all duration-300"
+                      className="h-14 px-8 bg-white text-[#1C4E64] hover:bg-gray-100 transition-all duration-300 shadow-xl"
                     >
                       Access Search 
                     </Button>
@@ -96,7 +110,7 @@ export default function MuseDataLanding() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="h-14 px-8 bg-white text-[#1C4E64] border-2 border-[#1C4E64] hover:bg-[#1C4E64] hover:text-white transition-all duration-300"
+                    className="h-14 px-8 bg-transparent text-white border-2 border-white hover:bg-white hover:text-[#1C4E64] transition-all duration-300"
                   >
                     View Evidence Pack
                   </Button>
@@ -105,7 +119,7 @@ export default function MuseDataLanding() {
             </div>
 
             <div className="flex justify-center animate-fade-in-up delay-100">
-              <div className="bg-gradient-to-br from-[#2D5F73] to-[#1C4E64] p-8 sm:p-12 rounded-lg shadow-2xl max-w-md w-full">
+              <div className="bg-gradient-to-br from-[#2D5F73] to-[#1C4E64] p-8 sm:p-12 rounded-lg shadow-2xl max-w-md w-full backdrop-blur-sm bg-opacity-95">
                 <div className="text-white space-y-6">
                   <div className="border-l-4 border-white pl-4">
                     <div className="text-sm opacity-90">Target Market</div>
@@ -371,15 +385,64 @@ export default function MuseDataLanding() {
       
 
       {/* Footer */}
-      <footer className="bg-[#1C4E64] text-white py-8 px-4 sm:px-6">
-        <div className="mx-auto max-w-7xl text-center">
-          <p className="text-sm opacity-90 mb-2">Institutional-Grade Finance Infrastructure</p>
-          <p className="text-sm opacity-75">© 2026 MUSEDATA. All rights reserved.</p>
-          <p className="text-sm opacity-75 mt-4">
-            <a href="mailto:collin@musedata.ai" className="hover:underline">
-              partners@musedata.ai
-            </a>
-          </p>
+   {/* Enhanced Footer with Newsletter and Apply */}
+      <footer className="bg-[#1C4E64] text-white py-12 px-4 sm:px-6">
+        <div className="mx-auto max-w-7xl">
+          {/* Main Footer Content */}
+          <div className="grid md:grid-cols-3 gap-8 mb-8">
+            
+            {/* Company Info */}
+            <div className="text-center md:text-left">
+              <h3 className="text-lg font-semibold mb-4">MUSEDATA</h3>
+              <p className="text-sm opacity-90 mb-4">
+                Institutional-Grade Finance Infrastructure
+              </p>
+              <p className="text-sm opacity-75">
+                <a href="mailto:partners@musedata.ai" className="hover:underline inline-flex items-center gap-2">
+                  <Mail className="w-4 h-4" />
+                  partners@musedata.ai
+                </a>
+              </p>
+            </div>
+
+            {/* Newsletter */}
+            <div className="text-center md:text-left">
+              <h3 className="text-lg font-semibold mb-4">Newsletter</h3>
+              <p className="text-sm opacity-90 mb-4">
+                Stay updated with the latest insights in institutional finance
+              </p>
+               <a href="/news-letters">
+                <button className="w-full sm:w-auto px-6 py-3 bg-white text-[#1C4E64] rounded-md hover:bg-gray-100 font-medium transition-colors inline-flex items-center justify-center gap-2">
+                  Join
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </a>
+            </div>
+
+            {/* Apply Section */}
+            <div className="text-center md:text-left">
+              <h3 className="text-lg font-semibold mb-4">Join Us</h3>
+              <p className="text-sm opacity-90 mb-4">
+                Ready to transform your finance operations?
+              </p>
+              <a href="/apply">
+                <button className="w-full sm:w-auto px-6 py-3 bg-white text-[#1C4E64] rounded-md hover:bg-gray-100 font-medium transition-colors inline-flex items-center justify-center gap-2">
+                  Apply Now
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </a>
+              <p className="text-xs opacity-75 mt-3">
+                For companies $3M-$100M ARR
+              </p>
+            </div>
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="border-t border-white/20 pt-6 text-center">
+            <p className="text-sm opacity-75">
+              © 2026 MUSEDATA. All rights reserved.
+            </p>
+          </div>
         </div>
       </footer>
     </div>
