@@ -57,7 +57,7 @@ const router = useRouter()
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: 'url("/background.jpeg")',
+            backgroundImage: 'url("/background.png")',
           }}
         />
         
