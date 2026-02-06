@@ -432,7 +432,7 @@ const router = useRouter()
                 </button>
               </a>
               <p className="text-xs opacity-75 mt-3">
-                For companies $3M-$100M ARR
+                For become a team member of MuseData
               </p>
             </div>
           </div>
