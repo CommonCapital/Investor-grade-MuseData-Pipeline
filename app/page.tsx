@@ -85,23 +85,23 @@ const router = useRouter()
               
               <div className="flex flex-col sm:flex-row gap-4">
                 <Unauthenticated>
-                  <SignInButton mode="modal" forceRedirectUrl="/search">
+                  <SignInButton mode="modal" forceRedirectUrl="/funding">
                     <Button
                       size="lg"
                       className="h-14 px-8 bg-white text-[#1C4E64] hover:bg-gray-100 transition-all duration-300 shadow-xl"
                     >
-                     Access Search 
+                     Apply for funding 
                     </Button>
                   </SignInButton>
                 </Unauthenticated>
 
                 <Authenticated>
-                  <a href="/search">
+                  <a href="/funding">
                     <Button
                       size="lg"
                       className="h-14 px-8 bg-white text-[#1C4E64] hover:bg-gray-100 transition-all duration-300 shadow-xl"
                     >
-                      Access Search 
+                      Apply for funding
                     </Button>
                   </a>
                 </Authenticated>
@@ -420,17 +420,27 @@ const router = useRouter()
             </div>
 
             {/* Apply Section */}
-            <div className="text-center md:text-left">
+            <div className="text-center md:text-left ">
               <h3 className="text-lg font-semibold mb-4">Join Us</h3>
               <p className="text-sm opacity-90 mb-4">
                 Ready to transform your finance operations?
               </p>
-              <a href="/apply">
-                <button className="w-full sm:w-auto px-6 py-3 bg-white text-[#1C4E64] rounded-md hover:bg-gray-100 font-medium transition-colors inline-flex items-center justify-center gap-2">
-                  Apply Now
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </a>
+          <div className="flex flex-col sm:flex-row gap-4">
+  <a href="/apply">
+    <button className="w-full sm:w-auto px-6 py-3 bg-white text-[#1C4E64] rounded-md hover:bg-gray-100 font-medium transition-colors inline-flex items-center justify-center gap-2">
+      Apply for Position
+      <ArrowRight className="w-4 h-4" />
+    </button>
+  </a>
+
+  <a href="/funding">
+    <button className="w-full sm:w-auto px-6 py-3 bg-white text-[#1C4E64] rounded-md hover:bg-gray-100 font-medium transition-colors inline-flex items-center justify-center gap-2">
+      Apply your Startup
+      <ArrowRight className="w-4 h-4" />
+    </button>
+  </a>
+</div>
+
               <p className="text-xs opacity-75 mt-3">
                 For become a team member of MuseData
               </p>

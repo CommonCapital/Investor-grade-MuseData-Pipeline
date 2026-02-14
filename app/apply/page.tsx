@@ -3,7 +3,10 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import Link from "next/link";
 import { FileUpload } from "./components/ui/file-upload-component";
-import { User, Mail, Phone, MapPin, Briefcase, Award, Linkedin, Globe, Target, Lightbulb, Code } from "lucide-react";
+import { User, Mail, Phone, MapPin, Briefcase, Award, Linkedin, Globe, Target, Lightbulb, Code, CheckCircle, AlertCircle } from "lucide-react";
+import { useConvex, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 interface FormData {
   fullName: string;
@@ -23,6 +26,10 @@ interface FormData {
 }
 
 export default function ApplyPageImproved() {
+  const convex = useConvex();
+  const submitApplication = useMutation(api.jobApplications.submitApplication);
+  const generateUploadUrl = useMutation(api.jobApplications.generateUploadUrl);
+
   const [formData, setFormData] = useState<FormData>({
     fullName: "",
     email: "",
@@ -42,6 +49,8 @@ export default function ApplyPageImproved() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [applicationId, setApplicationId] = useState<string>("");
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -83,18 +92,78 @@ export default function ApplyPageImproved() {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus("idle");
+    setErrorMessage("");
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Validate required fields
+      if (!formData.resume) {
+        throw new Error("Resume is required");
+      }
+
+      if (!formData.terms) {
+        throw new Error("You must accept the terms and conditions");
+      }
+
+      // Step 1: Upload resume
+      const resumeUploadUrl = await generateUploadUrl();
+      const resumeResponse = await fetch(resumeUploadUrl, {
+        method: "POST",
+        headers: { "Content-Type": formData.resume.type },
+        body: formData.resume,
+      });
+
+      if (!resumeResponse.ok) {
+        throw new Error("Failed to upload resume");
+      }
+
+      const { storageId: resumeStorageId } = await resumeResponse.json();
+
+      // Step 2: Upload cover letter if provided
+      let coverLetterStorageId: Id<"_storage"> | undefined;
+      if (formData.coverLetter) {
+        const coverLetterUploadUrl = await generateUploadUrl();
+        const coverLetterResponse = await fetch(coverLetterUploadUrl, {
+          method: "POST",
+          headers: { "Content-Type": formData.coverLetter.type },
+          body: formData.coverLetter,
+        });
+
+        if (!coverLetterResponse.ok) {
+          throw new Error("Failed to upload cover letter");
+        }
+
+        const result = await coverLetterResponse.json();
+        coverLetterStorageId = result.storageId;
+      }
+
+      // Step 3: Submit application
+      const result = await submitApplication({
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone || undefined,
+        location: formData.location,
+        currentRole: formData.currentRole,
+        experience: formData.experience,
+        linkedin: formData.linkedin || undefined,
+        portfolio: formData.portfolio || undefined,
+        position: formData.position,
+        motivation: formData.motivation,
+        skills: formData.skills,
+        resumeStorageId,
+        coverLetterStorageId,
+        termsAccepted: formData.terms,
+      });
 
       setSubmitStatus("success");
-      alert(
-        "Application submitted successfully! You will receive a confirmation email shortly and can track your application status through the MUSEDATA platform."
-      );
+      setApplicationId(result.applicationId);
       resetForm();
-    } catch (error) {
+
+      // Scroll to top to show success message
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (error: any) {
+      console.error("Submission error:", error);
       setSubmitStatus("error");
-      alert("There was an error submitting your application. Please try again.");
+      setErrorMessage(error.message || "There was an error submitting your application. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -154,6 +223,44 @@ export default function ApplyPageImproved() {
 
       {/* Main Container */}
       <div className="max-w-5xl mx-auto px-6 -mt-12 pb-20">
+        {/* Success Message */}
+        {submitStatus === "success" && (
+          <div className="mb-8 bg-green-50 border-2 border-green-200 rounded-2xl p-6 shadow-lg">
+            <div className="flex items-start gap-4">
+              <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="text-lg font-bold text-green-900 mb-2">
+                  Application Submitted Successfully!
+                </h3>
+                <p className="text-green-700 mb-3">
+                  Thank you for applying to MUSEDATA. You will receive a confirmation email shortly
+                  and can track your application status through the MUSEDATA platform.
+                </p>
+                <p className="text-sm text-green-600">
+                  Application ID: <span className="font-mono font-semibold">{applicationId}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Error Message */}
+        {submitStatus === "error" && (
+          <div className="mb-8 bg-red-50 border-2 border-red-200 rounded-2xl p-6 shadow-lg">
+            <div className="flex items-start gap-4">
+              <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="text-lg font-bold text-red-900 mb-2">
+                  Submission Error
+                </h3>
+                <p className="text-red-700">
+                  {errorMessage}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Form Container */}
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
           <form onSubmit={handleSubmit}>
@@ -496,3 +603,5 @@ export default function ApplyPageImproved() {
     </div>
   );
 }
+
+ 
