@@ -39,9 +39,7 @@ const Header = () => {
               <Link href="#services" className="text-[#1C4E64] font-medium hover:underline">
                 Services
               </Link>
-              <Link href="/search/billing" className="text-[#1C4E64] font-medium hover:underline">
-                Pricing
-              </Link>
+              
               
               <Unauthenticated>
                 <SignInButton mode="modal" forceRedirectUrl="/central-hub">
@@ -95,13 +93,7 @@ const Header = () => {
               >
                 Services
               </Link>
-              <Link 
-                href="/search/billing"
-                className="block text-[#1C4E64] font-medium hover:underline"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Pricing
-              </Link>
+             
               
               <div className="pt-4">
                 <Unauthenticated>
