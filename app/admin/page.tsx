@@ -53,11 +53,32 @@ function DocButton({ storageId, label }: { storageId: Id<"_storage">; label: str
   const convex = useConvex();
   const [loading, setLoading] = useState(false);
 
-  const open = async () => {
+  const download = async () => {
     setLoading(true);
     try {
       const url = await convex.query(api.admin.getFileUrl, { storageId });
-      if (url) window.open(url, "_blank");
+      if (!url) return;
+
+      // Fetch the file as a blob
+      const response = await fetch(url);
+      const blob = await response.blob();
+
+      // Create download link
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      
+      // Generate filename from label (e.g., "Resume / CV" → "resume-cv.pdf")
+      const filename = `${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.pdf`;
+      link.download = filename;
+      
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up
+      window.URL.revokeObjectURL(downloadUrl);
     } finally {
       setLoading(false);
     }
@@ -65,13 +86,12 @@ function DocButton({ storageId, label }: { storageId: Id<"_storage">; label: str
 
   return (
     <button
-      onClick={open}
+      onClick={download}
       disabled={loading}
       className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#4AADCF]/50 text-sm text-zinc-300 hover:text-white transition-all group"
     >
-      <FileText className="w-4 h-4 text-[#4AADCF] group-hover:scale-110 transition-transform" />
-      {loading ? "Opening…" : label}
-      <ExternalLink className="w-3 h-3 opacity-50 ml-auto" />
+      <Download className="w-4 h-4 text-[#4AADCF] group-hover:scale-110 transition-transform" />
+      {loading ? "Downloading…" : label}
     </button>
   );
 }
