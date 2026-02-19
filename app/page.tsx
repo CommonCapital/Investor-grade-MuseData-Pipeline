@@ -456,7 +456,7 @@ export default function MuseDataLanding() {
                   </button>
                 </Link>
 
-                <Link href="/startup-apply">
+                <Link href="/funding">
                   <button className="w-full px-6 py-3 bg-white text-[#1C4E64] rounded-md hover:bg-gray-100 font-medium transition-colors inline-flex items-center justify-center gap-2 shadow-lg hover:shadow-xl">
                     Apply your Startup
                     <ArrowRight className="w-4 h-4" />
