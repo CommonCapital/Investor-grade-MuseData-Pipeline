@@ -87,7 +87,7 @@ export default function MuseDataLanding() {
               
               <div className="flex flex-col sm:flex-row gap-4">
                 <Unauthenticated>
-                  <SignInButton mode="modal" forceRedirectUrl="/startup-apply">
+                  <SignInButton mode="modal" forceRedirectUrl="/funding">
                     <Button
                       size="lg"
                       className="h-14 px-8 bg-white text-[#1C4E64] hover:bg-gray-100 transition-all duration-300 shadow-xl"
@@ -98,7 +98,7 @@ export default function MuseDataLanding() {
                 </Unauthenticated>
 
                 <Authenticated>
-                  <Link href="/startup-apply">
+                  <Link href="/funding">
                     <Button
                       size="lg"
                       className="h-14 px-8 bg-white text-[#1C4E64] hover:bg-gray-100 transition-all duration-300 shadow-xl"
@@ -108,13 +108,13 @@ export default function MuseDataLanding() {
                   </Link>
                 </Authenticated>
                 
-                <Link href="/pricing">
+                <Link href="/sample-report">
                   <Button
                     size="lg"
                     variant="outline"
                     className="h-14 px-8 bg-transparent text-white border-2 border-white hover:bg-white hover:text-[#1C4E64] transition-all duration-300"
                   >
-                    View Pricing
+                    Evidence Pack
                   </Button>
                 </Link>
               </div>
