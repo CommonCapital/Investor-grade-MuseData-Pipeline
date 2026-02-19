@@ -15,7 +15,7 @@ export default function PricingPage() {
       <header className="border-b border-[#1C4E64]/10 bg-white/60 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 md:px-12 py-5 flex justify-between items-center">
           <Link href="/" className="text-xl font-bold text-[#1C4E64] tracking-tight" style={{ fontFamily: "'Fraunces', serif" }}>
-            
+            MuseData
           </Link>
           <nav className="flex gap-8">
             <Link href="/" className="text-sm text-[#5a7a8a] hover:text-[#1C4E64] font-medium transition-colors">
