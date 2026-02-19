@@ -258,7 +258,7 @@ export default function PricingPage() {
               Reach out to our team to explore how we can support your institutional capital readiness.
             </p>
             <a
-              href="mailto:partners@musedata.ai?subject=Engagement Discussion"
+              href="mailto:collin@musedata.ai?subject=Engagement Discussion"
               className="inline-flex items-center gap-2 bg-white text-[#1C4E64] px-8 py-4 rounded-xl font-semibold hover:bg-[#e8f4f8] transition-all shadow-lg hover:shadow-xl hover:scale-105"
             >
               <Mail className="w-5 h-5" />
