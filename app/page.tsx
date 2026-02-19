@@ -11,7 +11,8 @@ import {
   Menu,
   X,
   CheckCircle,
-  Mail
+  Mail,
+  DollarSign
 } from "lucide-react";
 import Link from "next/link";
 import Script from "next/script";
@@ -20,15 +21,16 @@ import { useRouter } from "next/navigation";
 
 export default function MuseDataLanding() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-const router = useRouter()
+  const router = useRouter();
+
   return (
     <div className="min-h-screen bg-gray-50">
-       <Script 
+      <Script 
         src="https://www.buildmyagent.io/widget/69706ea5e966c51847e406ff/widget-professional.js?widgetId=69706ea5e966c51847e406ff"
         strategy="lazyOnload"
       />
 
-        <style jsx global>{`
+      <style jsx global>{`
         @keyframes fadeInUp {
           from {
             opacity: 0;
@@ -49,7 +51,93 @@ const router = useRouter()
         .delay-300 { animation-delay: 0.3s; opacity: 0; }
       `}</style>
 
-  
+      {/* Header Navigation */}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <Link href="/" className="text-xl font-bold text-[#1C4E64] hover:text-[#2D5F73] transition-colors">
+              MUSEDATA
+            </Link>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center gap-8">
+              <Link href="#what-we-do" className="text-sm font-medium text-gray-700 hover:text-[#1C4E64] transition-colors">
+                What We Do
+              </Link>
+              <Link href="#services" className="text-sm font-medium text-gray-700 hover:text-[#1C4E64] transition-colors">
+                Services
+              </Link>
+              <Link href="/pricing" className="text-sm font-medium text-gray-700 hover:text-[#1C4E64] transition-colors inline-flex items-center gap-1">
+                <DollarSign className="w-4 h-4" />
+                Pricing
+              </Link>
+              <Link href="/apply" className="text-sm font-medium text-gray-700 hover:text-[#1C4E64] transition-colors">
+                Careers
+              </Link>
+              <Link href="/startup-apply" className="text-sm font-medium text-gray-700 hover:text-[#1C4E64] transition-colors">
+                Apply for Funding
+              </Link>
+            </nav>
+
+            {/* Auth Button */}
+            <div className="hidden md:block">
+              <Authenticated>
+                <UserButton afterSignOutUrl="/" />
+              </Authenticated>
+              <Unauthenticated>
+                <SignInButton mode="modal">
+                  <Button size="sm" className="bg-[#1C4E64] hover:bg-[#2D5F73]">
+                    Sign In
+                  </Button>
+                </SignInButton>
+              </Unauthenticated>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+
+          {/* Mobile Menu */}
+          {mobileMenuOpen && (
+            <div className="md:hidden border-t border-gray-200 py-4 space-y-3">
+              <Link href="#what-we-do" className="block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg">
+                What We Do
+              </Link>
+              <Link href="#services" className="block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg">
+                Services
+              </Link>
+              <Link href="/pricing" className="block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg inline-flex items-center gap-2">
+                <DollarSign className="w-4 h-4" />
+                Pricing
+              </Link>
+              <Link href="/apply" className="block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg">
+                Careers
+              </Link>
+              <Link href="/startup-apply" className="block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg">
+                Apply for Funding
+              </Link>
+              <div className="px-4 pt-2">
+                <Authenticated>
+                  <UserButton afterSignOutUrl="/" />
+                </Authenticated>
+                <Unauthenticated>
+                  <SignInButton mode="modal">
+                    <Button size="sm" className="w-full bg-[#1C4E64] hover:bg-[#2D5F73]">
+                      Sign In
+                    </Button>
+                  </SignInButton>
+                </Unauthenticated>
+              </div>
+            </div>
+          )}
+        </div>
+      </header>
 
       {/* Hero Section with Background Image */}
       <section className="relative py-16 sm:py-28 px-4 sm:px-6 overflow-hidden">
@@ -85,36 +173,36 @@ const router = useRouter()
               
               <div className="flex flex-col sm:flex-row gap-4">
                 <Unauthenticated>
-                  <SignInButton mode="modal" forceRedirectUrl="/funding">
+                  <SignInButton mode="modal" forceRedirectUrl="/startup-apply">
                     <Button
                       size="lg"
                       className="h-14 px-8 bg-white text-[#1C4E64] hover:bg-gray-100 transition-all duration-300 shadow-xl"
                     >
-                     Apply for funding 
+                      Apply for Funding 
                     </Button>
                   </SignInButton>
                 </Unauthenticated>
 
                 <Authenticated>
-                  <a href="/funding">
+                  <Link href="/startup-apply">
                     <Button
                       size="lg"
                       className="h-14 px-8 bg-white text-[#1C4E64] hover:bg-gray-100 transition-all duration-300 shadow-xl"
                     >
-                      Apply for funding
+                      Apply for Funding
                     </Button>
-                  </a>
+                  </Link>
                 </Authenticated>
                 
-                <a href="/sample-report">
+                <Link href="/pricing">
                   <Button
                     size="lg"
                     variant="outline"
                     className="h-14 px-8 bg-transparent text-white border-2 border-white hover:bg-white hover:text-[#1C4E64] transition-all duration-300"
                   >
-                    View Evidence Pack
+                    View Pricing
                   </Button>
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -155,7 +243,7 @@ const router = useRouter()
             that automates cash forecasting, board pack generation, and pitch-ready analysis.
           </p>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
-            <Card className="border-t-4 border-[#1C4E64] shadow-lg animate-fade-in-up bg-[#1C4E64]">
+            <Card className="border-t-4 border-[#1C4E64] shadow-lg animate-fade-in-up bg-[#1C4E64] hover:shadow-xl transition-shadow">
               <CardContent className="p-6 sm:p-8 text-center">
                 <h3 className="text-lg sm:text-xl font-semibold mb-3 text-white">
                   72-Hour QoE Evidence Sprint
@@ -165,7 +253,7 @@ const router = useRouter()
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-t-4 border-[#2D5F73] shadow-lg animate-fade-in-up delay-100 bg-[#1C4E64]">
+            <Card className="border-t-4 border-[#2D5F73] shadow-lg animate-fade-in-up delay-100 bg-[#1C4E64] hover:shadow-xl transition-shadow">
               <CardContent className="p-6 sm:p-8 text-center">
                 <h3 className="text-lg sm:text-xl font-semibold mb-3 text-white">
                   Board Layer
@@ -175,7 +263,7 @@ const router = useRouter()
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-t-4 border-[#3A7A94] shadow-lg animate-fade-in-up delay-200 bg-[#1C4E64]">
+            <Card className="border-t-4 border-[#3A7A94] shadow-lg animate-fade-in-up delay-200 bg-[#1C4E64] hover:shadow-xl transition-shadow">
               <CardContent className="p-6 sm:p-8 text-center">
                 <h3 className="text-lg sm:text-xl font-semibold mb-3 text-white">
                   Enterprise Portfolio
@@ -201,135 +289,146 @@ const router = useRouter()
           </p>
           
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <Card className="shadow-lg border-l-4 border-[#1C4E64] bg-[#1C4E64]">
+            <Card className="shadow-lg border-l-4 border-[#1C4E64] bg-[#1C4E64] hover:shadow-xl transition-all hover:-translate-y-1">
               <CardHeader>
                 <CardTitle className="text-xl text-white">Quality of Earnings (QoE) Sprint</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 text-sm text-white">
                   <div className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-400" />
                     <span>72-hour turnaround for initial evidence pack</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-400" />
                     <span>Full reconciliation within 30 days</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-400" />
                     <span>Audit-ready documentation and trail</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-400" />
                     <span>Investor-ready financial narratives</span>
                   </div>
                 </div>
-                <div className="mt-6 pt-4 border-t border-gray-200">
-                  <p className="text-xs text-white italic">
+                <div className="mt-6 pt-4 border-t border-white/20">
+                  <p className="text-xs text-white/80 italic">
                     Ideal for companies preparing for due diligence or Series A/B funding
                   </p>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="shadow-lg border-l-4 border-[#2D5F73] bg-[#1C4E64]">
+            <Card className="shadow-lg border-l-4 border-[#2D5F73] bg-[#1C4E64] hover:shadow-xl transition-all hover:-translate-y-1">
               <CardHeader>
                 <CardTitle className="text-xl text-white">Board Layer Governance</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 text-sm text-white">
                   <div className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-400" />
                     <span>Monthly KPI dashboards and reporting</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-400" />
                     <span>Automated board pack generation</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-400" />
                     <span>Cash forecasting and runway analysis</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-400" />
                     <span>Repeatable monthly cadence</span>
                   </div>
                 </div>
-                <div className="mt-6 pt-4 border-t border-gray-200">
-                  <p className="text-xs text-white italic">
+                <div className="mt-6 pt-4 border-t border-white/20">
+                  <p className="text-xs text-white/80 italic">
                     For post-raise companies needing consistent investor updates
                   </p>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="shadow-lg border-l-4 border-[#3A7A94] bg-[#1C4E64]">
+            <Card className="shadow-lg border-l-4 border-[#3A7A94] bg-[#1C4E64] hover:shadow-xl transition-all hover:-translate-y-1">
               <CardHeader>
                 <CardTitle className="text-xl text-white">Enterprise Portfolio</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 text-sm text-white">
                   <div className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-400" />
                     <span>Portfolio-wide financial infrastructure</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-400" />
                     <span>Scalable from $5M to $100M ARR</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-400" />
                     <span>Multi-company consolidation and reporting</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-400" />
                     <span>LP-level reporting and analytics</span>
                   </div>
                 </div>
-                <div className="mt-6 pt-4 border-t border-gray-200">
-                  <p className="text-xs text-white italic">
+                <div className="mt-6 pt-4 border-t border-white/20">
+                  <p className="text-xs text-white/80 italic">
                     For VCs managing multiple portfolio companies
                   </p>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="shadow-lg border-l-4 border-[#245167] bg-[#1C4E64]">
+            <Card className="shadow-lg border-l-4 border-[#245167] bg-[#1C4E64] hover:shadow-xl transition-all hover:-translate-y-1">
               <CardHeader>
                 <CardTitle className="text-xl text-white">CFO Advisory</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 text-sm text-white">
                   <div className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-400" />
                     <span>Seasoned CFO guidance and best practices</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-400" />
                     <span>Financial operations optimization</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-400" />
                     <span>Fundraising preparation and support</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-600" />
+                    <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0 text-green-400" />
                     <span>Strategic financial planning</span>
                   </div>
                 </div>
-                <div className="mt-6 pt-4 border-t border-gray-200">
-                  <p className="text-xs text-white italic">
+                <div className="mt-6 pt-4 border-t border-white/20">
+                  <p className="text-xs text-white/80 italic">
                     Expert guidance for scaling finance operations
                   </p>
                 </div>
               </CardContent>
             </Card>
           </div>
+
+          {/* Pricing CTA */}
+          <div className="mt-12 text-center">
+            <Link href="/pricing">
+              <Button size="lg" className="bg-[#1C4E64] hover:bg-[#2D5F73] text-white shadow-lg hover:shadow-xl transition-all">
+                <DollarSign className="w-5 h-5 mr-2" />
+                View Detailed Pricing
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 sm:py-32 bg-[#1C4E64] text-white">
+      <section className="py-20 sm:py-32 bg-gradient-to-br from-[#1C4E64] to-[#2D5F73] text-white">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2 className="text-3xl sm:text-4xl font-bold mb-6">
@@ -348,7 +447,7 @@ const router = useRouter()
                 <SignInButton mode="modal" forceRedirectUrl="/schedule-sprint">
                   <Button
                     size="lg"
-                    className="h-14 px-8 bg-white text-[#1C4E64] hover:bg-gray-100 transition-all duration-300"
+                    className="h-14 px-8 bg-white text-[#1C4E64] hover:bg-gray-100 transition-all duration-300 shadow-lg"
                   >
                     Schedule Evidence Sprint
                     <ArrowRight className="w-4 h-4 ml-2" />
@@ -357,39 +456,36 @@ const router = useRouter()
               </Unauthenticated>
 
               <Authenticated>
-                <a href="/schedule-sprint">
+                <Link href="/schedule-sprint">
                   <Button
                     size="lg"
-                    className="h-14 px-8 bg-white text-[#1C4E64] hover:bg-gray-100 transition-all duration-300"
+                    className="h-14 px-8 bg-white text-[#1C4E64] hover:bg-gray-100 transition-all duration-300 shadow-lg"
                   >
                     Schedule a 72-hour QoE Evidence Sprint
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
-                </a>
+                </Link>
               </Authenticated>
               
-              <a href="/sample-report">
+              <Link href="/pricing">
                 <Button
                   size="lg"
                   variant="outline"
-                  className="h-14 px-8 bg-[#1C4E64] text-white border-2 border-white hover:bg-white hover:text-[#1C4E64] transition-all duration-300"
+                  className="h-14 px-8 bg-transparent text-white border-2 border-white hover:bg-white hover:text-[#1C4E64] transition-all duration-300"
                 >
-                  View Sample Pack
+                  View Pricing
                 </Button>
-              </a>
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      
-
-      {/* Footer */}
-   {/* Enhanced Footer with Newsletter and Apply */}
-      <footer className="bg-[#1C4E64] text-white py-12 px-4 sm:px-6">
+      {/* Enhanced Footer with Newsletter and Apply */}
+      <footer className="bg-[#0d1117] text-white py-12 px-4 sm:px-6">
         <div className="mx-auto max-w-7xl">
           {/* Main Footer Content */}
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
             
             {/* Company Info */}
             <div className="text-center md:text-left">
@@ -398,11 +494,27 @@ const router = useRouter()
                 Institutional-Grade Finance Infrastructure
               </p>
               <p className="text-sm opacity-75">
-                <a href="mailto:partners@musedata.ai" className="hover:underline inline-flex items-center gap-2">
+                <a href="mailto:collin@musedata.ai" className="hover:underline inline-flex items-center gap-2 hover:text-blue-400 transition-colors">
                   <Mail className="w-4 h-4" />
                   partners@musedata.ai
                 </a>
               </p>
+            </div>
+
+            {/* Quick Links */}
+            <div className="text-center md:text-left">
+              <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+              <div className="space-y-2">
+                <Link href="/pricing" className="block text-sm opacity-90 hover:opacity-100 hover:text-blue-400 transition-colors">
+                  Pricing
+                </Link>
+                <Link href="#what-we-do" className="block text-sm opacity-90 hover:opacity-100 hover:text-blue-400 transition-colors">
+                  What We Do
+                </Link>
+                <Link href="#services" className="block text-sm opacity-90 hover:opacity-100 hover:text-blue-400 transition-colors">
+                  Services
+                </Link>
+              </div>
             </div>
 
             {/* Newsletter */}
@@ -411,39 +523,32 @@ const router = useRouter()
               <p className="text-sm opacity-90 mb-4">
                 Stay updated with the latest insights in institutional finance
               </p>
-               <a href="/news-letters">
-                <button className="w-full sm:w-auto px-6 py-3 bg-white text-[#1C4E64] rounded-md hover:bg-gray-100 font-medium transition-colors inline-flex items-center justify-center gap-2">
-                  Join
+              <Link href="/news-letters">
+                <button className="w-full sm:w-auto px-6 py-3 bg-white text-[#1C4E64] rounded-md hover:bg-gray-100 font-medium transition-colors inline-flex items-center justify-center gap-2 shadow-lg hover:shadow-xl">
+                  Join Newsletter
                   <ArrowRight className="w-4 h-4" />
                 </button>
-              </a>
+              </Link>
             </div>
 
             {/* Apply Section */}
-            <div className="text-center md:text-left ">
+            <div className="text-center md:text-left">
               <h3 className="text-lg font-semibold mb-4">Join Us</h3>
-              <p className="text-sm opacity-90 mb-4">
-                Ready to transform your finance operations?
-              </p>
-          <div className="flex flex-col sm:flex-row gap-4">
-  <a href="/apply">
-    <button className="w-full sm:w-auto px-6 py-3 bg-white text-[#1C4E64] rounded-md hover:bg-gray-100 font-medium transition-colors inline-flex items-center justify-center gap-2">
-      Apply for Position
-      <ArrowRight className="w-4 h-4" />
-    </button>
-  </a>
+              <div className="space-y-3 flex flex-col gap-3">
+                <Link href="/apply">
+                  <button className="w-full px-6 py-3 bg-white text-[#1C4E64] rounded-md hover:bg-gray-100 font-medium transition-colors inline-flex items-center justify-center gap-2 shadow-lg hover:shadow-xl">
+                    Apply for Position
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </Link>
 
-  <a href="/funding">
-    <button className="w-full sm:w-auto px-6 py-3 bg-white text-[#1C4E64] rounded-md hover:bg-gray-100 font-medium transition-colors inline-flex items-center justify-center gap-2">
-      Apply your Startup
-      <ArrowRight className="w-4 h-4" />
-    </button>
-  </a>
-</div>
-
-              <p className="text-xs opacity-75 mt-3">
-                For become a team member of MuseData
-              </p>
+                <Link href="/startup-apply">
+                  <button className="w-full px-6 py-3 bg-white text-[#1C4E64] rounded-md hover:bg-gray-100 font-medium transition-colors inline-flex items-center justify-center gap-2 shadow-lg hover:shadow-xl">
+                    Apply your Startup
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </Link>
+              </div>
             </div>
           </div>
 

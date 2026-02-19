@@ -120,10 +120,10 @@ function JobDrawer({ id, onClose }: { id: Id<"jobApplications">; onClose: () => 
   return (
     <DrawerShell onClose={onClose}>
       {/* Header */}
-      <div className="px-8 pt-8 pb-6 border-b border-white/10">
+      <div className="px-4 sm:px-8 pt-4 sm:pt-8 pb-6 border-b border-white/10">
         <div className="flex items-start justify-between gap-4 mb-4">
           <div>
-            <h2 className="text-2xl font-bold text-white">{app.fullName}</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-white">{app.fullName}</h2>
             <p className="text-zinc-400 mt-1">{app.currentRole}</p>
           </div>
           <StatusBadge status={app.status} type="job" />
@@ -153,7 +153,7 @@ function JobDrawer({ id, onClose }: { id: Id<"jobApplications">; onClose: () => 
       </div>
 
       {/* Body */}
-      <div className="px-8 py-6 space-y-6 overflow-y-auto flex-1">
+      <div className="px-4 sm:px-8 py-6 space-y-6 overflow-y-auto flex-1">
         {/* Documents */}
         <Section title="Documents">
           <div className="flex flex-wrap gap-3">
@@ -245,10 +245,10 @@ function StartupDrawer({ id, onClose }: { id: Id<"startupApplications">; onClose
   return (
     <DrawerShell onClose={onClose}>
       {/* Header */}
-      <div className="px-8 pt-8 pb-6 border-b border-white/10">
+      <div className="px-4 sm:px-8 pt-4 sm:pt-8 pb-6 border-b border-white/10">
         <div className="flex items-start justify-between gap-4 mb-4">
           <div>
-            <h2 className="text-2xl font-bold text-white">{app.companyName}</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-white">{app.companyName}</h2>
             <p className="text-zinc-400 mt-0.5">Founded by {app.founderName}</p>
           </div>
           <StatusBadge status={app.status} type="startup" />
@@ -283,7 +283,7 @@ function StartupDrawer({ id, onClose }: { id: Id<"startupApplications">; onClose
       </div>
 
       {/* Body */}
-      <div className="px-8 py-6 space-y-6 overflow-y-auto flex-1">
+      <div className="px-4 sm:px-8 py-6 space-y-6 overflow-y-auto flex-1">
         {/* Documents */}
         <Section title="Documents">
           <div className="flex flex-wrap gap-3">
@@ -423,10 +423,10 @@ function DrawerShell({ children, onClose }: { children: React.ReactNode; onClose
   return (
     <div className="fixed inset-0 z-50 flex">
       {/* Backdrop */}
-      <div className="flex-1 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      {/* Panel */}
-      <div className="w-full max-w-2xl bg-[#0d1117] border-l border-white/10 flex flex-col h-full shadow-2xl overflow-hidden">
-        <div className="flex items-center justify-between px-8 pt-6 pb-4">
+      <div className="hidden lg:block flex-1 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      {/* Panel - full screen on mobile, sidebar on desktop */}
+      <div className="w-full lg:max-w-2xl bg-[#0d1117] lg:border-l border-white/10 flex flex-col h-full shadow-2xl overflow-hidden">
+        <div className="flex items-center justify-between px-4 sm:px-8 pt-4 sm:pt-6 pb-4">
           <span className="text-xs font-semibold text-zinc-500 uppercase tracking-widest">Application Detail</span>
           <button onClick={onClose}
             className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-zinc-400 hover:text-white transition-all">
@@ -504,6 +504,7 @@ export default function AdminPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [selectedJob, setSelectedJob] = useState<Id<"jobApplications"> | null>(null);
   const [selectedStartup, setSelectedStartup] = useState<Id<"startupApplications"> | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // ── Auth gate ──────────────────────────────────────────────────────────────
   if (!isLoaded) {
@@ -550,8 +551,57 @@ export default function AdminPage() {
       {/* Load DM Sans */}
       <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');`}</style>
 
-      {/* Sidebar */}
-      <div className="fixed left-0 top-0 bottom-0 w-60 bg-[#0d1117] border-r border-white/8 flex flex-col z-40">
+      {/* Mobile header */}
+      <div className="lg:hidden sticky top-0 z-50 bg-[#0d1117] border-b border-white/8 px-4 py-3 flex items-center justify-between">
+        <div>
+          <p className="text-lg font-bold text-white">MUSEDATA</p>
+          <p className="text-xs text-zinc-500">Admin</p>
+        </div>
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="w-10 h-10 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 flex">
+          <div className="flex-1 bg-black/60 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
+          <div className="w-64 bg-[#0d1117] border-l border-white/8 flex flex-col shadow-2xl">
+            <div className="px-6 py-6 border-b border-white/8 flex items-center justify-between">
+              <div>
+                <p className="text-lg font-bold text-white">MUSEDATA</p>
+                <p className="text-xs text-zinc-500 mt-0.5">Admin Portal</p>
+              </div>
+              <button onClick={() => setSidebarOpen(false)} className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <nav className="flex-1 px-3 py-4 space-y-1">
+              <NavItem icon={Building2} label="Startup Applications" active={tab === "startups"} onClick={() => { setTab("startups"); setStatusFilter(""); setSidebarOpen(false); }} />
+              <NavItem icon={Users} label="Job Applications" active={tab === "jobs"} onClick={() => { setTab("jobs"); setStatusFilter(""); setSidebarOpen(false); }} />
+            </nav>
+            <div className="px-4 py-4 border-t border-white/8">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-[#1C4E64] flex items-center justify-center text-xs font-bold text-[#4AADCF]">
+                  {user.firstName?.[0] ?? userEmail[0].toUpperCase()}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-medium text-white truncate">{user.firstName ?? "Admin"}</p>
+                  <p className="text-xs text-zinc-500 truncate">{userEmail}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:block fixed left-0 top-0 bottom-0 w-60 bg-[#0d1117] border-r border-white/8 flex flex-col z-40">
         {/* Logo */}
         <div className="px-6 py-6 border-b border-white/8">
           <p className="text-lg font-bold text-white tracking-tight">MUSEDATA</p>
@@ -579,7 +629,7 @@ export default function AdminPage() {
       </div>
 
       {/* Main content */}
-      <div className="ml-60 flex flex-col min-h-screen">
+      <div className="lg:ml-60 flex flex-col min-h-screen">
         {tab === "startups"
           ? <StartupsView statusFilter={statusFilter} setStatusFilter={setStatusFilter} search={search} setSearch={setSearch} onSelect={setSelectedStartup} />
           : <JobsView statusFilter={statusFilter} setStatusFilter={setStatusFilter} search={search} setSearch={setSearch} onSelect={setSelectedJob} />
@@ -628,29 +678,31 @@ function StartupsView({ statusFilter, setStatusFilter, search, setSearch, onSele
   return (
     <div className="flex-1 flex flex-col">
       {/* Header */}
-      <div className="px-8 pt-8 pb-6 border-b border-white/8">
+      <div className="px-4 sm:px-6 lg:px-8 pt-6 lg:pt-8 pb-6 border-b border-white/8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-white">Startup Applications</h1>
+            <h1 className="text-xl lg:text-2xl font-bold text-white">Startup Applications</h1>
             <p className="text-zinc-500 text-sm mt-1">{stats?.startups.total ?? "—"} total · {stats?.startups.recent ?? "—"} this week</p>
           </div>
         </div>
 
-        {/* Stats strip */}
+        {/* Stats strip - scrollable on mobile */}
         {stats && (
-          <div className="grid grid-cols-7 gap-3 mb-6">
-            {Object.entries(stats.startups.byStatus).map(([s, n]) => {
-              const cfg = STARTUP_STATUS_CONFIG[s];
-              return (
-                <button key={s} onClick={() => setStatusFilter(statusFilter === s ? "" : s)}
-                  className={`rounded-xl p-3 border text-center transition-all ${
-                    statusFilter === s ? "border-[#4AADCF]/50 bg-[#1C4E64]/20" : "border-white/8 bg-white/[0.02] hover:bg-white/5"
-                  }`}>
-                  <p className={`text-xl font-bold ${cfg.color}`}>{n as number}</p>
-                  <p className="text-xs text-zinc-500 mt-0.5 capitalize">{s.replace("_"," ")}</p>
-                </button>
-              );
-            })}
+          <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 mb-6">
+            <div className="grid grid-cols-7 gap-3 min-w-max sm:min-w-0">
+              {Object.entries(stats.startups.byStatus).map(([s, n]) => {
+                const cfg = STARTUP_STATUS_CONFIG[s];
+                return (
+                  <button key={s} onClick={() => setStatusFilter(statusFilter === s ? "" : s)}
+                    className={`rounded-xl p-3 border text-center transition-all min-w-[80px] ${
+                      statusFilter === s ? "border-[#4AADCF]/50 bg-[#1C4E64]/20" : "border-white/8 bg-white/[0.02] hover:bg-white/5"
+                    }`}>
+                    <p className={`text-xl font-bold ${cfg.color}`}>{n as number}</p>
+                    <p className="text-xs text-zinc-500 mt-0.5 capitalize">{s.replace("_"," ")}</p>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
 
@@ -664,42 +716,44 @@ function StartupsView({ statusFilter, setStatusFilter, search, setSearch, onSele
         </div>
       </div>
 
-      {/* Table */}
+      {/* Table - scrollable horizontally on mobile */}
       <div className="flex-1 overflow-auto">
-        <table className="w-full">
-          <thead className="sticky top-0 bg-[#080c10]/90 backdrop-blur-sm">
-            <tr className="border-b border-white/8">
-              {["Company","Founder","Industry","Stage","Funding","Status","Rating","Date"].map(h => (
-                <th key={h} className="px-5 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-widest whitespace-nowrap">{h}</th>
-              ))}
-              <th className="px-5 py-3" />
-            </tr>
-          </thead>
-          <tbody>
-            {!apps && <tr><td colSpan={9} className="px-5 py-16 text-center text-zinc-600">Loading…</td></tr>}
-            {apps && filtered.length === 0 && <tr><td colSpan={9} className="px-5 py-16 text-center text-zinc-600">No applications found</td></tr>}
-            {filtered.map(a => (
-              <tr key={a._id} onClick={() => onSelect(a._id)}
-                className="border-b border-white/5 hover:bg-white/[0.03] cursor-pointer transition-colors group">
-                <td className="px-5 py-4">
-                  <p className="text-sm font-semibold text-white group-hover:text-[#4AADCF] transition-colors">{a.companyName}</p>
-                  <p className="text-xs text-zinc-500">{a.companyLocation}</p>
-                </td>
-                <td className="px-5 py-4">
-                  <p className="text-sm text-zinc-300">{a.founderName}</p>
-                  <p className="text-xs text-zinc-500">{a.founderEmail}</p>
-                </td>
-                <td className="px-5 py-4 text-sm text-zinc-400">{a.industry}</td>
-                <td className="px-5 py-4 text-sm text-zinc-400 capitalize">{a.stage.replace("_"," ")}</td>
-                <td className="px-5 py-4 text-sm font-medium text-emerald-400">{a.fundingAmount}</td>
-                <td className="px-5 py-4"><StatusBadge status={a.status} type="startup" /></td>
-                <td className="px-5 py-4 text-sm text-amber-400">{a.internalRating ? `★ ${a.internalRating}` : <span className="text-zinc-700">—</span>}</td>
-                <td className="px-5 py-4 text-xs text-zinc-500 whitespace-nowrap">{fmt(a.submittedAt)}</td>
-                <td className="px-5 py-4"><Eye className="w-4 h-4 text-zinc-700 group-hover:text-[#4AADCF] transition-colors" /></td>
+        <div className="min-w-max">
+          <table className="w-full">
+            <thead className="sticky top-0 bg-[#080c10]/90 backdrop-blur-sm">
+              <tr className="border-b border-white/8">
+                {["Company","Founder","Industry","Stage","Funding","Status","Rating","Date"].map(h => (
+                  <th key={h} className="px-3 sm:px-5 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-widest whitespace-nowrap">{h}</th>
+                ))}
+                <th className="px-3 sm:px-5 py-3" />
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {!apps && <tr><td colSpan={9} className="px-5 py-16 text-center text-zinc-600">Loading…</td></tr>}
+              {apps && filtered.length === 0 && <tr><td colSpan={9} className="px-5 py-16 text-center text-zinc-600">No applications found</td></tr>}
+              {filtered.map(a => (
+                <tr key={a._id} onClick={() => onSelect(a._id)}
+                  className="border-b border-white/5 hover:bg-white/[0.03] cursor-pointer transition-colors group">
+                  <td className="px-3 sm:px-5 py-4">
+                    <p className="text-sm font-semibold text-white group-hover:text-[#4AADCF] transition-colors">{a.companyName}</p>
+                    <p className="text-xs text-zinc-500">{a.companyLocation}</p>
+                  </td>
+                  <td className="px-3 sm:px-5 py-4">
+                    <p className="text-sm text-zinc-300">{a.founderName}</p>
+                    <p className="text-xs text-zinc-500">{a.founderEmail}</p>
+                  </td>
+                  <td className="px-3 sm:px-5 py-4 text-sm text-zinc-400">{a.industry}</td>
+                  <td className="px-3 sm:px-5 py-4 text-sm text-zinc-400 capitalize">{a.stage.replace("_"," ")}</td>
+                  <td className="px-3 sm:px-5 py-4 text-sm font-medium text-emerald-400">{a.fundingAmount}</td>
+                  <td className="px-3 sm:px-5 py-4"><StatusBadge status={a.status} type="startup" /></td>
+                  <td className="px-3 sm:px-5 py-4 text-sm text-amber-400">{a.internalRating ? `★ ${a.internalRating}` : <span className="text-zinc-700">—</span>}</td>
+                  <td className="px-3 sm:px-5 py-4 text-xs text-zinc-500 whitespace-nowrap">{fmt(a.submittedAt)}</td>
+                  <td className="px-3 sm:px-5 py-4"><Eye className="w-4 h-4 text-zinc-700 group-hover:text-[#4AADCF] transition-colors" /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
@@ -723,29 +777,31 @@ function JobsView({ statusFilter, setStatusFilter, search, setSearch, onSelect }
   return (
     <div className="flex-1 flex flex-col">
       {/* Header */}
-      <div className="px-8 pt-8 pb-6 border-b border-white/8">
+      <div className="px-4 sm:px-6 lg:px-8 pt-6 lg:pt-8 pb-6 border-b border-white/8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-white">Job Applications</h1>
+            <h1 className="text-xl lg:text-2xl font-bold text-white">Job Applications</h1>
             <p className="text-zinc-500 text-sm mt-1">{stats?.jobs.total ?? "—"} total · {stats?.jobs.recent ?? "—"} this week</p>
           </div>
         </div>
 
-        {/* Stats strip */}
+        {/* Stats strip - scrollable on mobile */}
         {stats && (
-          <div className="grid grid-cols-5 gap-3 mb-6">
-            {Object.entries(stats.jobs.byStatus).map(([s, n]) => {
-              const cfg = JOB_STATUS_CONFIG[s];
-              return (
-                <button key={s} onClick={() => setStatusFilter(statusFilter === s ? "" : s)}
-                  className={`rounded-xl p-3 border text-center transition-all ${
-                    statusFilter === s ? "border-[#4AADCF]/50 bg-[#1C4E64]/20" : "border-white/8 bg-white/[0.02] hover:bg-white/5"
-                  }`}>
-                  <p className={`text-xl font-bold ${cfg.color}`}>{n as number}</p>
-                  <p className="text-xs text-zinc-500 mt-0.5 capitalize">{s.replace("_"," ")}</p>
-                </button>
-              );
-            })}
+          <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 mb-6">
+            <div className="grid grid-cols-5 gap-3 min-w-max sm:min-w-0">
+              {Object.entries(stats.jobs.byStatus).map(([s, n]) => {
+                const cfg = JOB_STATUS_CONFIG[s];
+                return (
+                  <button key={s} onClick={() => setStatusFilter(statusFilter === s ? "" : s)}
+                    className={`rounded-xl p-3 border text-center transition-all min-w-[80px] ${
+                      statusFilter === s ? "border-[#4AADCF]/50 bg-[#1C4E64]/20" : "border-white/8 bg-white/[0.02] hover:bg-white/5"
+                    }`}>
+                    <p className={`text-xl font-bold ${cfg.color}`}>{n as number}</p>
+                    <p className="text-xs text-zinc-500 mt-0.5 capitalize">{s.replace("_"," ")}</p>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
 
@@ -759,37 +815,39 @@ function JobsView({ statusFilter, setStatusFilter, search, setSearch, onSelect }
         </div>
       </div>
 
-      {/* Table */}
+      {/* Table - scrollable horizontally on mobile */}
       <div className="flex-1 overflow-auto">
-        <table className="w-full">
-          <thead className="sticky top-0 bg-[#080c10]/90 backdrop-blur-sm">
-            <tr className="border-b border-white/8">
-              {["Applicant","Position","Experience","Location","Status","Date"].map(h => (
-                <th key={h} className="px-5 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-widest">{h}</th>
-              ))}
-              <th className="px-5 py-3" />
-            </tr>
-          </thead>
-          <tbody>
-            {!apps && <tr><td colSpan={7} className="px-5 py-16 text-center text-zinc-600">Loading…</td></tr>}
-            {apps && filtered.length === 0 && <tr><td colSpan={7} className="px-5 py-16 text-center text-zinc-600">No applications found</td></tr>}
-            {filtered.map(a => (
-              <tr key={a._id} onClick={() => onSelect(a._id)}
-                className="border-b border-white/5 hover:bg-white/[0.03] cursor-pointer transition-colors group">
-                <td className="px-5 py-4">
-                  <p className="text-sm font-semibold text-white group-hover:text-[#4AADCF] transition-colors">{a.fullName}</p>
-                  <p className="text-xs text-zinc-500">{a.email}</p>
-                </td>
-                <td className="px-5 py-4 text-sm text-zinc-300 capitalize">{a.position}</td>
-                <td className="px-5 py-4 text-sm text-zinc-400">{a.experience} yrs</td>
-                <td className="px-5 py-4 text-sm text-zinc-400">{a.location}</td>
-                <td className="px-5 py-4"><StatusBadge status={a.status} type="job" /></td>
-                <td className="px-5 py-4 text-xs text-zinc-500 whitespace-nowrap">{fmt(a.submittedAt)}</td>
-                <td className="px-5 py-4"><Eye className="w-4 h-4 text-zinc-700 group-hover:text-[#4AADCF] transition-colors" /></td>
+        <div className="min-w-max">
+          <table className="w-full">
+            <thead className="sticky top-0 bg-[#080c10]/90 backdrop-blur-sm">
+              <tr className="border-b border-white/8">
+                {["Applicant","Position","Experience","Location","Status","Date"].map(h => (
+                  <th key={h} className="px-3 sm:px-5 py-3 text-left text-xs font-semibold text-zinc-500 uppercase tracking-widest">{h}</th>
+                ))}
+                <th className="px-3 sm:px-5 py-3" />
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {!apps && <tr><td colSpan={7} className="px-5 py-16 text-center text-zinc-600">Loading…</td></tr>}
+              {apps && filtered.length === 0 && <tr><td colSpan={7} className="px-5 py-16 text-center text-zinc-600">No applications found</td></tr>}
+              {filtered.map(a => (
+                <tr key={a._id} onClick={() => onSelect(a._id)}
+                  className="border-b border-white/5 hover:bg-white/[0.03] cursor-pointer transition-colors group">
+                  <td className="px-3 sm:px-5 py-4">
+                    <p className="text-sm font-semibold text-white group-hover:text-[#4AADCF] transition-colors">{a.fullName}</p>
+                    <p className="text-xs text-zinc-500">{a.email}</p>
+                  </td>
+                  <td className="px-3 sm:px-5 py-4 text-sm text-zinc-300 capitalize">{a.position}</td>
+                  <td className="px-3 sm:px-5 py-4 text-sm text-zinc-400">{a.experience} yrs</td>
+                  <td className="px-3 sm:px-5 py-4 text-sm text-zinc-400">{a.location}</td>
+                  <td className="px-3 sm:px-5 py-4"><StatusBadge status={a.status} type="job" /></td>
+                  <td className="px-3 sm:px-5 py-4 text-xs text-zinc-500 whitespace-nowrap">{fmt(a.submittedAt)}</td>
+                  <td className="px-3 sm:px-5 py-4"><Eye className="w-4 h-4 text-zinc-700 group-hover:text-[#4AADCF] transition-colors" /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
