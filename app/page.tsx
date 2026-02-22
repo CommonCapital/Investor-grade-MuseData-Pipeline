@@ -154,7 +154,7 @@ export default function MuseDataLanding() {
           </h2>
           <p className="text-center text-gray-600 mb-12 max-w-3xl mx-auto animate-fade-in-up delay-100">
             MUSEDATA is a <span className="font-semibold">Boardroom Decision Intelligence and growth equity</span> platform 
-            for founder led enterprise software and enterprise AI teams. When a raise, sponsor process, or strategic sale approaches, we help teams move faster with cleaner numbers, clearer narratives, and audit ready diligence support. Where conviction is earned, we write minority growth equity checks ($5M-$25M) alongside our capital partners.
+            for VC-backed enterprise software and enterprise AI, running diligence grade evidence sprints for raises, sponsor processes, and strategic sales and writing $5M to $25M minority checks alongside aligned capital.
           </p>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
             <Card className="border-t-4 border-[#1C4E64] shadow-lg animate-fade-in-up bg-[#1C4E64] hover:shadow-xl transition-shadow">
