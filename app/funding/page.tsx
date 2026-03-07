@@ -422,15 +422,7 @@ export default function StartupApplicationPage() {
             </div>
           </div>
           <nav className="flex gap-8">
-            <Link href="/" className="text-sm text-gray-600 hover:text-[#1C4E64] font-medium transition-colors">
-              Home
-            </Link>
-            <Link href="/portfolio" className="text-sm text-gray-600 hover:text-[#1C4E64] font-medium transition-colors">
-              Portfolio
-            </Link>
-            <Link href="/apply" className="text-sm text-gray-600 hover:text-[#1C4E64] font-medium transition-colors">
-              Careers
-            </Link>
+            
           </nav>
         </div>
       </header>
@@ -1441,7 +1433,7 @@ export default function StartupApplicationPage() {
           <p className="text-white/70 text-sm mb-4">Backing the Next Generation of Transformative Companies</p>
           <div className="flex justify-center gap-6 text-sm">
             <a
-              href="mailto:investments@musedata.ai"
+              href="mailto:partners@musedata.ai"
               className="text-white/70 hover:text-white transition-colors"
             >
               investments@musedata.ai

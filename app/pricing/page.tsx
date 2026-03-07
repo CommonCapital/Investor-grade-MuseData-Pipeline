@@ -258,7 +258,7 @@ export default function PricingPage() {
               Reach out to our team to explore how we can support your institutional capital readiness.
             </p>
             <a
-              href="mailto:collin@musedata.ai?subject=Engagement Discussion"
+              href="mailto:partners@musedata.ai?subject=Engagement Discussion"
               className="inline-flex items-center gap-2 bg-white text-[#1C4E64] px-8 py-4 rounded-xl font-semibold hover:bg-[#e8f4f8] transition-all shadow-lg hover:shadow-xl hover:scale-105"
             >
               <Mail className="w-5 h-5" />
@@ -279,7 +279,7 @@ export default function PricingPage() {
             Institutional-Grade Finance Infrastructure
           </p>
           <div className="flex justify-center items-center gap-6 text-sm text-[#7a9aaa]">
-            <a href="mailto:collin@musedata.ai" className="hover:text-[#1C4E64] transition-colors">
+            <a href="mailto:partners@musedata.ai" className="hover:text-[#1C4E64] transition-colors">
               partners@musedata.ai
             </a>
             <span className="text-[#d4e4eb]">|</span>

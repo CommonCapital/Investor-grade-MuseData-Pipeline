@@ -182,26 +182,7 @@ export default function ApplyPageImproved() {
               Growth Equity
             </div>
           </div>
-          <nav className="flex gap-8">
-            <Link
-              href="/"
-              className="text-sm text-gray-600 hover:text-[#1C4E64] font-medium transition-colors"
-            >
-              Home
-            </Link>
-            <Link
-              href="#services"
-              className="text-sm text-gray-600 hover:text-[#1C4E64] font-medium transition-colors"
-            >
-              Services
-            </Link>
-            <Link
-              href="/pricing"
-              className="text-sm text-gray-600 hover:text-[#1C4E64] font-medium transition-colors"
-            >
-              Pricing
-            </Link>
-          </nav>
+       
         </div>
       </header>
 
