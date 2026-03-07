@@ -201,7 +201,7 @@ export default function CompaniesPage() {
             <li><Link href="/strategic-resource-group">Strategic Resource Group</Link></li>
             <li><a href="#about">About</a></li>
 
-            <li><Link href="/jobs">Jobs</Link></li>
+            <li><Link href="/apply">Jobs</Link></li>
           </ul>
 
           <Link href="mailto:partners@musedata.ai" className="nav-cta">Connect</Link>
@@ -219,7 +219,7 @@ export default function CompaniesPage() {
           ["/strategic-resource-group","Strategic Resource Group"],
           ["#about","About"],
       
-          ["/jobs","Jobs"],
+          ["/apply","Jobs"],
         ].map(([href, label, cls]) => (
           <Link key={href} href={href} className={cls || ""} onClick={() => setMobOpen(false)}>
             {label}

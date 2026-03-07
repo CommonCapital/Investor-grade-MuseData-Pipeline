@@ -342,7 +342,7 @@ export default function SRGPage() {
             <li><Link href="/strategic-resource-group" className="on">Strategic Resource Group</Link></li>
             <li><a href="#about">About</a></li>
 
-            <li><Link href="/jobs">Jobs</Link></li>
+            <li><Link href="/apply">Jobs</Link></li>
           </ul>
           <Link href="mailto:partners@musedata.ai" className="nav-cta">Connect</Link>
           <div className="ham" onClick={() => setMobOpen(o => !o)}>
@@ -359,7 +359,7 @@ export default function SRGPage() {
           ["/strategic-resource-group","Strategic Resource Group","on"],
           ["#about","About"],
   
-          ["/jobs","Jobs"],
+          ["/apply","Jobs"],
         ].map(([href, label, cls]) => (
           <Link key={href} href={href} className={cls || ""} onClick={() => setMobOpen(false)}>{label}</Link>
         ))}

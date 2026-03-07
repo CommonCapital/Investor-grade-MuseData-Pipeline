@@ -201,7 +201,7 @@ export default function FoundersCollective() {
             <li><Link href="/founders" className="on">Founders Collective</Link></li>
             <li><a href="#about">About</a></li>
         
-            <li><Link href="/jobs">Jobs</Link></li>
+            <li><Link href="/apply">Jobs</Link></li>
           </ul>
 
           <Link href="mailto:partners@musedata.ai" className="nav-cta">Connect</Link>
@@ -217,7 +217,7 @@ export default function FoundersCollective() {
           ["/companies","Companies"],["/people","People"],
           ["/strategic-resource-group","Strategic Resource Group"],
           ["/founders","Founders Collective","on"],
-          ["#about","About"],["/jobs","Jobs"],
+          ["#about","About"],["/apply","Jobs"],
         ].map(([href,label,cls]) => (
           <Link key={href} href={href} className={cls || ""} onClick={() => setMobOpen(false)}>{label}</Link>
         ))}
