@@ -433,7 +433,7 @@ export default function MuseDataLanding() {
             <div className="hero-actions">
               <Unauthenticated>
                 <SignInButton mode="modal" forceRedirectUrl="/funding">
-                  <button className="btn-primary">Apply for Capital <span className="arr" /></button>
+                   <Link href="/funding" className="btn-primary">Apply for Capital <span className="arr" /></Link>
                 </SignInButton>
               </Unauthenticated>
               <Authenticated>
@@ -652,7 +652,7 @@ export default function MuseDataLanding() {
             <Fade delay={0.32}>
               <Unauthenticated>
                 <SignInButton mode="modal" forceRedirectUrl="/funding">
-                  <button className="btn-primary">Apply Your Startup <span className="arr" /></button>
+                   <Link href="/funding" className="btn-primary">Apply for Capital <span className="arr" /></Link>
                 </SignInButton>
               </Unauthenticated>
               <Authenticated>
