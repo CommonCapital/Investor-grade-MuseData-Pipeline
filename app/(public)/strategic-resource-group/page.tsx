@@ -380,9 +380,7 @@ export default function SRGPage() {
                 <ul className="card-list">
                   {c.list.map(item => <li key={item}>{item}</li>)}
                 </ul>
-                <a href="#" className="card-lnk">
-                  Learn more <span className="card-arr">→</span>
-                </a>
+                
               </div>
             </Rv>
           ))}
@@ -456,7 +454,7 @@ export default function SRGPage() {
                 <div key={nc.title} className="nc" style={{ transitionDelay: `${i * 0.08}s` }}>
                   <div className="nc-title">{nc.title}</div>
                   <p className="nc-desc">{nc.desc}</p>
-                  <a href="#" className="nc-lnk">{nc.lnk} →</a>
+                  
                 </div>
               ))}
             </div>
