@@ -193,7 +193,7 @@ export default function MuseDataLanding() {
           transition: background 0.2s, color 0.2s, border-color 0.2s;
         }
         .nav-connect:hover { background: var(--hero-bg); color: #fff; border-color: var(--hero-bg); }
-        .ham { display: none; flex-direction: column; justify-content: center; gap: 6px; cursor: pointer; margin-left: 16px; align-self: center; flex-shrink: 0; }
+        .ham { display: none; flex-direction: column; justify-content: center; gap: 6px; cursor: pointer; margin-left: auto; align-self: center; flex-shrink: 0; }
         .ham span { width: 22px; height: 1.5px; background: var(--nav-active); display: block; }
         @media(max-width:980px){ .nav-links a { padding: 0 11px; font-size: 0.667rem; } }
         @media(max-width:780px){ .nav-links { display: none; } .ham { display: flex; } .nav-connect { display: none; } }

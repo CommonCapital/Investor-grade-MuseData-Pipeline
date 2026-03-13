@@ -7,6 +7,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import UnifiedNavbar from "@/components/UnifiedNavbar/UnifiedNavbar";
 import { ThemeProvider } from "@/components/ThemeToggle/theme-provider";
 import Loading from "@/components/LoadingPage";
+import HydrationReady from "@/components/HydrationReady";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,10 +47,12 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              <UnifiedNavbar />
-              <Suspense fallback={<Loading />}>
-                {children}
-              </Suspense>
+              <HydrationReady>
+                <UnifiedNavbar />
+                <Suspense fallback={<Loading />}>
+                  {children}
+                </Suspense>
+              </HydrationReady>
             </ThemeProvider>
           </ConvexClientProvider>
         </ClerkProvider>
