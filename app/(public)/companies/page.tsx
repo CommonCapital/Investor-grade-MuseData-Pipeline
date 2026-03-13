@@ -193,7 +193,7 @@ export default function CompaniesPage() {
             </p>
             <p className="focus-note">
               Portfolio companies backed by leading venture platforms including{" "}
-              <span className="hl">Y Combinator</span> and other top-tier early-stage investors.
+              <span className="hl">Top-tier</span> early-stage investors.
             </p>
           </div>
         </div>
