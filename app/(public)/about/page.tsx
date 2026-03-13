@@ -1,490 +1,252 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+
 import Link from "next/link";
-
-/* ─── Fade/Reveal via IntersectionObserver ─── */
-function Fade({
-  children,
-  delay = 0,
-  style,
-  className = "",
-}: {
-  children: React.ReactNode;
-  delay?: number;
-  style?: React.CSSProperties;
-  className?: string;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.classList.add("in");
-          io.disconnect();
-        }
-      },
-      { threshold: 0.08 }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-  return (
-    <div ref={ref} className={`fade ${className}`} style={{ transitionDelay: `${delay}s`, ...style }}>
-      {children}
-    </div>
-  );
-}
-
-const TEAM = [
-  {
-    name: "Alexandra Chen",
-    role: "Managing Partner",
-    bio: "Former Partner at Insight Partners. Led investments in Snowflake, Datadog, and Confluent. MBA from Stanford GSB.",
-    image: "/team/alex.jpg",
-  },
-  {
-    name: "Marcus Thorne",
-    role: "Partner, Strategic Resource Group",
-    bio: "Ex-CFO at Plaid and early operator at Stripe. Builds financial infrastructure for portfolio companies.",
-    image: "/team/marcus.jpg",
-  },
-  {
-    name: "Priya Sharma",
-    role: "Principal, Investments",
-    bio: "Previously at a16z and Goldman Sachs. Focuses on enterprise AI and data infrastructure.",
-    image: "/team/priya.jpg",
-  },
-  {
-    name: "James Okafor",
-    role: "Principal, Capital Formation",
-    bio: "Built LP relationships at Tiger Global. Leads co-investment processes and fund reporting.",
-    image: "/team/james.jpg",
-  },
-];
-
-const VALUES = [
-  {
-    icon: "🔍",
-    title: "Evidence First",
-    desc: "We invest based on proprietary diligence, not relationships or momentum. Every decision is backed by data.",
-  },
-  {
-    icon: "🤝",
-    title: "Partnership Over Control",
-    desc: "We take minority positions intentionally. Founders retain control; we provide infrastructure, not interference.",
-  },
-  {
-    icon: "🌍",
-    title: "Global by Design",
-    desc: "The best enterprise software companies aren't confined to one geography. Neither are we.",
-  },
-  {
-    icon: "⚡",
-    title: "Speed with Rigor",
-    desc: "We move fast—but never at the expense of thoroughness. Our process is structured, not rushed.",
-  },
-];
-
-const LOGO_B64 = "data:image/png;base64,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";
+import { LOGO_B64 } from "@/components/UnifiedNavbar/UnifiedNavbar";
 
 export default function AboutPage() {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", handler, { passive: true });
-    return () => window.removeEventListener("scroll", handler);
-  }, []);
-
   return (
     <>
       <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; font-size: 15px; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&display=swap');
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         :root {
-          --nav-bg: #f6f8f8; --nav-text: #b5c9ce; --nav-active: #1c3342; --nav-border: #dce4e8;
-          --hero-bg: #092e42; --hero-h1: #ffffff; --hero-body: rgba(255,255,255,0.55);
-          --hero-label: #5997b0; --hero-line: #5997b0; --section-bg: #f1f7fa;
-          --section-white: #ffffff; --card-border: #5e96aa; --label-color: #7a9daa;
-          --h2-color: #0d2b3a; --body-color: #3a5a6a; --bullet-color: #5997b0;
-          --list-text: #3a5464; --divider: #d4e4eb; --cta-bg: #092e42;
-          --cta-accent: #39a2ca; --cta-body: rgba(255,255,255,0.65);
-          --btn-bg: #39a2ca; --btn-text: #ffffff; --btn-fine: #4a6e7e;
-          --footer-bg: #092e42; --footer-text: rgba(255,255,255,0.55);
-          --footer-links: rgba(255,255,255,0.35);
-          --ff: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+          --deep:   #0A2F42;
+          --mid:    #1B5E7B;
+          --slate:  #4A6B7C;
+          --bright: #3BA3CB;
+          --main:   #2A7FA0;
+          --white:  #fff;
+          --ghost:  #F2F8FB;
+          --wash:   #E3F1F8;
+          --border: rgba(42,127,160,.13);
+          --nav-h:  68px;
         }
-        ::selection { background: rgba(57,162,202,0.2); }
-        ::-webkit-scrollbar { width: 2px; }
-        ::-webkit-scrollbar-thumb { background: var(--hero-label); }
-        body {
-          background: var(--section-white); color: var(--h2-color);
-          font-family: var(--ff); font-weight: 400; line-height: 1.65;
-          -webkit-font-smoothing: antialiased; overflow-x: hidden; padding-bottom: 64px;
-        }
-        @media(max-width:768px){ body { padding-bottom: 120px; } }
-        @media(max-width:480px){ body { padding-bottom: 140px; } }
-        .w { max-width: 1200px; margin: 0 auto; padding: 0 56px; }
-        @media(max-width:900px){ .w { padding: 0 32px; } }
-        @media(max-width:640px){ .w { padding: 0 20px; } }
-        .fade { opacity: 0; transform: translateY(22px); transition: opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1); }
-        .fade.in { opacity: 1; transform: none; }
-        /* Header */
-        #about-header {
-          position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-          background: var(--nav-bg); border-bottom: 1px solid var(--nav-border);
-          transition: box-shadow 0.3s;
-        }
-        #about-header.scrolled { box-shadow: 0 2px 24px rgba(9,46,66,0.08); }
-        .header-inner {
-          display: flex; align-items: center; height: 82px;
-          max-width: 1200px; margin: 0 auto; padding: 0 48px;
-        }
-        @media(max-width:900px){ .header-inner { padding: 0 32px; } }
-        .header-logo {
-          display: flex; align-items: center; gap: 12px; text-decoration: none;
-          flex-shrink: 0; margin-right: 52px; line-height: 1;
-        }
-        .header-mark { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .header-mark img { width: 40px; height: 40px; object-fit: contain; display: block; }
-        .header-word { font-size: 0.933rem; font-weight: 700; letter-spacing: 0.22em; color: var(--nav-active); text-transform: uppercase; line-height: 1; white-space: nowrap; }
-        .header-tag {
-          font-size: 0.6rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
-          color: var(--label-color); background: var(--section-bg); padding: 6px 14px; border-radius: 999px;
-        }
-        /* Hero */
-        #about-hero {
-          min-height: 50vh; padding-top: 82px; background: var(--hero-bg);
-          display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden;
-        }
-        .hero-bg-img {
-          position: absolute; inset: 0; background-image: url('/background.png');
-          background-size: cover; background-position: center; opacity: 0.08; pointer-events: none;
-        }
-        .hero-inner { padding: 96px 56px 108px; position: relative; z-index: 1; text-align: left; max-width: 720px; }
-        .hero-label-row { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; opacity: 0; animation: up 0.9s cubic-bezier(0.16,1,0.3,1) 0.1s forwards; }
-        .hero-label-line { width: 32px; height: 1px; background: var(--hero-line); }
-        .hero-label-text { font-size: 0.667rem; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; color: var(--hero-label); }
-        .hero-h1 {
-          font-family: var(--ff); font-size: clamp(2rem,3.8vw,3rem); font-weight: 300;
-          line-height: 1.2; letter-spacing: -0.01em; color: var(--hero-h1); text-align: left;
-          opacity: 0; animation: up 1s cubic-bezier(0.16,1,0.3,1) 0.22s forwards;
-        }
-        .hero-h1 .accent { color: var(--cta-accent); }
-        .hero-body {
-          margin-top: 2rem; max-width: 580px; font-size: 0.933rem; font-weight: 400;
-          line-height: 1.75; color: var(--hero-body); opacity: 0; animation: up 1s cubic-bezier(0.16,1,0.3,1) 0.38s forwards;
-        }
-        @keyframes up { from { opacity:0; transform: translateY(24px); } to { opacity:1; transform: none; } }
-        /* Sections */
-        .about-section { padding: 72px 0; border-top: 1px solid var(--divider); background: var(--section-white); }
-        .about-section.alt { background: var(--section-bg); }
-        .section-label {
-          display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
-          font-size: 0.633rem; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: var(--hero-label);
-        }
-        .section-label::before { content: ''; width: 28px; height: 1px; background: var(--hero-label); display: block; }
-        .section-title {
-          font-family: var(--ff); font-size: clamp(1.6rem,2.8vw,2.2rem); font-weight: 300;
-          line-height: 1.15; letter-spacing: -0.01em; color: var(--h2-color); margin-bottom: 32px;
-        }
-        .section-body { font-size: 0.867rem; color: var(--body-color); line-height: 1.75; max-width: 720px; }
-        /* Values Grid */
-        .values-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; margin-top: 40px; }
-        @media(max-width:768px){ .values-grid { grid-template-columns: 1fr; } }
-        .value-card {
-          background: var(--section-white); border-radius: 12px; padding: 28px;
-          border-left: 3px solid var(--card-border);
-        }
-        .value-card .icon { font-size: 1.8rem; margin-bottom: 16px; }
-        .value-card h3 {
-          font-family: var(--ff); font-size: 1.067rem; font-weight: 500;
-          color: var(--h2-color); margin-bottom: 10px;
-        }
-        .value-card p { font-size: 0.867rem; color: var(--body-color); line-height: 1.7; }
-        /* Team */
-        .team-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; margin-top: 40px; }
-        @media(max-width:1024px){ .team-grid { grid-template-columns: repeat(2,1fr); } }
-        @media(max-width:640px){ .team-grid { grid-template-columns: 1fr; } }
-        .team-card {
-          background: var(--section-white); border-radius: 12px; padding: 24px;
-          text-align: center; border: 1.5px solid var(--divider);
-          transition: border-color 0.25s;
-        }
-        .team-card:hover { border-color: var(--hero-label); }
-        .team-avatar {
-          width: 100%; aspect-ratio: 1; border-radius: 10px; margin-bottom: 16px;
-          background: var(--section-bg); display: flex; align-items: center; justify-content: center;
-          font-size: 2.5rem; color: var(--hero-label);
-        }
-        .team-name {
-          font-family: var(--ff); font-size: 1rem; font-weight: 500; color: var(--h2-color);
-          margin-bottom: 4px;
-        }
-        .team-role { font-size: 0.733rem; font-weight: 600; color: var(--hero-label); margin-bottom: 12px; }
-        .team-bio { font-size: 0.8rem; color: var(--body-color); line-height: 1.6; }
-        /* Timeline */
-        .timeline { position: relative; padding-left: 40px; margin-top: 40px; }
-        .timeline::before {
-          content: ''; position: absolute; left: 12px; top: 8px; bottom: 8px;
-          width: 2px; background: var(--divider);
-        }
-        .timeline-item { position: relative; padding: 24px 0; }
-        .timeline-item::before {
-          content: ''; position: absolute; left: -32px; top: 32px;
-          width: 12px; height: 12px; border-radius: 50%;
-          background: var(--btn-bg); border: 3px solid var(--section-white);
-        }
-        .timeline-year {
-          font-size: 0.733rem; font-weight: 700; letter-spacing: 0.18em;
-          text-transform: uppercase; color: var(--hero-label); margin-bottom: 8px;
-        }
-        .timeline-title {
-          font-family: var(--ff); font-size: 1.067rem; font-weight: 500;
-          color: var(--h2-color); margin-bottom: 8px;
-        }
-        .timeline-desc { font-size: 0.867rem; color: var(--body-color); line-height: 1.7; }
-        /* CTA */
-        .about-cta {
-          padding: 72px 0; background: var(--hero-bg); border-top: 1px solid rgba(255,255,255,0.06);
-          text-align: center;
-        }
-        .cta-h2 {
-          font-family: var(--ff); font-size: clamp(1.6rem,3vw,2.2rem); font-weight: 300;
-          line-height: 1.2; color: #fff; margin-bottom: 16px;
-        }
-        .cta-sub { font-size: 0.867rem; color: rgba(255,255,255,0.6); max-width: 520px; margin: 0 auto 32px; line-height: 1.75; }
-        .cta-btn {
-          display: inline-flex; align-items: center; gap: 12px;
-          background: var(--btn-bg); color: var(--btn-text);
-          font-size: 0.7rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
-          padding: 16px 36px; border: none; border-radius: 12px; cursor: pointer;
-          transition: background 0.25s, gap 0.25s; text-decoration: none;
-        }
-        .cta-btn:hover { background: #2b8fb5; gap: 18px; }
-        /* Footer */
-        #about-footer {
+        html { font-size: 16px; scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: var(--white); color: var(--deep); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overflow-x: hidden; }
+        h1,h2,h3,h4,h5,h6,p,span,a,li,blockquote,div { font-family: 'Inter', sans-serif; }
+
+        /* ── HERO ── */
+        .ab-hero { position: relative; overflow: hidden; padding: calc(var(--nav-h) + 5rem) 3rem 6rem; background: var(--deep); }
+        .ab-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 85% 20%, rgba(59,163,203,.1), transparent 55%), radial-gradient(ellipse 50% 70% at 10% 80%, rgba(42,127,160,.07), transparent 55%); pointer-events: none; }
+        .ab-hero-inner { max-width: 1440px; margin: 0 auto; position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: end; }
+        .ab-tag { font-size: .6875rem; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; color: var(--bright); display: inline-flex; align-items: center; gap: .75rem; margin-bottom: 1.6rem; }
+        .ab-tag::before { content: ''; width: 28px; height: 1px; background: var(--bright); }
+        .ab-h1 { font-size: clamp(2rem, 4.5vw, 3.8rem); font-weight: 200; color: var(--white); line-height: 1.1; letter-spacing: -.02em; margin-bottom: 1.8rem; }
+        .ab-h1 em { font-style: normal; font-weight: 700; color: var(--bright); }
+        .ab-intro { font-size: .875rem; font-weight: 400; line-height: 1.8; color: rgba(255,255,255,.45); max-width: 460px; }
+        .ab-quote-wrap { padding-left: 3rem; border-left: 1px solid rgba(59,163,203,.2); }
+        .ab-quote { font-size: clamp(1rem, 1.5vw, 1.2rem); font-weight: 400; font-style: normal; color: var(--white); line-height: 1.75; letter-spacing: -.01em; margin-bottom: 1.6rem; }
+        .ab-quote em { font-style: normal; color: var(--bright); }
+        .ab-quote-attr { font-size: .6875rem; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.25); }
+
+        /* ── STATS ── */
+        .ab-stats { background: var(--deep); border-top: 1px solid rgba(255,255,255,.07); border-bottom: 1px solid rgba(255,255,255,.07); }
+        .ab-stats-inner { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); }
+        .ab-stat { padding: 2.5rem 3rem; border-right: 1px solid rgba(255,255,255,.07); }
+        .ab-stat:last-child { border-right: none; }
+        .ab-stat-val { font-size: 1.75rem; font-weight: 300; color: var(--white); letter-spacing: -.03em; line-height: 1; margin-bottom: .5rem; }
+        .ab-stat-val sup { font-size: .75rem; font-weight: 600; color: var(--bright); vertical-align: super; letter-spacing: .02em; }
+        .ab-stat-label { font-size: .625rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.3); }
+
+        /* ── PILLARS ── */
+        .ab-pillars-section { background: var(--white); border-top: 1px solid var(--border); }
+        .ab-pillars-wrap { max-width: 1440px; margin: 0 auto; padding: 6rem 3rem; }
+        .ab-section-label { font-size: .7rem; font-weight: 500; letter-spacing: .25em; text-transform: uppercase; color: var(--main); display: inline-flex; align-items: center; gap: .75rem; margin-bottom: 3rem; }
+        .ab-section-label::before { content: ''; width: 24px; height: 1px; background: var(--main); }
+        .ab-pillars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5px; background: var(--border); }
+        .ab-pillar { background: var(--white); padding: 2.8rem 2.4rem; position: relative; transition: background .3s; }
+        .ab-pillar:hover { background: var(--ghost); }
+        .ab-pillar::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--main), var(--bright)); transform: scaleX(0); transform-origin: left; transition: transform .5s cubic-bezier(.22,1,.36,1); }
+        .ab-pillar:hover::before { transform: scaleX(1); }
+        .ab-pillar-num { font-size: .68rem; font-weight: 600; letter-spacing: .2em; color: var(--bright); margin-bottom: 1.2rem; opacity: .7; }
+        .ab-pillar-title { font-size: 1rem; font-weight: 600; color: var(--deep); margin-bottom: .8rem; letter-spacing: -.01em; line-height: 1.3; }
+        .ab-pillar-desc { font-size: .8125rem; font-weight: 400; line-height: 1.75; color: var(--slate); }
+
+        /* ── HOW WE PARTNER ── */
+        .ab-partner { background: var(--ghost); border-top: 1px solid var(--border); }
+        .ab-partner-inner { max-width: 1440px; margin: 0 auto; padding: 6rem 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start; }
+        .ab-partner-h { font-size: clamp(1.8rem, 2.8vw, 2.6rem); font-weight: 700; color: var(--deep); line-height: 1.12; letter-spacing: -.03em; margin-bottom: 1.4rem; }
+        .ab-partner-h em { font-style: normal; font-weight: 300; color: var(--main); }
+        .ab-partner-body { font-size: .9375rem; font-weight: 400; line-height: 1.8; color: var(--slate); margin-bottom: 1.2rem; }
+        .ab-partner-cta { display: inline-flex; align-items: center; gap: .75rem; height: 44px; padding: 0 2rem; background: var(--deep); color: var(--white); font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; margin-top: 1.2rem; transition: background .2s, transform .15s; }
+        .ab-partner-cta:hover { background: var(--main); transform: translateY(-2px); }
+        .ab-checklist { list-style: none; display: flex; flex-direction: column; gap: 1.2rem; padding-top: .5rem; }
+        .ab-checklist li { display: flex; align-items: flex-start; gap: 1rem; font-size: .9rem; font-weight: 400; line-height: 1.6; color: var(--slate); }
+        .ab-checklist li::before { content: ''; width: 20px; height: 20px; flex-shrink: 0; border: 1px solid rgba(42,127,160,.3); border-radius: 50%; background: var(--wash); margin-top: 1px; background-image: url("data:image/svg+xml,%3Csvg width='10' height='8' viewBox='0 0 10 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4l3 3 5-6' stroke='%232A7FA0' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: center; }
+
+        /* ── CTA BAND ── */
+        .ab-cta { background: var(--deep); border-top: 1px solid rgba(255,255,255,.07); text-align: center; padding: 7rem 3rem; position: relative; overflow: hidden; }
+        .ab-cta::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 50% 60% at 50% 50%, rgba(59,163,203,.06), transparent 60%); pointer-events: none; }
+        .ab-cta-h { font-size: clamp(1.8rem, 3vw, 3rem); font-weight: 300; color: var(--white); letter-spacing: -.03em; line-height: 1.12; margin-bottom: .8rem; }
+        .ab-cta-h em { font-style: normal; font-weight: 200; color: var(--bright); }
+        .ab-cta-sub { font-size: .9375rem; color: rgba(255,255,255,.4); margin-bottom: 2.4rem; line-height: 1.7; }
+        .ab-cta-btns { display: flex; align-items: center; justify-content: center; gap: 1.2rem; flex-wrap: wrap; }
+        .ab-btn-primary { display: inline-flex; align-items: center; gap: .75rem; height: 48px; padding: 0 2.4rem; background: var(--bright); color: var(--white); font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; transition: background .2s, transform .15s; }
+        .ab-btn-primary:hover { background: var(--main); transform: translateY(-2px); }
+        .ab-btn-ghost { display: inline-flex; align-items: center; gap: .75rem; height: 48px; padding: 0 2.4rem; border: 1px solid rgba(255,255,255,.2); color: rgba(255,255,255,.7); font-size: .75rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; transition: border-color .2s, color .2s; }
+        .ab-btn-ghost:hover { border-color: var(--bright); color: var(--bright); }
+
+        /* ── FOOTER ── */
+        footer {
           position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
-          background: var(--footer-bg); border-top: 1px solid rgba(255,255,255,0.06);
+          background: var(--footer-bg);
+          border-top: 1px solid rgba(255,255,255,0.06);
         }
-        .footer-slim {
-          display: flex; align-items: center; justify-content: space-between;
-          padding: 22px 0; gap: 24px; flex-wrap: nowrap;
-        }
+        .footer-slim { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; gap: 24px; flex-wrap: nowrap; }
         .footer-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
         .footer-mark { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .footer-mark img { width: 28px; height: 28px; object-fit: contain; display: block; }
         .footer-word { font-size: 0.733rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.7); line-height: 1; white-space: nowrap; }
         .footer-right { display: flex; align-items: center; gap: 32px; flex-shrink: 0; }
         .footer-links-row { display: flex; align-items: center; gap: 24px; }
-        .footer-links-row a {
-          font-size: 0.633rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
-          color: rgba(255,255,255,0.35); text-decoration: none; transition: color 0.2s; white-space: nowrap; line-height: 1;
-        }
+        .footer-links-row a { font-size: 0.633rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.35); text-decoration: none; transition: color 0.2s; white-space: nowrap; line-height: 1; }
         .footer-links-row a:hover { color: rgba(255,255,255,0.7); }
         .footer-copy { font-size: 0.633rem; color: rgba(255,255,255,0.22); letter-spacing: 0.04em; line-height: 1; white-space: nowrap; flex-shrink: 0; }
-        @media(max-width:768px){
-          .hero-inner { padding: 56px 24px 72px; }
-          .hero-h1 { font-size: clamp(1.7rem,5vw,2.4rem); }
-          .hero-body { font-size: 0.867rem; margin-top: 1.5rem; }
-          .about-section { padding: 48px 0; }
-          .footer-slim { flex-wrap: wrap; gap: 14px; }
-          .footer-right { flex-direction: column; align-items: flex-start; gap: 10px; }
-          .footer-links-row { flex-wrap: wrap; gap: 14px; }
+
+        /* ── RESPONSIVE ── */
+        @media(max-width:1100px) {
+          .ab-hero-inner { grid-template-columns: 1fr; gap: 3rem; }
+          .ab-quote-wrap { padding-left: 0; border-left: none; border-top: 1px solid rgba(59,163,203,.15); padding-top: 2.5rem; }
+          .ab-pillars { grid-template-columns: repeat(2, 1fr); }
+          .ab-partner-inner { grid-template-columns: 1fr; gap: 3rem; }
         }
-        @media(max-width:480px){
-          .hero-inner { padding: 44px 18px 56px; }
-          .about-section { padding: 36px 0; }
-          .section-title { font-size: 1.4rem; }
-          .footer-slim { flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px 0; }
+        @media(max-width:768px) {
+          .ab-hero { padding: calc(var(--nav-h) + 3rem) 1.5rem 4rem; }
+          .ab-stats-inner { grid-template-columns: 1fr; }
+          .ab-stat { border-right: none; border-bottom: 1px solid rgba(255,255,255,.07); }
+          .ab-pillars { grid-template-columns: 1fr; }
+          .ab-pillars-wrap { padding: 4rem 1.5rem; }
+          .ab-partner-inner { padding: 4rem 1.5rem; }
+          .ab-cta { padding: 5rem 1.5rem; }
         }
       `}</style>
 
-      {/* Header */}
-      <header id="about-header" className={scrolled ? "scrolled" : ""}>
-        <div className="header-inner">
-          <a href="/" className="header-logo">
-            <div className="header-mark">
-              <img src={LOGO_B64} alt="MUSEDATA" />
-            </div>
-            <span className="header-word">MUSEDATA</span>
-          </a>
-          <span className="header-tag">About</span>
-        </div>
-      </header>
-
-      {/* Hero */}
-      <section id="about-hero">
-        <div className="hero-bg-img" />
-        <div className="w">
-          <div className="hero-inner">
-            <Fade delay={0}>
-              <div className="hero-label-row">
-                <div className="hero-label-line" />
-                <span className="hero-label-text">Our Story</span>
-              </div>
-            </Fade>
-            <Fade delay={0.12}>
-              <h1 className="hero-h1">
-                Evidence before <span className="accent">conviction.</span>
-              </h1>
-            </Fade>
-            <Fade delay={0.24}>
-              <p className="hero-body">
-                MUSEDATA is a growth equity firm deploying minority capital into enterprise software and AI companies. We were founded on a simple principle: the finest capital is not merely patient—it is precise.
-              </p>
-            </Fade>
-          </div>
-        </div>
-      </section>
-
-      {/* Mission */}
-      <section className="about-section">
-        <div className="w">
-          <Fade delay={0}>
-            <div className="section-label">Our Mission</div>
-          </Fade>
-          <Fade delay={0.08}>
-            <h2 className="section-title">Building institutions, not just companies.</h2>
-          </Fade>
-          <Fade delay={0.16}>
-            <p className="section-body">
-              We believe the best enterprise software companies are built to last. That requires more than capital—it requires infrastructure, discipline, and partnerships that scale with ambition. MUSEDATA exists to provide exactly that: minority growth equity, embedded operational expertise, and institutional credibility from day one.
+      {/* ── HERO ── */}
+      <section className="ab-hero">
+        <div className="ab-hero-inner">
+          <div>
+            <div className="ab-tag">Investment Philosophy</div>
+            <h1 className="ab-h1">
+              Evidence before<br /><em>conviction.</em>
+            </h1>
+            <p className="ab-intro">
+              MUSEDATA is a growth equity firm deploying minority capital into enterprise software and AI companies: backed by proprietary diligence, built around founders ready for their next chapter.
             </p>
-          </Fade>
-        </div>
-      </section>
-
-      {/* Values */}
-      <section className="about-section alt">
-        <div className="w">
-          <Fade delay={0}>
-            <div className="section-label">Our Values</div>
-          </Fade>
-          <Fade delay={0.08}>
-            <h2 className="section-title">The principles that guide every decision.</h2>
-          </Fade>
-          
-          <div className="values-grid">
-            {VALUES.map((value, i) => (
-              <Fade key={value.title} delay={0.16 + i * 0.08}>
-                <div className="value-card">
-                  <div className="icon">{value.icon}</div>
-                  <h3>{value.title}</h3>
-                  <p>{value.desc}</p>
-                </div>
-              </Fade>
-            ))}
+          </div>
+          <div className="ab-quote-wrap">
+            <blockquote className="ab-quote">
+              "The finest capital is not merely patient. It is <em>precise</em>: deployed at the moment when a company is ready to be something permanent."
+            </blockquote>
+            <div className="ab-quote-attr">MUSEDATA Investment Thesis</div>
           </div>
         </div>
       </section>
 
-      {/* Team */}
-      <section className="about-section">
-        <div className="w">
-          <Fade delay={0}>
-            <div className="section-label">Our Team</div>
-          </Fade>
-          <Fade delay={0.08}>
-            <h2 className="section-title">Operators. Investors. Builders.</h2>
-          </Fade>
-          
-          <div className="team-grid">
-            {TEAM.map((member, i) => (
-              <Fade key={member.name} delay={0.16 + i * 0.08}>
-                <div className="team-card">
-                  <div className="team-avatar">👤</div>
-                  <div className="team-name">{member.name}</div>
-                  <div className="team-role">{member.role}</div>
-                  <p className="team-bio">{member.bio}</p>
-                </div>
-              </Fade>
-            ))}
+      {/* ── STATS ── */}
+      <div className="ab-stats">
+        <div className="ab-stats-inner">
+          <div className="ab-stat">
+            <div className="ab-stat-val">$3–25<sup>M</sup></div>
+            <div className="ab-stat-label">ARR at Entry</div>
+          </div>
+          <div className="ab-stat">
+            <div className="ab-stat-val">$5–25<sup>M</sup></div>
+            <div className="ab-stat-label">Check Size</div>
+          </div>
+          <div className="ab-stat">
+            <div className="ab-stat-val">$100<sup>M+</sup></div>
+            <div className="ab-stat-label">Portfolio Scale</div>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* History */}
-      <section className="about-section alt">
-        <div className="w">
-          <Fade delay={0}>
-            <div className="section-label">Our Journey</div>
-          </Fade>
-          <Fade delay={0.08}>
-            <h2 className="section-title">From thesis to track record.</h2>
-          </Fade>
-          
-          <div className="timeline">
-            <Fade delay={0.16}>
-              <div className="timeline-item">
-                <div className="timeline-year">2021</div>
-                <div className="timeline-title">Founded</div>
-                <p className="timeline-desc">MUSEDATA launched with a thesis: enterprise software companies need more than capital—they need institutional infrastructure from day one.</p>
-              </div>
-            </Fade>
-            <Fade delay={0.24}>
-              <div className="timeline-item">
-                <div className="timeline-year">2022</div>
-                <div className="timeline-title">First Investments</div>
-                <p className="timeline-desc">Deployed initial capital into three enterprise AI companies, each selected through proprietary diligence frameworks.</p>
-              </div>
-            </Fade>
-            <Fade delay={0.32}>
-              <div className="timeline-item">
-                <div className="timeline-year">2023</div>
-                <div className="timeline-title">SRG Launched</div>
-                <p className="timeline-desc">Embedded the Strategic Resource Group directly into portfolio operations, building financial and GTM infrastructure at scale.</p>
-              </div>
-            </Fade>
-            <Fade delay={0.4}>
-              <div className="timeline-item">
-                <div className="timeline-year">2024–Present</div>
-                <div className="timeline-title">Global Expansion</div>
-                <p className="timeline-desc">Expanded investment activity across North America and Europe. Built LP network for co-investment and sponsor processes.</p>
-              </div>
-            </Fade>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="about-cta">
-        <div className="w">
-          <Fade delay={0}>
-            <h2 className="cta-h2">Ready to build something <span style={{ color: 'var(--cta-accent)' }}>extraordinary?</span></h2>
-          </Fade>
-          <Fade delay={0.08}>
-            <p className="cta-sub">
-              Whether you're a founder seeking capital or an operator looking to join our team, we'd love to hear from you.
-            </p>
-          </Fade>
-          <Fade delay={0.16}>
-            <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
-              <Link href="/funding" className="cta-btn">Apply for Capital →</Link>
-              <Link href="/jobs" className="cta-btn" style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.3)' }}>View Careers →</Link>
+      {/* ── PILLARS ── */}
+      <div className="ab-pillars-section">
+        <div className="ab-pillars-wrap">
+          <div className="ab-section-label">Our Principles</div>
+          <div className="ab-pillars">
+            <div className="ab-pillar">
+              <div className="ab-pillar-num">01</div>
+              <div className="ab-pillar-title">Evidence before conviction</div>
+              <div className="ab-pillar-desc">Every investment begins with proprietary diligence: financial, operational, and strategic: before capital is ever committed.</div>
             </div>
-          </Fade>
+            <div className="ab-pillar">
+              <div className="ab-pillar-num">02</div>
+              <div className="ab-pillar-title">Minority by design</div>
+              <div className="ab-pillar-desc">We take minority positions intentionally. Founders retain control. We provide the infrastructure, relationships, and capital to scale.</div>
+            </div>
+            <div className="ab-pillar">
+              <div className="ab-pillar-num">03</div>
+              <div className="ab-pillar-title">Capital as a signal</div>
+              <div className="ab-pillar-desc">MUSEDATA capital signals institutional readiness: opening doors to LP co-investment, sponsor processes, and strategic partnerships.</div>
+            </div>
+            <div className="ab-pillar">
+              <div className="ab-pillar-num">04</div>
+              <div className="ab-pillar-title">Global mandate</div>
+              <div className="ab-pillar-desc">Operating from New York, Los Angeles, and London: investing globally into enterprise software and AI companies at the inflection point.</div>
+            </div>
+          </div>
         </div>
-      </section>
+      </div>
 
-      {/* Footer */}
-      <footer id="about-footer">
+      {/* ── HOW WE PARTNER ── */}
+      <div className="ab-partner">
+        <div className="ab-partner-inner">
+          <div>
+            <div className="ab-section-label">How We Partner</div>
+            <h2 className="ab-partner-h">
+              Capital with <em>operational depth.</em>
+            </h2>
+            <p className="ab-partner-body">
+              We deploy minority growth equity and work alongside founders as the company scales. The firm's operational capabilities: the SRG, the network, the institutional relationships: are part of how we invest, not an add-on to it.
+            </p>
+            <p className="ab-partner-body">
+              The best partnerships are built on conviction, not checklists.
+            </p>
+            <a href="mailto:partners@musedata.ai" className="ab-partner-cta">
+              Apply for Capital &rarr;
+            </a>
+          </div>
+          <ul className="ab-checklist">
+            <li>Proprietary diligence across financial, operational, and strategic dimensions</li>
+            <li>Strategic Resource Group embedded inside every portfolio company</li>
+            <li>Governance, reporting cadence, and institutional infrastructure from day one</li>
+            <li>LP co-investment access and sponsor process facilitation</li>
+            <li>Global network across New York, Los Angeles, and London</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* ── CTA ── */}
+      <div className="ab-cta">
+        <h2 className="ab-cta-h">
+          Your next chapter deserves<br /><em>the right capital.</em>
+        </h2>
+        <p className="ab-cta-sub">
+          Apply directly: the process begins with evidence, not introductions.
+        </p>
+        <div className="ab-cta-btns">
+          <a href="mailto:partners@musedata.ai" className="ab-btn-primary">Apply for Capital &rarr;</a>
+          <a href="mailto:partners@musedata.ai" className="ab-btn-ghost">Contact the Team</a>
+        </div>
+      </div>
+
+      {/* ── FOOTER ── */}
+      <footer>
         <div className="w">
           <div className="footer-slim">
-            <a href="/" className="footer-logo">
+            <a href="#" className="footer-logo">
               <div className="footer-mark">
-                <img src={LOGO_B64} alt="MUSEDATA" />
+                <img src={LOGO_B64} alt="MUSEDATA logo" />
               </div>
               <span className="footer-word">MUSEDATA</span>
             </a>
             <div className="footer-right">
               <div className="footer-links-row">
-                <a href="/privacy">Privacy Policy</a>
-                <a href="/terms">Terms of Use</a>
-                <a href="/disclosures">Disclosures</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Use</a>
+                <a href="#">Disclosures</a>
                 <a href="mailto:partners@musedata.ai">Contact</a>
               </div>
               <div className="footer-copy">© 2026 MUSEDATA Growth Equity. All rights reserved.</div>
