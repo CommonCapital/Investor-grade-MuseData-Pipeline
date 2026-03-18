@@ -11,6 +11,16 @@ async function requireAdmin(ctx: any) {
   return identity;
 }
 
+// ── File Upload ───────────────────────────────────────────────────────────────
+
+export const generateUploadUrl = mutation({
+  args: {},
+  handler: async (ctx) => {
+    await requireAdmin(ctx);
+    return await ctx.storage.generateUploadUrl();
+  },
+});
+
 // ── Job Applications ──────────────────────────────────────────────────────────
 
 export const listJobApplications = query({
@@ -56,10 +66,8 @@ export const createJobApplication = mutation({
     const identity = await requireAdmin(ctx);
     const now = Date.now();
     const id = await ctx.db.insert("jobApplications", {
-      ...args,
-      submittedAt: now, lastUpdatedAt: now,
-      termsAccepted: true, manuallyAdded: true,
-      addedBy: identity.email ?? "admin",
+      ...args, submittedAt: now, lastUpdatedAt: now,
+      termsAccepted: true, manuallyAdded: true, addedBy: identity.email ?? "admin",
     });
     return { id };
   },
@@ -78,8 +86,7 @@ export const updateJobStatus = mutation({
     const identity = await requireAdmin(ctx);
     await ctx.db.patch(args.applicationId, {
       status: args.status, lastUpdatedAt: Date.now(),
-      reviewedBy: identity.email ?? "admin",
-      reviewNotes: args.reviewNotes,
+      reviewedBy: identity.email ?? "admin", reviewNotes: args.reviewNotes,
     });
     return { success: true };
   },
@@ -103,10 +110,7 @@ export const updateJobApplication = mutation({
   handler: async (ctx, args) => {
     const identity = await requireAdmin(ctx);
     const { applicationId, ...fields } = args;
-    await ctx.db.patch(applicationId, {
-      ...fields, lastUpdatedAt: Date.now(),
-      reviewedBy: identity.email ?? "admin",
-    });
+    await ctx.db.patch(applicationId, { ...fields, lastUpdatedAt: Date.now(), reviewedBy: identity.email ?? "admin" });
     return { success: true };
   },
 });
@@ -156,14 +160,9 @@ export const createStartupApplication = mutation({
     coFounders: v.optional(v.string()),
     companyName: v.string(), companyWebsite: v.optional(v.string()),
     companyLocation: v.string(),
-    incorporationStatus: v.union(
-      v.literal("incorporated"), v.literal("in_progress"), v.literal("not_yet")
-    ),
+    incorporationStatus: v.union(v.literal("incorporated"), v.literal("in_progress"), v.literal("not_yet")),
     industry: v.string(),
-    stage: v.union(
-      v.literal("idea"), v.literal("prototype"), v.literal("mvp"),
-      v.literal("early_revenue"), v.literal("growth")
-    ),
+    stage: v.union(v.literal("idea"), v.literal("prototype"), v.literal("mvp"), v.literal("early_revenue"), v.literal("growth")),
     businessModel: v.string(), problemStatement: v.string(),
     solution: v.string(), uniqueValueProposition: v.string(),
     targetMarket: v.string(), marketSize: v.optional(v.string()),
@@ -171,15 +170,11 @@ export const createStartupApplication = mutation({
     currentRevenue: v.optional(v.string()), revenueGrowth: v.optional(v.string()),
     numberOfCustomers: v.optional(v.string()),
     keyMilestones: v.string(),
-    fundingStage: v.union(
-      v.literal("pre_seed"), v.literal("seed"), v.literal("series_a"),
-      v.literal("series_b"), v.literal("series_c_plus")
-    ),
+    fundingStage: v.union(v.literal("pre_seed"), v.literal("seed"), v.literal("series_a"), v.literal("series_b"), v.literal("series_c_plus")),
     fundingAmount: v.string(), previousFunding: v.optional(v.string()),
     currentInvestors: v.optional(v.string()), useOfFunds: v.string(),
-    valuation: v.optional(v.string()),
-    teamSize: v.string(), keyTeamMembers: v.string(),
-    advisors: v.optional(v.string()),
+    valuation: v.optional(v.string()), teamSize: v.string(),
+    keyTeamMembers: v.string(), advisors: v.optional(v.string()),
     productDescription: v.string(), technologyStack: v.optional(v.string()),
     customerAcquisition: v.string(), salesStrategy: v.string(),
     marketingStrategy: v.optional(v.string()),
@@ -191,15 +186,15 @@ export const createStartupApplication = mutation({
       v.literal("term_sheet"), v.literal("funded"), v.literal("rejected"), v.literal("on_hold")
     ),
     internalRating: v.optional(v.number()),
+    pitchDeckStorageId: v.optional(v.id("_storage")),
+    financialModelStorageId: v.optional(v.id("_storage")),
   },
   handler: async (ctx, args) => {
     const identity = await requireAdmin(ctx);
     const now = Date.now();
     const id = await ctx.db.insert("startupApplications", {
-      ...args,
-      submittedAt: now, lastUpdatedAt: now,
-      termsAccepted: true, manuallyAdded: true,
-      addedBy: identity.email ?? "admin",
+      ...args, submittedAt: now, lastUpdatedAt: now,
+      termsAccepted: true, manuallyAdded: true, addedBy: identity.email ?? "admin",
     });
     return { id };
   },
@@ -240,8 +235,7 @@ export const listLimitedPartners = query({
   args: {
     status: v.optional(v.union(
       v.literal("prospect"), v.literal("contacted"), v.literal("interested"),
-      v.literal("soft_committed"), v.literal("committed"),
-      v.literal("closed"), v.literal("declined")
+      v.literal("soft_committed"), v.literal("committed"), v.literal("closed"), v.literal("declined")
     )),
   },
   handler: async (ctx, args) => {
@@ -280,8 +274,7 @@ export const createLimitedPartner = mutation({
     sectorPreferences: v.optional(v.string()),
     status: v.union(
       v.literal("prospect"), v.literal("contacted"), v.literal("interested"),
-      v.literal("soft_committed"), v.literal("committed"),
-      v.literal("closed"), v.literal("declined")
+      v.literal("soft_committed"), v.literal("committed"), v.literal("closed"), v.literal("declined")
     ),
     lastContactDate: v.optional(v.number()), nextFollowUpDate: v.optional(v.number()),
     meetingCount: v.optional(v.number()), source: v.optional(v.string()),
@@ -292,8 +285,7 @@ export const createLimitedPartner = mutation({
     const identity = await requireAdmin(ctx);
     const now = Date.now();
     const id = await ctx.db.insert("limitedPartners", {
-      ...args, addedBy: identity.email ?? "admin",
-      addedAt: now, lastUpdatedAt: now,
+      ...args, addedBy: identity.email ?? "admin", addedAt: now, lastUpdatedAt: now,
     });
     return { id };
   },
@@ -316,8 +308,7 @@ export const updateLimitedPartner = mutation({
     sectorPreferences: v.optional(v.string()),
     status: v.optional(v.union(
       v.literal("prospect"), v.literal("contacted"), v.literal("interested"),
-      v.literal("soft_committed"), v.literal("committed"),
-      v.literal("closed"), v.literal("declined")
+      v.literal("soft_committed"), v.literal("committed"), v.literal("closed"), v.literal("declined")
     )),
     lastContactDate: v.optional(v.number()), nextFollowUpDate: v.optional(v.number()),
     meetingCount: v.optional(v.number()), source: v.optional(v.string()),
@@ -370,22 +361,9 @@ export const getDashboardStats = query({
     lps.forEach((a: any) => { lpByStatus[a.status as keyof typeof lpByStatus]++; });
     const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
     return {
-      jobs: {
-        total: jobApps.length,
-        recent: jobApps.filter((a: any) => a.submittedAt > sevenDaysAgo).length,
-        byStatus: jobByStatus,
-      },
-      startups: {
-        total: startupApps.length,
-        recent: startupApps.filter((a: any) => a.submittedAt > sevenDaysAgo).length,
-        byStatus: startupByStatus,
-      },
-      lps: {
-        total: lps.length,
-        recent: lps.filter((a: any) => a.addedAt > sevenDaysAgo).length,
-        byStatus: lpByStatus,
-        committed: lps.filter((a: any) => ["soft_committed","committed","closed"].includes(a.status)).length,
-      },
+      jobs: { total: jobApps.length, recent: jobApps.filter((a: any) => a.submittedAt > sevenDaysAgo).length, byStatus: jobByStatus },
+      startups: { total: startupApps.length, recent: startupApps.filter((a: any) => a.submittedAt > sevenDaysAgo).length, byStatus: startupByStatus },
+      lps: { total: lps.length, recent: lps.filter((a: any) => a.addedAt > sevenDaysAgo).length, byStatus: lpByStatus, committed: lps.filter((a: any) => ["soft_committed","committed","closed"].includes(a.status)).length },
     };
   },
 });
