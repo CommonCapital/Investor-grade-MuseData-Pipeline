@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Growth Equity",
-  description: "Institutional-Grade Finance Infrastructure for VC-Backed Software Companies",
+  description: "MUSEDATA is a growth equity firm deploying minority capital into enterprise software and AI companies, selected through proprietary diligence, and partnered with founders who are building something permanent.",
   icons: {
     icon: "/favicon.ico",
     
