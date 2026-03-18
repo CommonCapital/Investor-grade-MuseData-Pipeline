@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { LOGO_B64 } from "@/components/UnifiedNavbar/UnifiedNavbar";
+import UnifiedNavbar, { LOGO_B64 } from "@/components/UnifiedNavbar/UnifiedNavbar";
 
 interface Person {
   init: string;
@@ -267,7 +267,7 @@ export default function PeoplePage() {
           .team-grid{grid-template-columns:1fr;}
         }
       `}</style>
-
+     <UnifiedNavbar />
       {/* ── PAGE HEADER ── */}
       <div className="page-header">
         <div className="page-header-inner">
