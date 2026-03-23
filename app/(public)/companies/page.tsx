@@ -187,7 +187,7 @@ export default function CompaniesPage() {
           <div className="hbar-div" />
           <div className="hbar-item">
             <div>
-              <div className="hbar-n">YC</div>
+              <div className="hbar-n">VC</div>
               <div className="hbar-l">Backed Founders</div>
             </div>
           </div>
