@@ -24,7 +24,7 @@ const T = {
   borderStrong: "rgba(42,127,160,0.28)",
 };
 
-const ADMIN_EMAILS = ["partners@musedata.ai", "collin@musedata.ai", "nursan2007@gmail.com"];
+const ADMIN_EMAILS = ["partners@musedata.ai", "collin@musedata.ai", "nursan2007@gmail.com", "noorulainmalik77@gmail.com"];
 
 const fmt = (ts: number) => new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 const fmtOpt = (ts?: number) => ts ? fmt(ts) : "—";
