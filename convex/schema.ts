@@ -160,7 +160,9 @@ export default defineSchema({
     lastContactDate: v.optional(v.number()), nextFollowUpDate: v.optional(v.number()),
     meetingCount: v.optional(v.number()), source: v.optional(v.string()),
     referredBy: v.optional(v.string()), internalRating: v.optional(v.number()),
-    notes: v.optional(v.string()), reviewNotes: v.optional(v.string()),
+    notes: v.optional(v.string()), reviewNotes: v.optional(v.string()), // After `reviewNotes: v.optional(v.string()),` add:
+ndaStorageId: v.optional(v.id("_storage")),
+subscriptionAgreementStorageId: v.optional(v.id("_storage")),
     addedBy: v.string(), addedAt: v.number(), lastUpdatedAt: v.number(),
   })
     .index("by_email", ["email"]).index("by_status", ["status"])

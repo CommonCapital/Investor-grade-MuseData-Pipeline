@@ -61,6 +61,7 @@ export const createJobApplication = mutation({
       v.literal("submitted"), v.literal("under_review"), v.literal("interviewing"),
       v.literal("accepted"), v.literal("rejected")
     ),
+    
   },
   handler: async (ctx, args) => {
     const identity = await requireAdmin(ctx);
@@ -279,7 +280,8 @@ export const createLimitedPartner = mutation({
     lastContactDate: v.optional(v.number()), nextFollowUpDate: v.optional(v.number()),
     meetingCount: v.optional(v.number()), source: v.optional(v.string()),
     referredBy: v.optional(v.string()), internalRating: v.optional(v.number()),
-    notes: v.optional(v.string()),
+    notes: v.optional(v.string()), ndaStorageId: v.optional(v.id("_storage")),
+subscriptionAgreementStorageId: v.optional(v.id("_storage")),
   },
   handler: async (ctx, args) => {
     const identity = await requireAdmin(ctx);

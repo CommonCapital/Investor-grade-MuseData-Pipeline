@@ -698,8 +698,10 @@ function StartupModal({ onClose, initial, startupId }: { onClose: () => void; in
 // ═══════════════════════════════════════════════════════════════════════════════
 const LP_TYPE_OPTIONS = Object.entries(LP_TYPES).map(([v, l]) => ({ value: v, label: l }));
 const LP_STATUS_OPTIONS = Object.entries(LP_STATUS).map(([v, c]) => ({ value: v, label: c.label }));
-type LPForm = { fullName: string; organization: string; title: string; email: string; phone: string; location: string; linkedin: string; website: string; investorType: string; commitmentAmount: string; checkSizeRange: string; totalAUM: string; geographicFocus: string; sectorPreferences: string; status: string; lastContactDate: string; nextFollowUpDate: string; meetingCount: string; source: string; referredBy: string; internalRating: string; notes: string; };
-const EMPTY_LP: LPForm = { fullName:"",organization:"",title:"",email:"",phone:"",location:"",linkedin:"",website:"",investorType:"hnwi",commitmentAmount:"",checkSizeRange:"",totalAUM:"",geographicFocus:"",sectorPreferences:"",status:"prospect",lastContactDate:"",nextFollowUpDate:"",meetingCount:"",source:"",referredBy:"",internalRating:"",notes:"" };
+type LPForm = { fullName: string; organization: string; title: string; email: string; phone: string; location: string; linkedin: string; website: string; investorType: string; commitmentAmount: string; checkSizeRange: string; totalAUM: string; geographicFocus: string; sectorPreferences: string; status: string; lastContactDate: string; nextFollowUpDate: string; meetingCount: string; source: string; referredBy: string; internalRating: string; notes: string;ndaStorageId: string; 
+  subscriptionAgreementStorageId: string;  };
+const EMPTY_LP: LPForm = { fullName:"",organization:"",title:"",email:"",phone:"",location:"",linkedin:"",website:"",investorType:"hnwi",commitmentAmount:"",checkSizeRange:"",totalAUM:"",geographicFocus:"",sectorPreferences:"",status:"prospect",lastContactDate:"",nextFollowUpDate:"",meetingCount:"",source:"",referredBy:"",internalRating:"",notes:"",   ndaStorageId: "", 
+  subscriptionAgreementStorageId: ""  };
 
 function LPModal({ onClose, initial, lpId }: { onClose: () => void; initial?: Partial<LPForm>; lpId?: Id<"limitedPartners"> }) {
   const create = useMutation(api.admin.createLimitedPartner);
@@ -712,7 +714,8 @@ function LPModal({ onClose, initial, lpId }: { onClose: () => void; initial?: Pa
     if (!form.fullName || !form.email) { setError("Name and email are required."); return; }
     setError(""); setSaving(true);
     try {
-      const p = { fullName: form.fullName, organization: form.organization || undefined, title: form.title || undefined, email: form.email, phone: form.phone || undefined, location: form.location || undefined, linkedin: form.linkedin || undefined, website: form.website || undefined, investorType: form.investorType as any, commitmentAmount: form.commitmentAmount || undefined, checkSizeRange: form.checkSizeRange || undefined, totalAUM: form.totalAUM || undefined, geographicFocus: form.geographicFocus || undefined, sectorPreferences: form.sectorPreferences || undefined, status: form.status as any, lastContactDate: form.lastContactDate ? new Date(form.lastContactDate).getTime() : undefined, nextFollowUpDate: form.nextFollowUpDate ? new Date(form.nextFollowUpDate).getTime() : undefined, meetingCount: form.meetingCount ? Number(form.meetingCount) : undefined, source: form.source || undefined, referredBy: form.referredBy || undefined, internalRating: form.internalRating ? Number(form.internalRating) : undefined, notes: form.notes || undefined };
+      const p = { fullName: form.fullName, organization: form.organization || undefined, title: form.title || undefined, email: form.email, phone: form.phone || undefined, location: form.location || undefined, linkedin: form.linkedin || undefined, website: form.website || undefined, investorType: form.investorType as any, commitmentAmount: form.commitmentAmount || undefined, checkSizeRange: form.checkSizeRange || undefined, totalAUM: form.totalAUM || undefined, geographicFocus: form.geographicFocus || undefined, sectorPreferences: form.sectorPreferences || undefined, status: form.status as any, lastContactDate: form.lastContactDate ? new Date(form.lastContactDate).getTime() : undefined, nextFollowUpDate: form.nextFollowUpDate ? new Date(form.nextFollowUpDate).getTime() : undefined, meetingCount: form.meetingCount ? Number(form.meetingCount) : undefined, source: form.source || undefined, referredBy: form.referredBy || undefined, internalRating: form.internalRating ? Number(form.internalRating) : undefined, notes: form.notes || undefined, ndaStorageId: form.ndaStorageId ? (form.ndaStorageId as Id<"_storage">) : undefined,
+subscriptionAgreementStorageId: form.subscriptionAgreementStorageId ? (form.subscriptionAgreementStorageId as Id<"_storage">) : undefined, };
       if (lpId) await update({ lpId, ...p });
       else await create(p);
       onClose();
@@ -726,6 +729,22 @@ function LPModal({ onClose, initial, lpId }: { onClose: () => void; initial?: Pa
       <FormSection step={3} title="Investment Profile"><div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><FInput label="Commitment Amount" value={form.commitmentAmount} onChange={set("commitmentAmount")} placeholder="$500K" /><FInput label="Check Size Range" value={form.checkSizeRange} onChange={set("checkSizeRange")} placeholder="$250K–$1M" /><FInput label="Total AUM" value={form.totalAUM} onChange={set("totalAUM")} placeholder="$50M" /><FInput label="Geographic Focus" value={form.geographicFocus} onChange={set("geographicFocus")} placeholder="North America, Europe" /></div><FTextarea label="Sector Preferences" value={form.sectorPreferences} onChange={set("sectorPreferences")} placeholder="FinTech, HealthTech, AI/ML…" rows={2} /></FormSection>
       <FormSection step={4} title="Relationship"><div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><FSelect label="Pipeline Status" value={form.status} onChange={set("status")} options={LP_STATUS_OPTIONS} required /><FInput label="Meeting Count" value={form.meetingCount} onChange={set("meetingCount")} placeholder="3" type="number" /><FInput label="Last Contact" value={form.lastContactDate} onChange={set("lastContactDate")} type="date" /><FInput label="Next Follow-Up" value={form.nextFollowUpDate} onChange={set("nextFollowUpDate")} type="date" /><FInput label="Source" value={form.source} onChange={set("source")} placeholder="Conference / Referral / Cold" /><FInput label="Referred By" value={form.referredBy} onChange={set("referredBy")} placeholder="John Doe" /></div></FormSection>
       <FormSection step={5} title="Internal Notes"><RatingPicker value={form.internalRating} onChange={set("internalRating")} /><FTextarea label="Notes" value={form.notes} onChange={set("notes")} placeholder="Investment thesis, relationship context, key concerns…" rows={3} /></FormSection>
+      <FormSection step={1} title="Documents">
+  <div className="space-y-3">
+    <FPdfUpload 
+      label="NDA / Confidentiality Agreement" 
+      storageId={form.ndaStorageId} 
+      onUploaded={set("ndaStorageId")} 
+      hint="Signed NDA or CDA · PDF only · max 20 MB" 
+    />
+    <FPdfUpload 
+      label="Subscription Agreement / Commitment Letter" 
+      storageId={form.subscriptionAgreementStorageId} 
+      onUploaded={set("subscriptionAgreementStorageId")} 
+      hint="LP subscription docs · PDF only · max 20 MB" 
+    />
+  </div>
+</FormSection>
       {error && <div className="flex items-start gap-3 px-4 py-3 rounded-xl ml-9" style={{ background: "#fee2e2", border: "1px solid #fca5a5" }}><XCircle className="w-4 h-4 flex-shrink-0 mt-0.5 text-red-500" /><p className="text-sm text-red-700">{error}</p></div>}
     </ModalShell>
   );
@@ -872,6 +891,18 @@ function LPDrawer({ id, onClose }: { id: Id<"limitedPartners">; onClose: () => v
           {(lp.linkedin || lp.website) && <div className="flex gap-3 mt-3">{lp.linkedin && <a href={lp.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-sm" style={{ color: T.main }}><Linkedin className="w-3.5 h-3.5" /> LinkedIn</a>}{lp.website && <a href={lp.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-sm" style={{ color: T.main }}><Globe className="w-3.5 h-3.5" /> Website</a>}</div>}
         </div>
         <div className="px-5 sm:px-8 py-6 space-y-6 overflow-y-auto flex-1">
+          {(lp.ndaStorageId || lp.subscriptionAgreementStorageId) && (
+  <Section title="Documents">
+    <div className="flex flex-wrap gap-3">
+      {lp.ndaStorageId && (
+        <DocButton storageId={lp.ndaStorageId} label="NDA" />
+      )}
+      {lp.subscriptionAgreementStorageId && (
+        <DocButton storageId={lp.subscriptionAgreementStorageId} label="Subscription Agreement" />
+      )}
+    </div>
+  </Section>
+)}
           <Section title="Investment Profile"><Grid2>{lp.commitmentAmount && <Field label="Commitment" value={lp.commitmentAmount} />}{lp.checkSizeRange && <Field label="Check Size" value={lp.checkSizeRange} />}{lp.totalAUM && <Field label="Total AUM" value={lp.totalAUM} />}{lp.geographicFocus && <Field label="Geographic Focus" value={lp.geographicFocus} />}</Grid2>{lp.sectorPreferences && <Field label="Sectors" value={lp.sectorPreferences} long />}</Section>
           <Section title="Relationship"><Grid2><Field label="Last Contact" value={fmtOpt(lp.lastContactDate)} /><Field label="Next Follow-Up" value={fmtOpt(lp.nextFollowUpDate)} />{lp.meetingCount != null && <Field label="Meetings" value={String(lp.meetingCount)} />}{lp.source && <Field label="Source" value={lp.source} />}{lp.referredBy && <Field label="Referred By" value={lp.referredBy} />}</Grid2></Section>
           {lp.notes && <Section title="Notes"><p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: T.deep }}>{lp.notes}</p></Section>}
