@@ -57,9 +57,7 @@ const PILLARS = [
   { n:"01", title:"Companies",               href:"/companies",                body:"Our portfolio of enterprise software and AI businesses, each selected through proprietary diligence and backed with $5–25M minority equity.",                                                                      link:"View Portfolio" },
   { n:"02", title:"People",                  href:"/people",                   body:"The operators, investors, and advisors behind MUSEDATA: a team built for rigorous diligence, institutional relationships, and long-term value creation.",                                                          link:"Meet the Team" },
   { n:"03", title:"Strategic Resource Group",href:"/strategic-resource-group", body:"Operational infrastructure embedded within every portfolio company: governance, reporting cadence, and strategic advisory for founders scaling toward institutional capital.",                                   link:"Learn More" },
-  { n:"04", title:"Harvard AI Build Sprint", href:"/student-reg",
-    body:"A highly selective 24-hour cohort building real AI products. Apply as a participant or partner with us as a sponsor.",
-    link:"Apply / Sponsor" },
+  
 
 ];
 
@@ -442,7 +440,9 @@ export default function MuseDataLanding() {
               <Authenticated>
                 <Link href="/funding" className="btn-primary">Apply for Capital <span className="arr" /></Link>
               </Authenticated>
-         
+         <Link href="/student-reg" className="btn-ghost">
+    Harvard AI Build Sprint <span className="arr" />
+  </Link>
             </div>
           </div>
         </div>
@@ -477,7 +477,7 @@ export default function MuseDataLanding() {
           <div className="sec-head-row">
             <div>
               <Fade delay={0}><div className="sec-label">What We Do</div></Fade>
-              <Fade delay={0.08}><h2 className="sec-h2">One firm. <em>Four pillars.</em></h2></Fade>
+              <Fade delay={0.08}><h2 className="sec-h2">One firm. <em>Three pillars.</em></h2></Fade>
             </div>
             <Fade delay={0.16}>
               <p className="sec-sub">Every part of MUSEDATA is built around the same principle: evidence before deployment, and partnership before capital.</p>
