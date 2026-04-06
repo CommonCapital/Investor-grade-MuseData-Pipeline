@@ -346,26 +346,281 @@ export const getFileUrl = query({
 
 // ── Dashboard Stats ───────────────────────────────────────────────────────────
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// PASTE THIS BLOCK INTO convex/admin.ts
+// Add it just before the final closing of the file (before or after getDashboardStats)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// ── Sprint Participants ───────────────────────────────────────────────────────
+
+export const listSprintParticipants = query({
+  args: {
+    status: v.optional(v.union(
+      v.literal("submitted"), v.literal("under_review"),
+      v.literal("accepted"), v.literal("rejected"), v.literal("waitlisted")
+    )),
+  },
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx);
+    if (args.status) {
+      return await ctx.db.query("sprintParticipants")
+        .withIndex("by_status", (q: any) => q.eq("status", args.status!))
+        .order("desc").collect();
+    }
+    return await ctx.db.query("sprintParticipants")
+      .withIndex("by_submitted_at").order("desc").collect();
+  },
+});
+
+export const getSprintParticipant = query({
+  args: { participantId: v.id("sprintParticipants") },
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx);
+    return await ctx.db.get(args.participantId);
+  },
+});
+
+export const createSprintParticipant = mutation({
+  args: {
+    fullName: v.string(),
+    email: v.string(),
+    institution: v.string(),
+    programYear: v.string(),
+    areaOfFocus: v.string(),
+    backgrounds: v.array(v.string()),
+    skills: v.string(),
+    executionStyle: v.string(),
+    hasPriorWork: v.string(),
+    projectSnapshot: v.string(),
+    primaryRole: v.string(),
+    outcomes: v.array(v.string()),
+    linkedinUrl: v.optional(v.string()),
+    portfolioUrl: v.optional(v.string()),
+    proofLinks: v.optional(v.string()),
+    availWindow: v.string(),
+    timeCommitment: v.string(),
+    locationPref: v.optional(v.string()),
+    commitSignal: v.string(),
+    teamPreference: v.string(),
+    collabStyle: v.string(),
+    interests: v.array(v.string()),
+    postSprintIntent: v.string(),
+    openToSponsor: v.optional(v.string()),
+    motivation: v.string(),
+    status: v.union(
+      v.literal("submitted"), v.literal("under_review"),
+      v.literal("accepted"), v.literal("rejected"), v.literal("waitlisted")
+    ),
+  },
+  handler: async (ctx, args) => {
+    const identity = await requireAdmin(ctx);
+    const now = Date.now();
+    const id = await ctx.db.insert("sprintParticipants", {
+      ...args,
+      submittedAt: now,
+      lastUpdatedAt: now,
+    });
+    return { id };
+  },
+});
+
+export const updateSprintParticipantStatus = mutation({
+  args: {
+    participantId: v.id("sprintParticipants"),
+    status: v.union(
+      v.literal("submitted"), v.literal("under_review"),
+      v.literal("accepted"), v.literal("rejected"), v.literal("waitlisted")
+    ),
+    reviewNotes: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const identity = await requireAdmin(ctx);
+    await ctx.db.patch(args.participantId, {
+      status: args.status,
+      lastUpdatedAt: Date.now(),
+      reviewedBy: identity.email ?? "admin",
+      reviewNotes: args.reviewNotes,
+    });
+    return { success: true };
+  },
+});
+
+export const deleteSprintParticipant = mutation({
+  args: { participantId: v.id("sprintParticipants") },
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx);
+    await ctx.db.delete(args.participantId);
+    return { success: true };
+  },
+});
+
+// ── Sprint Sponsors ───────────────────────────────────────────────────────────
+
+export const listSprintSponsors = query({
+  args: {
+    status: v.optional(v.union(
+      v.literal("submitted"), v.literal("under_review"),
+      v.literal("in_discussion"), v.literal("committed"), v.literal("declined")
+    )),
+  },
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx);
+    if (args.status) {
+      return await ctx.db.query("sprintSponsors")
+        .withIndex("by_status", (q: any) => q.eq("status", args.status!))
+        .order("desc").collect();
+    }
+    return await ctx.db.query("sprintSponsors")
+      .withIndex("by_submitted_at").order("desc").collect();
+  },
+});
+
+export const getSprintSponsor = query({
+  args: { sponsorId: v.id("sprintSponsors") },
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx);
+    return await ctx.db.get(args.sponsorId);
+  },
+});
+
+export const createSprintSponsor = mutation({
+  args: {
+    companyName: v.string(),
+    contactName: v.string(),
+    contactTitle: v.string(),
+    email: v.string(),
+    phone: v.optional(v.string()),
+    website: v.string(),
+    linkedin: v.optional(v.string()),
+    orgType: v.string(),
+    orgStage: v.string(),
+    involvementTypes: v.array(v.string()),
+    sponsorLevel: v.string(),
+    anchorPartner: v.string(),
+    primaryGoals: v.array(v.string()),
+    successDefinition: v.string(),
+    relevantAreas: v.array(v.string()),
+    participantEngagement: v.array(v.string()),
+    preferredTimeframe: v.string(),
+    participationFormat: v.string(),
+    openToExpansion: v.string(),
+    isDecisionMaker: v.string(),
+    otherApprovers: v.optional(v.string()),
+    decisionTimeline: v.string(),
+    additionalNotes: v.optional(v.string()),
+    referralSource: v.string(),
+    status: v.union(
+      v.literal("submitted"), v.literal("under_review"),
+      v.literal("in_discussion"), v.literal("committed"), v.literal("declined")
+    ),
+    internalRating: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const identity = await requireAdmin(ctx);
+    const now = Date.now();
+    const id = await ctx.db.insert("sprintSponsors", {
+      ...args,
+      submittedAt: now,
+      lastUpdatedAt: now,
+    });
+    return { id };
+  },
+});
+
+export const updateSprintSponsorStatus = mutation({
+  args: {
+    sponsorId: v.id("sprintSponsors"),
+    status: v.union(
+      v.literal("submitted"), v.literal("under_review"),
+      v.literal("in_discussion"), v.literal("committed"), v.literal("declined")
+    ),
+    reviewNotes: v.optional(v.string()),
+    internalRating: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const identity = await requireAdmin(ctx);
+    await ctx.db.patch(args.sponsorId, {
+      status: args.status,
+      lastUpdatedAt: Date.now(),
+      reviewedBy: identity.email ?? "admin",
+      reviewNotes: args.reviewNotes,
+      internalRating: args.internalRating,
+    });
+    return { success: true };
+  },
+});
+
+export const deleteSprintSponsor = mutation({
+  args: { sponsorId: v.id("sprintSponsors") },
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx);
+    await ctx.db.delete(args.sponsorId);
+    return { success: true };
+  },
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// REPLACE your existing getDashboardStats with this updated version
+// ═══════════════════════════════════════════════════════════════════════════════
+
 export const getDashboardStats = query({
   args: {},
   handler: async (ctx) => {
     await requireAdmin(ctx);
-    const [jobApps, startupApps, lps] = await Promise.all([
+    const [jobApps, startupApps, lps, participants, sponsors] = await Promise.all([
       ctx.db.query("jobApplications").collect(),
       ctx.db.query("startupApplications").collect(),
       ctx.db.query("limitedPartners").collect(),
+      ctx.db.query("sprintParticipants").collect(),
+      ctx.db.query("sprintSponsors").collect(),
     ]);
+
     const jobByStatus = { submitted: 0, under_review: 0, interviewing: 0, accepted: 0, rejected: 0 };
     jobApps.forEach((a: any) => { jobByStatus[a.status as keyof typeof jobByStatus]++; });
+
     const startupByStatus = { submitted: 0, under_review: 0, due_diligence: 0, term_sheet: 0, funded: 0, rejected: 0, on_hold: 0 };
     startupApps.forEach((a: any) => { startupByStatus[a.status as keyof typeof startupByStatus]++; });
+
     const lpByStatus = { prospect: 0, contacted: 0, interested: 0, soft_committed: 0, committed: 0, closed: 0, declined: 0 };
     lps.forEach((a: any) => { lpByStatus[a.status as keyof typeof lpByStatus]++; });
+
+    const participantByStatus = { submitted: 0, under_review: 0, accepted: 0, rejected: 0, waitlisted: 0 };
+    participants.forEach((a: any) => { participantByStatus[a.status as keyof typeof participantByStatus]++; });
+
+    const sponsorByStatus = { submitted: 0, under_review: 0, in_discussion: 0, committed: 0, declined: 0 };
+    sponsors.forEach((a: any) => { sponsorByStatus[a.status as keyof typeof sponsorByStatus]++; });
+
     const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
     return {
-      jobs: { total: jobApps.length, recent: jobApps.filter((a: any) => a.submittedAt > sevenDaysAgo).length, byStatus: jobByStatus },
-      startups: { total: startupApps.length, recent: startupApps.filter((a: any) => a.submittedAt > sevenDaysAgo).length, byStatus: startupByStatus },
-      lps: { total: lps.length, recent: lps.filter((a: any) => a.addedAt > sevenDaysAgo).length, byStatus: lpByStatus, committed: lps.filter((a: any) => ["soft_committed","committed","closed"].includes(a.status)).length },
+      jobs: {
+        total: jobApps.length,
+        recent: jobApps.filter((a: any) => a.submittedAt > sevenDaysAgo).length,
+        byStatus: jobByStatus,
+      },
+      startups: {
+        total: startupApps.length,
+        recent: startupApps.filter((a: any) => a.submittedAt > sevenDaysAgo).length,
+        byStatus: startupByStatus,
+      },
+      lps: {
+        total: lps.length,
+        recent: lps.filter((a: any) => a.addedAt > sevenDaysAgo).length,
+        byStatus: lpByStatus,
+        committed: lps.filter((a: any) => ["soft_committed", "committed", "closed"].includes(a.status)).length,
+      },
+      sprintParticipants: {
+        total: participants.length,
+        recent: participants.filter((a: any) => a.submittedAt > sevenDaysAgo).length,
+        byStatus: participantByStatus,
+        accepted: participantByStatus.accepted,
+      },
+      sprintSponsors: {
+        total: sponsors.length,
+        recent: sponsors.filter((a: any) => a.submittedAt > sevenDaysAgo).length,
+        byStatus: sponsorByStatus,
+        committed: sponsorByStatus.committed,
+      },
     };
   },
 });
+

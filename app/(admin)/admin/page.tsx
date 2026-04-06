@@ -10,6 +10,7 @@ import {
   Linkedin, Globe, Calendar, Eye, Plus, Handshake,
   Trash2, Edit3, Save, RefreshCw, Search, XCircle,
   ChevronDown, FileText, Upload, CheckCircle2, Paperclip,
+  Zap,
 } from "lucide-react";
 
 // ─── Theme ─────────────────────────────────────────────────────────────────────
@@ -59,6 +60,21 @@ const LP_TYPES: Record<string, string> = {
   hnwi: "HNWI", family_office: "Family Office", endowment: "Endowment",
   pension_fund: "Pension Fund", corporate: "Corporate",
   fund_of_funds: "Fund of Funds", sovereign_wealth: "Sovereign Wealth", other: "Other",
+};
+const SPRINT_PARTICIPANT_STATUS: Record<string, { label: string; textColor: string; bgColor: string; dot: string }> = {
+  submitted:    { label: "Submitted",    textColor: "#0369a1", bgColor: "#e0f2fe", dot: "#0ea5e9" },
+  under_review: { label: "Under Review", textColor: "#92400e", bgColor: "#fef3c7", dot: "#f59e0b" },
+  accepted:     { label: "Accepted",     textColor: "#065f46", bgColor: "#d1fae5", dot: "#10b981" },
+  rejected:     { label: "Rejected",     textColor: "#991b1b", bgColor: "#fee2e2", dot: "#ef4444" },
+  waitlisted:   { label: "Waitlisted",   textColor: "#5b21b6", bgColor: "#ede9fe", dot: "#7c3aed" },
+};
+ 
+const SPRINT_SPONSOR_STATUS: Record<string, { label: string; textColor: string; bgColor: string; dot: string }> = {
+  submitted:    { label: "Submitted",    textColor: "#0369a1", bgColor: "#e0f2fe", dot: "#0ea5e9" },
+  under_review: { label: "Under Review", textColor: "#92400e", bgColor: "#fef3c7", dot: "#f59e0b" },
+  in_discussion:{ label: "In Discussion",textColor: "#5b21b6", bgColor: "#ede9fe", dot: "#7c3aed" },
+  committed:    { label: "Committed",    textColor: "#065f46", bgColor: "#d1fae5", dot: "#10b981" },
+  declined:     { label: "Declined",     textColor: "#991b1b", bgColor: "#fee2e2", dot: "#ef4444" },
 };
 
 // ─── Atoms ────────────────────────────────────────────────────────────────────
@@ -225,7 +241,35 @@ function RatingPicker({ value, onChange }: { value: string; onChange: (v: string
     </div>
   );
 }
-
+function FCheckboxGroup({ label, options, value, onChange }: {
+  label: string;
+  options: string[];
+  value: string[];
+  onChange: (v: string[]) => void;
+}) {
+  const toggle = (opt: string) =>
+    onChange(value.includes(opt) ? value.filter(v => v !== opt) : [...value, opt]);
+  return (
+    <div>
+      <label className="flex items-center gap-1.5 text-xs font-medium mb-2" style={{ color: T.slate }}>{label}</label>
+      <div className="flex flex-wrap gap-2">
+        {options.map(opt => {
+          const active = value.includes(opt);
+          return (
+            <button key={opt} type="button" onClick={() => toggle(opt)}
+              className="px-3 py-1.5 rounded-lg text-xs font-medium border transition-all"
+              style={active
+                ? { background: "rgba(42,127,160,0.12)", color: T.main, borderColor: T.main }
+                : { background: "#fff", color: T.slate, borderColor: T.border }}>
+              {active && <span className="mr-1 text-[10px]">✓</span>}
+              {opt}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 // ─── PDF Upload Component ─────────────────────────────────────────────────────
 function FPdfUpload({ label, storageId, onUploaded, hint }:
   { label: string; storageId: string; onUploaded: (id: string) => void; hint?: string }) {
@@ -750,6 +794,296 @@ subscriptionAgreementStorageId: form.subscriptionAgreementStorageId ? (form.subs
   );
 }
 
+const SPRINT_BACKGROUNDS = ["Computer Science","Data Science","Business/Finance","Design/UX","Engineering","Life Sciences","Social Sciences","Law","Medicine/Public Health","Other"];
+const SPRINT_EXECUTION_STYLES = ["Full-stack builder","Frontend specialist","Backend / infra","Data / ML","Product","Design","Strategy / Business","Other"];
+const SPRINT_ROLES = ["Technical lead","Product lead","Design lead","Business / Strategy lead","Generalist"];
+const SPRINT_OUTCOMES = ["Build a portfolio piece","Explore startup ideas","Learn AI tools","Network","Win prizes","Get hired","Other"];
+const SPRINT_AVAIL_WINDOWS = ["Weekdays only","Weekends only","Both weekdays and weekends","Flexible"];
+const SPRINT_TIME_COMMITMENTS = ["5–10 hrs / week","10–20 hrs / week","20–30 hrs / week","30+ hrs / week"];
+const SPRINT_TEAM_PREFS = ["Solo","Small team (2–3)","Larger team (4+)","No preference"];
+const SPRINT_COLLAB_STYLES = ["In-person","Remote","Hybrid"];
+const SPRINT_INTERESTS = ["Healthcare","Education","Finance / FinTech","Climate / CleanTech","Productivity","Entertainment","Social Impact","Enterprise / B2B","Consumer","Other"];
+const SPRINT_POST_INTENTS = ["Continue building","Look for co-founders","Apply to accelerators","Open-source it","Just exploring"];
+const SPRINT_COMMIT_SIGNALS = ["Fully committed","Mostly committed","Exploratory"];
+const SPRINT_PARTICIPANT_STATUS_OPTIONS = Object.entries(SPRINT_PARTICIPANT_STATUS).map(([v, c]) => ({ value: v, label: c.label }));
+ 
+type SprintParticipantForm = {
+  fullName: string; email: string; institution: string; programYear: string; areaOfFocus: string;
+  backgrounds: string[]; skills: string; executionStyle: string;
+  hasPriorWork: string; projectSnapshot: string; primaryRole: string; outcomes: string[];
+  linkedinUrl: string; portfolioUrl: string; proofLinks: string;
+  availWindow: string; timeCommitment: string; locationPref: string; commitSignal: string;
+  teamPreference: string; collabStyle: string; interests: string[]; postSprintIntent: string; openToSponsor: string;
+  motivation: string; status: string;
+};
+const EMPTY_SPRINT_PARTICIPANT: SprintParticipantForm = {
+  fullName:"",email:"",institution:"",programYear:"",areaOfFocus:"",
+  backgrounds:[],skills:"",executionStyle:"",
+  hasPriorWork:"",projectSnapshot:"",primaryRole:"",outcomes:[],
+  linkedinUrl:"",portfolioUrl:"",proofLinks:"",
+  availWindow:"",timeCommitment:"",locationPref:"",commitSignal:"",
+  teamPreference:"",collabStyle:"",interests:[],postSprintIntent:"",openToSponsor:"",
+  motivation:"",status:"submitted",
+};
+ 
+function SprintParticipantModal({ onClose, initial, participantId }: {
+  onClose: () => void;
+  initial?: Partial<SprintParticipantForm>;
+  participantId?: Id<"sprintParticipants">;
+}) {
+  const create = useMutation(api.admin.createSprintParticipant);
+  const [form, setForm] = useState<SprintParticipantForm>({ ...EMPTY_SPRINT_PARTICIPANT, ...initial });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const set = (k: keyof SprintParticipantForm) => (v: string) => setForm(f => ({ ...f, [k]: v }));
+  const setArr = (k: keyof SprintParticipantForm) => (v: string[]) => setForm(f => ({ ...f, [k]: v }));
+ 
+  const save = async () => {
+    const required = ["fullName","email","institution","programYear","areaOfFocus","skills","executionStyle","hasPriorWork","projectSnapshot","primaryRole","availWindow","timeCommitment","commitSignal","teamPreference","collabStyle","postSprintIntent","motivation"];
+    const missing = required.filter(k => !form[k as keyof SprintParticipantForm]);
+    if (missing.length) { setError(`Please fill in: ${missing.slice(0,3).join(", ")}${missing.length > 3 ? "…" : ""}`); return; }
+    setError(""); setSaving(true);
+    try {
+      await create({
+        fullName: form.fullName, email: form.email, institution: form.institution,
+        programYear: form.programYear, areaOfFocus: form.areaOfFocus,
+        backgrounds: form.backgrounds, skills: form.skills, executionStyle: form.executionStyle,
+        hasPriorWork: form.hasPriorWork, projectSnapshot: form.projectSnapshot,
+        primaryRole: form.primaryRole, outcomes: form.outcomes,
+        linkedinUrl: form.linkedinUrl || undefined, portfolioUrl: form.portfolioUrl || undefined,
+        proofLinks: form.proofLinks || undefined, availWindow: form.availWindow,
+        timeCommitment: form.timeCommitment, locationPref: form.locationPref || undefined,
+        commitSignal: form.commitSignal, teamPreference: form.teamPreference,
+        collabStyle: form.collabStyle, interests: form.interests,
+        postSprintIntent: form.postSprintIntent, openToSponsor: form.openToSponsor || undefined,
+        motivation: form.motivation, status: form.status as any,
+      });
+      onClose();
+    } catch (e: any) { setError(e.message ?? "Failed to save."); }
+    finally { setSaving(false); }
+  };
+ 
+  return (
+    <ModalShell
+      title={participantId ? "Edit Participant" : "Add Sprint Participant"}
+      subtitle="Harvard AI Build Sprint registration"
+      onClose={onClose} onSave={save} saving={saving}
+      saveLabel={participantId ? "Save Changes" : "Add Participant"}
+      icon={<Users className="w-4 h-4" style={{ color: T.main }} />}
+    >
+      <FormSection step={1} title="About You">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FInput label="Full Name" value={form.fullName} onChange={set("fullName")} placeholder="Jane Smith" required />
+          <FInput label="Email" value={form.email} onChange={set("email")} placeholder="jane@harvard.edu" type="email" required />
+          <FInput label="Institution" value={form.institution} onChange={set("institution")} placeholder="Harvard University" required />
+          <FInput label="Program / Year" value={form.programYear} onChange={set("programYear")} placeholder="MBA Year 2 / PhD Year 3" required />
+          <div className="sm:col-span-2">
+            <FInput label="Area of Focus" value={form.areaOfFocus} onChange={set("areaOfFocus")} placeholder="e.g. Computational Biology, FinTech, Climate Policy" required />
+          </div>
+        </div>
+      </FormSection>
+ 
+      <FormSection step={2} title="Skills & Capabilities">
+        <FCheckboxGroup label="Background(s)" options={SPRINT_BACKGROUNDS} value={form.backgrounds} onChange={setArr("backgrounds")} />
+        <FTextarea label="Skills & Technologies" value={form.skills} onChange={set("skills")} placeholder="React, Python, PyTorch, Figma…" rows={2} />
+        <FSelect label="Execution Style" value={form.executionStyle} onChange={set("executionStyle")} options={SPRINT_EXECUTION_STYLES.map(v => ({ value: v, label: v }))} required />
+      </FormSection>
+ 
+      <FormSection step={3} title="Experience & Build History">
+        <FSelect label="Prior AI / startup work?" value={form.hasPriorWork} onChange={set("hasPriorWork")} options={[{ value:"Yes",label:"Yes" },{ value:"No",label:"No" }]} required />
+        <FTextarea label="Project Snapshot" value={form.projectSnapshot} onChange={set("projectSnapshot")} placeholder="Briefly describe relevant past projects or experience…" rows={3} />
+        <FSelect label="Primary Role in a Team" value={form.primaryRole} onChange={set("primaryRole")} options={SPRINT_ROLES.map(v => ({ value: v, label: v }))} required />
+        <FCheckboxGroup label="Desired Outcomes (optional)" options={SPRINT_OUTCOMES} value={form.outcomes} onChange={setArr("outcomes")} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FInput label="LinkedIn" value={form.linkedinUrl} onChange={set("linkedinUrl")} placeholder="https://linkedin.com/in/…" />
+          <FInput label="Portfolio / GitHub" value={form.portfolioUrl} onChange={set("portfolioUrl")} placeholder="https://…" />
+        </div>
+        <FInput label="Proof Links / Demo Links" value={form.proofLinks} onChange={set("proofLinks")} placeholder="https://demo.com, https://github.com/…" />
+      </FormSection>
+ 
+      <FormSection step={4} title="Availability & Participation">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FSelect label="Availability Window" value={form.availWindow} onChange={set("availWindow")} options={SPRINT_AVAIL_WINDOWS.map(v => ({ value: v, label: v }))} required />
+          <FSelect label="Time Commitment" value={form.timeCommitment} onChange={set("timeCommitment")} options={SPRINT_TIME_COMMITMENTS.map(v => ({ value: v, label: v }))} required />
+          <FInput label="Location Preference (optional)" value={form.locationPref} onChange={set("locationPref")} placeholder="Cambridge MA / Remote / Flexible" />
+          <FSelect label="Commitment Signal" value={form.commitSignal} onChange={set("commitSignal")} options={SPRINT_COMMIT_SIGNALS.map(v => ({ value: v, label: v }))} required />
+        </div>
+      </FormSection>
+ 
+      <FormSection step={5} title="Teaming & Opportunities">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FSelect label="Team Preference" value={form.teamPreference} onChange={set("teamPreference")} options={SPRINT_TEAM_PREFS.map(v => ({ value: v, label: v }))} required />
+          <FSelect label="Collaboration Style" value={form.collabStyle} onChange={set("collabStyle")} options={SPRINT_COLLAB_STYLES.map(v => ({ value: v, label: v }))} required />
+          <FSelect label="Post-Sprint Intent" value={form.postSprintIntent} onChange={set("postSprintIntent")} options={SPRINT_POST_INTENTS.map(v => ({ value: v, label: v }))} required />
+          <FSelect label="Open to Sponsor Engagement?" value={form.openToSponsor} onChange={set("openToSponsor")} options={[{ value:"Yes",label:"Yes" },{ value:"No",label:"No" },{ value:"Maybe",label:"Maybe" }]} />
+        </div>
+        <FCheckboxGroup label="Areas of Interest" options={SPRINT_INTERESTS} value={form.interests} onChange={setArr("interests")} />
+      </FormSection>
+ 
+      <FormSection step={6} title="Motivation & Admin">
+        <FTextarea label="Why this Sprint?" value={form.motivation} onChange={set("motivation")} placeholder="What are they hoping to build or learn?" rows={3} />
+        <FSelect label="Status" value={form.status} onChange={set("status")} options={SPRINT_PARTICIPANT_STATUS_OPTIONS} required />
+      </FormSection>
+ 
+      {error && (
+        <div className="flex items-start gap-3 px-4 py-3 rounded-xl ml-9" style={{ background: "#fee2e2", border: "1px solid #fca5a5" }}>
+          <XCircle className="w-4 h-4 flex-shrink-0 mt-0.5 text-red-500" />
+          <p className="text-sm text-red-700">{error}</p>
+        </div>
+      )}
+    </ModalShell>
+  );
+}
+ 
+const SPONSOR_ORG_TYPES = ["Startup (Pre-Seed / Seed)","Startup (Series A+)","Scale-up / Late-stage","Enterprise / Fortune 500","VC / Investment Fund","Family Office","Non-profit / Foundation","Government / Public Sector","University / Research Institution","Other"];
+const SPONSOR_ORG_STAGES = ["Idea / Pre-product","Early traction","Growth","Established / Mature"];
+const SPONSOR_INVOLVEMENT = ["Title sponsor","Workshop / session host","Mentor provider","Prize sponsor","Recruiting partner","Media / PR partner","In-kind support (tools, cloud credits)","Other"];
+const SPONSOR_LEVELS = ["Platinum ($50K+)","Gold ($25K–$50K)","Silver ($10K–$25K)","Bronze ($5K–$10K)","Community Partner (in-kind)"];
+const SPONSOR_GOALS = ["Brand awareness among top students","Talent recruiting","Product feedback / user testing","Research partnerships","Community building","Co-marketing","Other"];
+const SPONSOR_AREAS = ["AI / ML","FinTech","HealthTech","EdTech","CleanTech / Sustainability","Web3 / Crypto","Enterprise SaaS","Consumer","Deep Tech","Other"];
+const SPONSOR_ENGAGEMENT = ["Demo day judging","Office hours with teams","Host a workshop","Mentorship sessions","Resume / portfolio review","Post internships or jobs","Other"];
+const SPONSOR_TIMEFRAMES = ["ASAP (within 2 weeks)","1–3 months","3–6 months","Flexible"];
+const SPONSOR_FORMATS = ["In-person only","Virtual only","Hybrid","No preference"];
+const SPONSOR_DECISION_TIMELINES = ["< 2 weeks","2–4 weeks","1–2 months","3+ months"];
+const SPRINT_SPONSOR_STATUS_OPTIONS = Object.entries(SPRINT_SPONSOR_STATUS).map(([v, c]) => ({ value: v, label: c.label }));
+ 
+type SprintSponsorForm = {
+  companyName: string; contactName: string; contactTitle: string;
+  email: string; phone: string; website: string; linkedin: string;
+  orgType: string; orgStage: string;
+  involvementTypes: string[]; sponsorLevel: string; anchorPartner: string;
+  primaryGoals: string[]; successDefinition: string;
+  relevantAreas: string[]; participantEngagement: string[];
+  preferredTimeframe: string; participationFormat: string; openToExpansion: string;
+  isDecisionMaker: string; otherApprovers: string; decisionTimeline: string;
+  additionalNotes: string; referralSource: string;
+  status: string; internalRating: string;
+};
+const EMPTY_SPRINT_SPONSOR: SprintSponsorForm = {
+  companyName:"",contactName:"",contactTitle:"",email:"",phone:"",website:"",linkedin:"",
+  orgType:"",orgStage:"",involvementTypes:[],sponsorLevel:"",anchorPartner:"",
+  primaryGoals:[],successDefinition:"",relevantAreas:[],participantEngagement:[],
+  preferredTimeframe:"",participationFormat:"",openToExpansion:"",
+  isDecisionMaker:"",otherApprovers:"",decisionTimeline:"",
+  additionalNotes:"",referralSource:"",status:"submitted",internalRating:"",
+};
+ 
+function SprintSponsorModal({ onClose, initial, sponsorId }: {
+  onClose: () => void;
+  initial?: Partial<SprintSponsorForm>;
+  sponsorId?: Id<"sprintSponsors">;
+}) {
+  const create = useMutation(api.admin.createSprintSponsor);
+  const [form, setForm] = useState<SprintSponsorForm>({ ...EMPTY_SPRINT_SPONSOR, ...initial });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const set = (k: keyof SprintSponsorForm) => (v: string) => setForm(f => ({ ...f, [k]: v }));
+  const setArr = (k: keyof SprintSponsorForm) => (v: string[]) => setForm(f => ({ ...f, [k]: v }));
+ 
+  const save = async () => {
+    const required = ["companyName","contactName","contactTitle","email","website","orgType","orgStage","sponsorLevel","anchorPartner","successDefinition","preferredTimeframe","participationFormat","openToExpansion","isDecisionMaker","decisionTimeline","referralSource"];
+    const missing = required.filter(k => !form[k as keyof SprintSponsorForm]);
+    if (missing.length) { setError(`Please fill in: ${missing.slice(0,3).join(", ")}${missing.length > 3 ? "…" : ""}`); return; }
+    setError(""); setSaving(true);
+    try {
+      await create({
+        companyName: form.companyName, contactName: form.contactName,
+        contactTitle: form.contactTitle, email: form.email,
+        phone: form.phone || undefined, website: form.website,
+        linkedin: form.linkedin || undefined, orgType: form.orgType, orgStage: form.orgStage,
+        involvementTypes: form.involvementTypes, sponsorLevel: form.sponsorLevel,
+        anchorPartner: form.anchorPartner, primaryGoals: form.primaryGoals,
+        successDefinition: form.successDefinition, relevantAreas: form.relevantAreas,
+        participantEngagement: form.participantEngagement, preferredTimeframe: form.preferredTimeframe,
+        participationFormat: form.participationFormat, openToExpansion: form.openToExpansion,
+        isDecisionMaker: form.isDecisionMaker, otherApprovers: form.otherApprovers || undefined,
+        decisionTimeline: form.decisionTimeline, additionalNotes: form.additionalNotes || undefined,
+        referralSource: form.referralSource, status: form.status as any,
+        internalRating: form.internalRating ? Number(form.internalRating) : undefined,
+      });
+      onClose();
+    } catch (e: any) { setError(e.message ?? "Failed to save."); }
+    finally { setSaving(false); }
+  };
+ 
+  return (
+    <ModalShell
+      title={sponsorId ? "Edit Sponsor" : "Add Sprint Sponsor"}
+      subtitle="Harvard AI Build Sprint sponsorship"
+      onClose={onClose} onSave={save} saving={saving}
+      saveLabel={sponsorId ? "Save Changes" : "Add Sponsor"}
+      icon={<Handshake className="w-4 h-4" style={{ color: T.main }} />}
+    >
+      <FormSection step={1} title="Organization Information">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FInput label="Company Name" value={form.companyName} onChange={set("companyName")} placeholder="Acme Corp" required />
+          <FInput label="Contact Name" value={form.contactName} onChange={set("contactName")} placeholder="Jane Smith" required />
+          <FInput label="Contact Title" value={form.contactTitle} onChange={set("contactTitle")} placeholder="VP of Partnerships" required />
+          <FInput label="Email" value={form.email} onChange={set("email")} placeholder="jane@acme.com" type="email" required />
+          <FInput label="Phone" value={form.phone} onChange={set("phone")} placeholder="+1 555 000 0000" />
+          <FInput label="Website" value={form.website} onChange={set("website")} placeholder="https://acme.com" required />
+          <FInput label="LinkedIn" value={form.linkedin} onChange={set("linkedin")} placeholder="https://linkedin.com/company/…" />
+        </div>
+      </FormSection>
+ 
+      <FormSection step={2} title="Organization Type">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FSelect label="Organization Type" value={form.orgType} onChange={set("orgType")} options={SPONSOR_ORG_TYPES.map(v => ({ value: v, label: v }))} required />
+          <FSelect label="Organization Stage" value={form.orgStage} onChange={set("orgStage")} options={SPONSOR_ORG_STAGES.map(v => ({ value: v, label: v }))} required />
+        </div>
+      </FormSection>
+ 
+      <FormSection step={3} title="Sponsorship Interest">
+        <FCheckboxGroup label="Involvement Types" options={SPONSOR_INVOLVEMENT} value={form.involvementTypes} onChange={setArr("involvementTypes")} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FSelect label="Sponsor Level" value={form.sponsorLevel} onChange={set("sponsorLevel")} options={SPONSOR_LEVELS.map(v => ({ value: v, label: v }))} required />
+          <FSelect label="Interested as Anchor Partner?" value={form.anchorPartner} onChange={set("anchorPartner")} options={[{ value:"Yes",label:"Yes" },{ value:"No",label:"No" },{ value:"Open to discussion",label:"Open to discussion" }]} required />
+        </div>
+      </FormSection>
+ 
+      <FormSection step={4} title="Objectives">
+        <FCheckboxGroup label="Primary Goals" options={SPONSOR_GOALS} value={form.primaryGoals} onChange={setArr("primaryGoals")} />
+        <FTextarea label="How would you define success?" value={form.successDefinition} onChange={set("successDefinition")} placeholder="What outcomes matter most to your organization?" rows={3} />
+      </FormSection>
+ 
+      <FormSection step={5} title="Event Fit">
+        <FCheckboxGroup label="Relevant Areas / Sectors" options={SPONSOR_AREAS} value={form.relevantAreas} onChange={setArr("relevantAreas")} />
+        <FCheckboxGroup label="Preferred Participant Engagement" options={SPONSOR_ENGAGEMENT} value={form.participantEngagement} onChange={setArr("participantEngagement")} />
+      </FormSection>
+ 
+      <FormSection step={6} title="Timing & Format">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FSelect label="Preferred Timeframe" value={form.preferredTimeframe} onChange={set("preferredTimeframe")} options={SPONSOR_TIMEFRAMES.map(v => ({ value: v, label: v }))} required />
+          <FSelect label="Participation Format" value={form.participationFormat} onChange={set("participationFormat")} options={SPONSOR_FORMATS.map(v => ({ value: v, label: v }))} required />
+          <FSelect label="Open to Future Expansion?" value={form.openToExpansion} onChange={set("openToExpansion")} options={[{ value:"Yes",label:"Yes" },{ value:"No",label:"No" },{ value:"Possibly",label:"Possibly" }]} required />
+        </div>
+      </FormSection>
+ 
+      <FormSection step={7} title="Internal Process">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FSelect label="Are you the decision maker?" value={form.isDecisionMaker} onChange={set("isDecisionMaker")} options={[{ value:"Yes",label:"Yes — sole decision maker" },{ value:"Shared",label:"Shared with others" },{ value:"No",label:"No — need internal approval" }]} required />
+          <FSelect label="Decision Timeline" value={form.decisionTimeline} onChange={set("decisionTimeline")} options={SPONSOR_DECISION_TIMELINES.map(v => ({ value: v, label: v }))} required />
+          <FInput label="Other Approvers (if any)" value={form.otherApprovers} onChange={set("otherApprovers")} placeholder="CMO, Legal, CFO…" />
+          <FInput label="Referral Source" value={form.referralSource} onChange={set("referralSource")} placeholder="Conference, LinkedIn, Referral…" required />
+        </div>
+      </FormSection>
+ 
+      <FormSection step={8} title="Admin & Review">
+        <RatingPicker value={form.internalRating} onChange={set("internalRating")} />
+        <FSelect label="Status" value={form.status} onChange={set("status")} options={SPRINT_SPONSOR_STATUS_OPTIONS} required />
+        <FTextarea label="Additional Notes" value={form.additionalNotes} onChange={set("additionalNotes")} placeholder="Any context, concerns, or next steps…" rows={3} />
+      </FormSection>
+ 
+      {error && (
+        <div className="flex items-start gap-3 px-4 py-3 rounded-xl ml-9" style={{ background: "#fee2e2", border: "1px solid #fca5a5" }}>
+          <XCircle className="w-4 h-4 flex-shrink-0 mt-0.5 text-red-500" />
+          <p className="text-sm text-red-700">{error}</p>
+        </div>
+      )}
+    </ModalShell>
+  );
+}
+ 
 // ═══════════════════════════════════════════════════════════════════════════════
 // DRAWERS
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -932,6 +1266,306 @@ function LPDrawer({ id, onClose }: { id: Id<"limitedPartners">; onClose: () => v
   );
 }
 
+function SprintParticipantDrawer({ id, onClose }: { id: Id<"sprintParticipants">; onClose: () => void }) {
+  const p = useQuery(api.admin.getSprintParticipant, { participantId: id });
+  const updateStatus = useMutation(api.admin.updateSprintParticipantStatus);
+  const del = useMutation(api.admin.deleteSprintParticipant);
+  const [notes, setNotes] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [confirmDel, setConfirmDel] = useState(false);
+ 
+  const save = async (status: string) => {
+    setSaving(true);
+    await updateStatus({ participantId: id, status: status as any, reviewNotes: notes || undefined });
+    setSaving(false);
+  };
+ 
+  if (!p) return (
+    <DrawerShell onClose={onClose} title="Sprint Participant">
+      <div className="flex-1 flex items-center justify-center"><Spinner /></div>
+    </DrawerShell>
+  );
+ 
+  return (
+    <>
+      <DrawerShell onClose={onClose} title="Sprint Participant">
+        <div className="h-0.5 flex-shrink-0" style={{ background: "linear-gradient(90deg, #7c3aed, #a78bfa)" }} />
+        <div className="px-5 sm:px-8 pt-5 pb-5 flex-shrink-0" style={{ borderBottom: `1px solid ${T.border}` }}>
+          <div className="flex items-start justify-between gap-3 mb-3">
+            <div>
+              <h2 className="text-xl font-bold" style={{ color: T.deep }}>{p.fullName}</h2>
+              <p className="text-sm mt-0.5" style={{ color: T.slate }}>{p.institution} · {p.programYear}</p>
+            </div>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <Badge status={p.status} cfg={SPRINT_PARTICIPANT_STATUS} />
+              <button onClick={() => setShowEdit(true)} className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ background: T.ghost, border: `1px solid ${T.border}`, color: T.slate }}>
+                <Edit3 className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm" style={{ color: T.slate }}>
+            <span className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" />{p.email}</span>
+            <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" />{fmt(p.submittedAt)}</span>
+          </div>
+          {(p.linkedinUrl || p.portfolioUrl) && (
+            <div className="flex gap-3 mt-3">
+              {p.linkedinUrl && <a href={p.linkedinUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-sm" style={{ color: T.main }}><Linkedin className="w-3.5 h-3.5" /> LinkedIn</a>}
+              {p.portfolioUrl && <a href={p.portfolioUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-sm" style={{ color: T.main }}><Globe className="w-3.5 h-3.5" /> Portfolio</a>}
+            </div>
+          )}
+        </div>
+ 
+        <div className="px-5 sm:px-8 py-6 space-y-6 overflow-y-auto flex-1">
+          <Section title="Profile">
+            <Grid2>
+              <Field label="Area of Focus" value={p.areaOfFocus} />
+              <Field label="Execution Style" value={p.executionStyle} />
+              <Field label="Primary Role" value={p.primaryRole} />
+              <Field label="Commit Signal" value={p.commitSignal} />
+            </Grid2>
+          </Section>
+ 
+          {p.backgrounds?.length > 0 && (
+            <Section title="Background">
+              <div className="flex flex-wrap gap-1.5">
+                {p.backgrounds.map((b: string) => <Tag key={b}>{b}</Tag>)}
+              </div>
+            </Section>
+          )}
+ 
+          <Section title="Skills">
+            <p className="text-sm leading-relaxed" style={{ color: T.deep }}>{p.skills}</p>
+          </Section>
+ 
+          <Section title="Experience">
+            <Grid2>
+              <Field label="Prior AI / Startup Work" value={p.hasPriorWork} />
+            </Grid2>
+            <Field label="Project Snapshot" value={p.projectSnapshot} long />
+            {p.proofLinks && <Field label="Proof Links" value={p.proofLinks} long />}
+          </Section>
+ 
+          <Section title="Availability">
+            <Grid2>
+              <Field label="Window" value={p.availWindow} />
+              <Field label="Time Commitment" value={p.timeCommitment} />
+              <Field label="Location Pref." value={p.locationPref} />
+              <Field label="Collab Style" value={p.collabStyle} />
+            </Grid2>
+          </Section>
+ 
+          <Section title="Teaming">
+            <Grid2>
+              <Field label="Team Preference" value={p.teamPreference} />
+              <Field label="Post-Sprint Intent" value={p.postSprintIntent} />
+              <Field label="Open to Sponsor" value={p.openToSponsor} />
+            </Grid2>
+            {p.interests?.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {p.interests.map((i: string) => <Tag key={i} variant="violet">{i}</Tag>)}
+              </div>
+            )}
+            {p.outcomes?.length > 0 && (
+              <div>
+                <p className="text-[10px] uppercase tracking-wider mb-1.5" style={{ color: T.slate }}>Desired Outcomes</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {p.outcomes.map((o: string) => <Tag key={o}>{o}</Tag>)}
+                </div>
+              </div>
+            )}
+          </Section>
+ 
+          <Section title="Motivation">
+            <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: T.deep }}>{p.motivation}</p>
+          </Section>
+ 
+          <Section title="Review Note">
+            <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Internal notes…"
+              className="w-full rounded-xl px-4 py-3 text-sm resize-none focus:outline-none min-h-[90px]"
+              style={{ background: "#fff", border: `1px solid ${T.border}`, color: T.deep }} />
+            {p.reviewNotes && <p className="text-xs mt-1" style={{ color: T.slate }}>Previous: {p.reviewNotes}</p>}
+          </Section>
+ 
+          <Section title="Update Status">
+            <div className="flex flex-wrap gap-2">
+              {(["under_review","accepted","rejected","waitlisted"] as const).map(s => (
+                <button key={s} onClick={() => save(s)} disabled={saving || p.status === s}
+                  className="px-3.5 py-1.5 rounded-lg text-sm font-medium border transition-all"
+                  style={p.status === s ? { background: "rgba(42,127,160,0.10)", color: T.main, borderColor: T.main } : { background: "#fff", color: T.slate, borderColor: T.border }}>
+                  {SPRINT_PARTICIPANT_STATUS[s].label}
+                </button>
+              ))}
+            </div>
+          </Section>
+ 
+          <Section title="Danger Zone">
+            {!confirmDel
+              ? <button onClick={() => setConfirmDel(true)} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm" style={{ color: "#ef4444", border: "1px solid #fca5a5", background: "#fff5f5" }}><Trash2 className="w-4 h-4" /> Delete Record</button>
+              : <DeleteConfirm onConfirm={async () => { await del({ participantId: id }); onClose(); }} onCancel={() => setConfirmDel(false)} />}
+          </Section>
+        </div>
+      </DrawerShell>
+      {showEdit && <SprintParticipantModal onClose={() => setShowEdit(false)} participantId={id} initial={p} />}
+    </>
+  );
+}
+ 
+function SprintSponsorDrawer({ id, onClose }: { id: Id<"sprintSponsors">; onClose: () => void }) {
+  const s = useQuery(api.admin.getSprintSponsor, { sponsorId: id });
+  const updateStatus = useMutation(api.admin.updateSprintSponsorStatus);
+  const del = useMutation(api.admin.deleteSprintSponsor);
+  const [notes, setNotes] = useState("");
+  const [rating, setRating] = useState(0);
+  const [saving, setSaving] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [confirmDel, setConfirmDel] = useState(false);
+ 
+  const save = async (status: string) => {
+    setSaving(true);
+    await updateStatus({ sponsorId: id, status: status as any, reviewNotes: notes || undefined, internalRating: rating || undefined });
+    setSaving(false);
+  };
+ 
+  if (!s) return (
+    <DrawerShell onClose={onClose} title="Sprint Sponsor">
+      <div className="flex-1 flex items-center justify-center"><Spinner /></div>
+    </DrawerShell>
+  );
+ 
+  return (
+    <>
+      <DrawerShell onClose={onClose} title="Sprint Sponsor">
+        <div className="h-0.5 flex-shrink-0" style={{ background: "linear-gradient(90deg, #10b981, #34d399)" }} />
+        <div className="px-5 sm:px-8 pt-5 pb-5 flex-shrink-0" style={{ borderBottom: `1px solid ${T.border}` }}>
+          <div className="flex items-start justify-between gap-3 mb-3">
+            <div>
+              <h2 className="text-xl font-bold" style={{ color: T.deep }}>{s.companyName}</h2>
+              <p className="text-sm mt-0.5" style={{ color: T.slate }}>{s.contactName} · {s.contactTitle}</p>
+            </div>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <Badge status={s.status} cfg={SPRINT_SPONSOR_STATUS} />
+              <button onClick={() => setShowEdit(true)} className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ background: T.ghost, border: `1px solid ${T.border}`, color: T.slate }}>
+                <Edit3 className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm mb-3" style={{ color: T.slate }}>
+            <span className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" />{s.email}</span>
+            {s.phone && <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" />{s.phone}</span>}
+            <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" />{fmt(s.submittedAt)}</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Tag variant="green">{s.sponsorLevel.split("(")[0].trim()}</Tag>
+            <Tag>{s.orgType.split("(")[0].trim()}</Tag>
+            {s.anchorPartner === "Yes" && <Tag variant="violet">Anchor Partner</Tag>}
+            {s.internalRating && <Tag variant="amber">★ {s.internalRating}/10</Tag>}
+          </div>
+          {(s.website || s.linkedin) && (
+            <div className="flex gap-3 mt-3">
+              {s.website && <a href={s.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-sm" style={{ color: T.main }}><Globe className="w-3.5 h-3.5" /> Website</a>}
+              {s.linkedin && <a href={s.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-sm" style={{ color: T.main }}><Linkedin className="w-3.5 h-3.5" /> LinkedIn</a>}
+            </div>
+          )}
+        </div>
+ 
+        <div className="px-5 sm:px-8 py-6 space-y-6 overflow-y-auto flex-1">
+          <Section title="Organization">
+            <Grid2>
+              <Field label="Type" value={s.orgType} />
+              <Field label="Stage" value={s.orgStage} />
+              <Field label="Format" value={s.participationFormat} />
+              <Field label="Timeframe" value={s.preferredTimeframe} />
+              <Field label="Decision Timeline" value={s.decisionTimeline} />
+              <Field label="Decision Maker?" value={s.isDecisionMaker} />
+            </Grid2>
+            {s.otherApprovers && <Field label="Other Approvers" value={s.otherApprovers} />}
+          </Section>
+ 
+          {s.involvementTypes?.length > 0 && (
+            <Section title="Involvement Types">
+              <div className="flex flex-wrap gap-1.5">
+                {s.involvementTypes.map((t: string) => <Tag key={t}>{t}</Tag>)}
+              </div>
+            </Section>
+          )}
+ 
+          {s.primaryGoals?.length > 0 && (
+            <Section title="Primary Goals">
+              <div className="flex flex-wrap gap-1.5">
+                {s.primaryGoals.map((g: string) => <Tag key={g} variant="green">{g}</Tag>)}
+              </div>
+            </Section>
+          )}
+ 
+          <Section title="Objectives">
+            <Field label="Definition of Success" value={s.successDefinition} long />
+          </Section>
+ 
+          {(s.relevantAreas?.length > 0 || s.participantEngagement?.length > 0) && (
+            <Section title="Event Fit">
+              {s.relevantAreas?.length > 0 && (
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider mb-1.5" style={{ color: T.slate }}>Relevant Areas</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {s.relevantAreas.map((a: string) => <Tag key={a} variant="violet">{a}</Tag>)}
+                  </div>
+                </div>
+              )}
+              {s.participantEngagement?.length > 0 && (
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider mb-1.5" style={{ color: T.slate }}>Participant Engagement</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {s.participantEngagement.map((e: string) => <Tag key={e}>{e}</Tag>)}
+                  </div>
+                </div>
+              )}
+            </Section>
+          )}
+ 
+          <Field label="Referral Source" value={s.referralSource} />
+          {s.additionalNotes && <Section title="Additional Notes"><p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: T.deep }}>{s.additionalNotes}</p></Section>}
+ 
+          <Section title="Internal Review">
+            <RatingPicker value={String(rating || s.internalRating || "")} onChange={v => setRating(Number(v))} />
+            <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Deal notes, concerns, next steps…"
+              className="w-full rounded-xl px-4 py-3 text-sm resize-none focus:outline-none min-h-[90px]"
+              style={{ background: "#fff", border: `1px solid ${T.border}`, color: T.deep }} />
+            {s.reviewNotes && <p className="text-xs" style={{ color: T.slate }}>Previous: {s.reviewNotes}</p>}
+          </Section>
+ 
+          <Section title="Move Stage">
+            <div className="flex flex-wrap gap-2">
+              {(["under_review","in_discussion","committed","declined"] as const).map(st => (
+                <button key={st} onClick={() => save(st)} disabled={saving || s.status === st}
+                  className="px-3.5 py-1.5 rounded-lg text-sm font-medium border transition-all"
+                  style={s.status === st ? { background: "rgba(42,127,160,0.10)", color: T.main, borderColor: T.main } : { background: "#fff", color: T.slate, borderColor: T.border }}>
+                  {SPRINT_SPONSOR_STATUS[st].label}
+                </button>
+              ))}
+            </div>
+          </Section>
+ 
+          <Section title="Danger Zone">
+            {!confirmDel
+              ? <button onClick={() => setConfirmDel(true)} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm" style={{ color: "#ef4444", border: "1px solid #fca5a5", background: "#fff5f5" }}><Trash2 className="w-4 h-4" /> Delete Record</button>
+              : <DeleteConfirm onConfirm={async () => { await del({ sponsorId: id }); onClose(); }} onCancel={() => setConfirmDel(false)} />}
+          </Section>
+        </div>
+      </DrawerShell>
+      {showEdit && (
+  <SprintSponsorModal
+    onClose={() => setShowEdit(false)}
+    sponsorId={id}
+    initial={{ ...s, internalRating: s.internalRating != null ? String(s.internalRating) : "" }}
+  />
+)}
+    </>
+  );
+}
+ 
 // ═══════════════════════════════════════════════════════════════════════════════
 // STATUS TABS
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -1047,7 +1681,84 @@ function JobCard({ app, onClick }: { app: any; onClick: () => void }) {
     </div>
   );
 }
-
+ 
+function SprintParticipantCard({ p, onClick }: { p: any; onClick: () => void }) {
+  return (
+    <div onClick={onClick} className="group relative bg-white rounded-2xl p-5 cursor-pointer transition-all duration-200"
+      style={{ border: `1px solid ${T.border}`, boxShadow: "0 1px 4px rgba(10,47,66,0.06)" }}
+      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 20px rgba(42,127,160,0.14)"; (e.currentTarget as HTMLElement).style.borderColor = T.main; }}
+      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 1px 4px rgba(10,47,66,0.06)"; (e.currentTarget as HTMLElement).style.borderColor = T.border; }}>
+      <div className="absolute inset-x-0 top-0 h-0.5 rounded-t-2xl opacity-0 group-hover:opacity-100 transition-opacity"
+        style={{ background: `linear-gradient(90deg, #7c3aed, #a78bfa)` }} />
+ 
+      <div className="flex items-start justify-between gap-2 mb-4">
+        <div className="flex-1 min-w-0">
+          <h3 className="text-sm font-semibold truncate" style={{ color: T.deep }}>{p.fullName}</h3>
+          <p className="text-xs mt-0.5 truncate" style={{ color: T.slate }}>{p.institution} · {p.programYear}</p>
+        </div>
+        <Badge status={p.status} cfg={SPRINT_PARTICIPANT_STATUS} />
+      </div>
+ 
+      <div className="grid grid-cols-2 gap-x-4 gap-y-3 mb-4">
+        <div><p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: T.slate }}>Role</p><p className="text-xs font-semibold" style={{ color: T.deep }}>{p.primaryRole}</p></div>
+        <div><p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: T.slate }}>Style</p><p className="text-xs font-semibold" style={{ color: T.deep }}>{p.executionStyle}</p></div>
+        <div><p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: T.slate }}>Time</p><p className="text-xs font-semibold" style={{ color: T.deep }}>{p.timeCommitment}</p></div>
+        <div><p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: T.slate }}>Team</p><p className="text-xs font-semibold" style={{ color: T.deep }}>{p.teamPreference}</p></div>
+      </div>
+ 
+      {p.interests?.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mb-3">
+          {p.interests.slice(0, 3).map((i: string) => <Pill key={i} variant="navy">{i}</Pill>)}
+          {p.interests.length > 3 && <Pill>+{p.interests.length - 3}</Pill>}
+        </div>
+      )}
+ 
+      <div className="flex items-center justify-between pt-3" style={{ borderTop: `1px solid ${T.border}` }}>
+        <span className="text-[10px]" style={{ color: T.slate }}>{fmt(p.submittedAt)}</span>
+        <Eye className="w-3.5 h-3.5" style={{ color: T.border }} />
+      </div>
+    </div>
+  );
+}
+ 
+function SprintSponsorCard({ s, onClick }: { s: any; onClick: () => void }) {
+  return (
+    <div onClick={onClick} className="group relative bg-white rounded-2xl p-5 cursor-pointer transition-all duration-200"
+      style={{ border: `1px solid ${T.border}`, boxShadow: "0 1px 4px rgba(10,47,66,0.06)" }}
+      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 20px rgba(42,127,160,0.14)"; (e.currentTarget as HTMLElement).style.borderColor = T.main; }}
+      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 1px 4px rgba(10,47,66,0.06)"; (e.currentTarget as HTMLElement).style.borderColor = T.border; }}>
+      <div className="absolute inset-x-0 top-0 h-0.5 rounded-t-2xl opacity-0 group-hover:opacity-100 transition-opacity"
+        style={{ background: `linear-gradient(90deg, #10b981, #34d399)` }} />
+ 
+      <div className="flex items-start justify-between gap-2 mb-4">
+        <div className="flex-1 min-w-0">
+          <h3 className="text-sm font-semibold truncate" style={{ color: T.deep }}>{s.companyName}</h3>
+          <p className="text-xs mt-0.5 truncate" style={{ color: T.slate }}>{s.contactName} · {s.contactTitle}</p>
+        </div>
+        <Badge status={s.status} cfg={SPRINT_SPONSOR_STATUS} />
+      </div>
+ 
+      <div className="grid grid-cols-2 gap-x-4 gap-y-3 mb-4">
+        <div><p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: T.slate }}>Level</p><p className="text-xs font-semibold" style={{ color: "#059669" }}>{s.sponsorLevel.split("(")[0].trim()}</p></div>
+        <div><p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: T.slate }}>Type</p><p className="text-xs font-semibold" style={{ color: T.deep }}>{s.orgType.split("(")[0].trim()}</p></div>
+        <div><p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: T.slate }}>Format</p><p className="text-xs font-semibold" style={{ color: T.deep }}>{s.participationFormat}</p></div>
+        <div><p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: T.slate }}>Timeline</p><p className="text-xs font-semibold" style={{ color: T.deep }}>{s.decisionTimeline}</p></div>
+      </div>
+ 
+      <div className="flex flex-wrap gap-1.5 mb-3">
+        {s.internalRating && <Pill variant="amber">★ {s.internalRating}/10</Pill>}
+        {s.anchorPartner === "Yes" && <Pill variant="green">Anchor</Pill>}
+        {s.relevantAreas?.slice(0,2).map((a: string) => <Pill key={a} variant="navy">{a}</Pill>)}
+      </div>
+ 
+      <div className="flex items-center justify-between pt-3" style={{ borderTop: `1px solid ${T.border}` }}>
+        <span className="text-[10px]" style={{ color: T.slate }}>{fmt(s.submittedAt)}</span>
+        <Eye className="w-3.5 h-3.5" style={{ color: T.border }} />
+      </div>
+    </div>
+  );
+}
+ 
 function LPCard({ lp, onClick }: { lp: any; onClick: () => void }) {
   const isOverdue = lp.nextFollowUpDate && lp.nextFollowUpDate < Date.now();
   return (
@@ -1179,14 +1890,79 @@ function LPsView({ statusFilter, setStatusFilter, search, setSearch, onSelect }:
   );
 }
 
+function SprintParticipantsView({ statusFilter, setStatusFilter, search, setSearch, onSelect }: {
+  statusFilter: string; setStatusFilter: (s: string) => void;
+  search: string; setSearch: (s: string) => void;
+  onSelect: (id: Id<"sprintParticipants">) => void;
+}) {
+  const participants = useQuery(api.admin.listSprintParticipants, statusFilter ? { status: statusFilter as any } : {});
+  const stats = useQuery(api.admin.getDashboardStats);
+  const [showAdd, setShowAdd] = useState(false);
+  const filtered = (participants ?? []).filter(p =>
+    !search ||
+    p.fullName.toLowerCase().includes(search.toLowerCase()) ||
+    p.email.toLowerCase().includes(search.toLowerCase()) ||
+    p.institution.toLowerCase().includes(search.toLowerCase())
+  );
+  return (
+    <>
+      <ViewShell
+        title="Sprint Participants" subtitle={`${stats?.sprintParticipants.total ?? "—"} total · ${stats?.sprintParticipants.accepted ?? "—"} accepted`}
+        stats={stats?.sprintParticipants.byStatus} statConfig={SPRINT_PARTICIPANT_STATUS}
+        statusFilter={statusFilter} setStatusFilter={setStatusFilter}
+        search={search} setSearch={setSearch} searchPlaceholder="Search name, email, institution…"
+        onAdd={() => setShowAdd(true)} addLabel="Add Participant"
+      >
+        {!participants && <div className="flex items-center justify-center py-20"><Spinner /></div>}
+        {participants && filtered.length === 0 && <div className="flex flex-col items-center justify-center py-20 gap-3"><Users className="w-10 h-10" style={{ color: T.border }} /><p className="text-sm" style={{ color: T.slate }}>No participants found</p></div>}
+        {participants && filtered.length > 0 && <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">{filtered.map(p => <SprintParticipantCard key={p._id} p={p} onClick={() => onSelect(p._id)} />)}</div>}
+      </ViewShell>
+      {showAdd && <SprintParticipantModal onClose={() => setShowAdd(false)} />}
+    </>
+  );
+}
+ 
+function SprintSponsorsView({ statusFilter, setStatusFilter, search, setSearch, onSelect }: {
+  statusFilter: string; setStatusFilter: (s: string) => void;
+  search: string; setSearch: (s: string) => void;
+  onSelect: (id: Id<"sprintSponsors">) => void;
+}) {
+  const sponsors = useQuery(api.admin.listSprintSponsors, statusFilter ? { status: statusFilter as any } : {});
+  const stats = useQuery(api.admin.getDashboardStats);
+  const [showAdd, setShowAdd] = useState(false);
+  const filtered = (sponsors ?? []).filter(s =>
+    !search ||
+    s.companyName.toLowerCase().includes(search.toLowerCase()) ||
+    s.contactName.toLowerCase().includes(search.toLowerCase()) ||
+    s.email.toLowerCase().includes(search.toLowerCase())
+  );
+  return (
+    <>
+      <ViewShell
+        title="Sprint Sponsors" subtitle={`${stats?.sprintSponsors.total ?? "—"} total · ${stats?.sprintSponsors.committed ?? "—"} committed`}
+        stats={stats?.sprintSponsors.byStatus} statConfig={SPRINT_SPONSOR_STATUS}
+        statusFilter={statusFilter} setStatusFilter={setStatusFilter}
+        search={search} setSearch={setSearch} searchPlaceholder="Search company, contact, email…"
+        onAdd={() => setShowAdd(true)} addLabel="Add Sponsor"
+      >
+        {!sponsors && <div className="flex items-center justify-center py-20"><Spinner /></div>}
+        {sponsors && filtered.length === 0 && <div className="flex flex-col items-center justify-center py-20 gap-3"><Handshake className="w-10 h-10" style={{ color: T.border }} /><p className="text-sm" style={{ color: T.slate }}>No sponsors yet — click <span style={{ color: T.main }}>Add Sponsor</span> to get started.</p></div>}
+        {sponsors && filtered.length > 0 && <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">{filtered.map(s => <SprintSponsorCard key={s._id} s={s} onClick={() => onSelect(s._id)} />)}</div>}
+      </ViewShell>
+      {showAdd && <SprintSponsorModal onClose={() => setShowAdd(false)} />}
+    </>
+  );
+}
 // ═══════════════════════════════════════════════════════════════════════════════
 // MAIN PAGE
 // ═══════════════════════════════════════════════════════════════════════════════
-type Tab = "startups" | "lps" | "jobs";
+type Tab = "startups" | "lps" | "jobs" | "sprint_participants" | "sprint_sponsors";
 const TABS: { key: Tab; icon: any; label: string; short: string; dot: string }[] = [
-  { key: "startups", icon: Building2, label: "Startups",         short: "Startups", dot: T.main },
-  { key: "lps",      icon: Handshake, label: "Limited Partners", short: "LPs",      dot: "#10b981" },
-  { key: "jobs",     icon: Users,     label: "Job Applications", short: "Jobs",     dot: "#7c3aed" },
+  { key: "startups",          icon: Building2, label: "Startups",           short: "Startups", dot: T.main },
+  { key: "lps",               icon: Handshake, label: "Limited Partners",   short: "LPs",      dot: "#10b981" },
+  { key: "jobs",              icon: Users,     label: "Job Applications",   short: "Jobs",     dot: "#7c3aed" },
+  { key: "sprint_participants",icon: Zap,      label: "Sprint Participants",short: "Sprint",   dot: "#f59e0b" },
+  { key: "sprint_sponsors",   icon: Handshake, label: "Sprint Sponsors",    short: "Sponsors", dot: "#10b981" },
 ];
 
 export default function AdminPage() {
@@ -1197,6 +1973,9 @@ export default function AdminPage() {
   const [selectedJob, setSelectedJob] = useState<Id<"jobApplications"> | null>(null);
   const [selectedStartup, setSelectedStartup] = useState<Id<"startupApplications"> | null>(null);
   const [selectedLP, setSelectedLP] = useState<Id<"limitedPartners"> | null>(null);
+   const [selectedSprintParticipant, setSelectedSprintParticipant] = useState<Id<"sprintParticipants"> | null>(null);
+   const [selectedSprintSponsor, setSelectedSprintSponsor] = useState<Id<"sprintSponsors"> | null>(null);
+ 
   const switchTab = (t: Tab) => { setTab(t); setStatusFilter(""); setSearch(""); };
 
   if (!isLoaded) return (
@@ -1310,6 +2089,8 @@ export default function AdminPage() {
           {tab === "startups" && <StartupsView statusFilter={statusFilter} setStatusFilter={setStatusFilter} search={search} setSearch={setSearch} onSelect={setSelectedStartup} />}
           {tab === "lps"      && <LPsView      statusFilter={statusFilter} setStatusFilter={setStatusFilter} search={search} setSearch={setSearch} onSelect={setSelectedLP} />}
           {tab === "jobs"     && <JobsView     statusFilter={statusFilter} setStatusFilter={setStatusFilter} search={search} setSearch={setSearch} onSelect={setSelectedJob} />}
+           {tab === "sprint_participants" && <SprintParticipantsView statusFilter={statusFilter} setStatusFilter={setStatusFilter} search={search} setSearch={setSearch} onSelect={setSelectedSprintParticipant} />}
+           {tab === "sprint_sponsors"     && <SprintSponsorsView     statusFilter={statusFilter} setStatusFilter={setStatusFilter} search={search} setSearch={setSearch} onSelect={setSelectedSprintSponsor} />}
         </main>
       </div>
 
@@ -1333,6 +2114,8 @@ export default function AdminPage() {
       {selectedJob     && <JobDrawer     id={selectedJob}     onClose={() => setSelectedJob(null)} />}
       {selectedStartup && <StartupDrawer id={selectedStartup} onClose={() => setSelectedStartup(null)} />}
       {selectedLP      && <LPDrawer      id={selectedLP}      onClose={() => setSelectedLP(null)} />}
+         {selectedSprintParticipant && <SprintParticipantDrawer id={selectedSprintParticipant} onClose={() => setSelectedSprintParticipant(null)} />}
+          {selectedSprintSponsor      && <SprintSponsorDrawer     id={selectedSprintSponsor}     onClose={() => setSelectedSprintSponsor(null)} />}
     </div>
   );
 }
