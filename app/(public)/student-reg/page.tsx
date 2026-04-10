@@ -312,7 +312,7 @@ export default function StudentRegistrationPage() {
             <div className="page-header-inner">
               <div className="ph-tag">Harvard AI Build Sprint</div>
               <h1 className="ph-h">Apply as a <em>Participant</em></h1>
-              <p className="ph-sub">Join a highly selective cohort building real AI products in a 24-hour sprint. Execution over ideas. ~5% acceptance rate.</p>
+              <p className="ph-sub">Join a highly selective cohort building real AI products in a 7-days sprint. Execution over ideas. ~5% acceptance rate.</p>
               <div className="ph-pills">
                 {["Remote and On-Site ", "7 days", "~5% acceptance", "AI & Enterprise", "May–June 2025"].map(p => (
                   <span key={p} className="ph-pill">{p}</span>
